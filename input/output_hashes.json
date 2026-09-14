@@ -1,0 +1,8 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "pal_disasm.txt": "b425a6e2ad8e1d8b1b37a360485bce5f51b107ac9256ade4fad6a091b099d099",
+    "pal_pseudocode.txt": "ea35efaac58552358c21151a87148e383906ad60792adc33ed30a99604db1b7a",
+    "pal_code.txt": "12ee284381739933fe10a308786b916851746f042341af7950528828a471cbfb"
+  }
+}
