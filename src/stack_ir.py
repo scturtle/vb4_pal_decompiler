@@ -16,6 +16,9 @@ dispatcher) are rendered as GoTo label comments rather than intra-proc jumps.
 """
 
 
+import declare_specs
+
+
 # ----------------------------------------------------------------------
 # Operand parsing helpers
 # ----------------------------------------------------------------------
@@ -330,52 +333,15 @@ WIN32_SPECS = {
     "winmm.ShowCursor": 1,
 }
 
-# Win32 library prefixes for Declare-table external stdcall targets.
-# These functions use right-to-left argument push order (stdcall ABI):
-# the last argument is pushed first (bottom of eval stack), the first
-# argument is pushed last (TOS).  Therefore _collect_args must NOT reverse
-# the popped items for these targets — the pop order (TOS→bottom) already
-# gives the correct source-order argument list.
+# Argument order (uniform across all call kinds).
 #
-# Internal VB functions (pub_*/priv_*) and VB40032.rtc* are called via
-# ImpAdCall with left-to-right push order (first arg at bottom, last at
-# TOS), so _collect_args MUST reverse for those.
-#
-# Pal.* functions live in PAL.dll (Declare table, stdcall) but are often
-# called via ImpAdCall which always uses VB internal convention
-# (left-to-right).  When called via ImpAdCallAd they follow stdcall
-# (right-to-left).  The call instruction label determines the convention.
-WIN32_PREFIXES = (
-    "kernel32.", "user32.", "gdi32.", "winmm.", "ole32.",
-    "advapi32.", "comdlg32.", "shell32.", "ws2_32.", "wsock32.",
-    "ntdll.", "msvcrt.", "crtdll.",
-)
-
-
-def _is_stdcall_target(name):
-    """True if *name* is a Win32 API target that uses right-to-left
-    argument push order (stdcall ABI).
-
-    Win32 API targets (kernel32.*, user32.*, etc.) are external stdcall
-    functions.  The VB4 compiler knows the target ABI and pushes arguments
-    right-to-left regardless of the call instruction (ImpAdCall or
-    ImpAdCallAd).  Therefore _collect_args must NOT reverse for these.
-
-    Pal.* functions are also Declare-table stdcall functions, but when
-    called via ImpAdCall they use left-to-right push order (confirmed by
-    Pal.copymen via ImpAdCall).  When called via ImpAdCallAd, most have
-    only 1 arg so reversal is a no-op.  To avoid risk, we only apply
-    reverse=False to Win32 API prefixes, not Pal.*.
-
-    Internal VB functions (pub_*/priv_*) and VB40032.rtc* always use
-    left-to-right push order and need reversal.
-    """
-    if not name:
-        return False
-    if name.startswith(WIN32_PREFIXES):
-        return True
-    return False
-
+# The p-code evaluates a call's arguments onto its eval stack, and the
+# runtime hands them to the callee so that the *last* pushed value (the
+# eval-stack TOS) becomes the callee's first parameter (ARG1).  Popping
+# TOS-first therefore already yields source order, so _collect_args never
+# reverses the popped items -- this holds for internal `pub_*`/`priv_*`
+# procedures, for Declare-table stdcall targets (Pal.*, kernel32.*, ...)
+# and for the PE-imported VB40032.rtc* runtime helpers alike.
 VCALL_LABELS = {"VCallHresult", "VCallI2", "VCallI4", "VCallAd",
                  "ThisVCallHresult", "ThisVCallI2", "ThisVCallI4",
                  "ThisVCallAd"}
@@ -727,11 +693,25 @@ class StackMachine(object):
         elif label in UNARY_OPS:
             self._unary(UNARY_OPS[label])
         elif label in CONV_LABELS:
-            if label in ("CStr2Ansi", "CStr2Uni"):
-                # CStr2Ansi/CStr2Uni: pop 2 (ByRef string descriptor + frame
-                # slot pointer), convert string to ANSI/Unicode, store the
-                # pointer in the frame slot.  The pointer is loaded separately
-                # by the subsequent FLdI4, so we pop 2 and push 0.
+            if label == "CStr2Ansi":
+                # CStr2Ansi: pop 2 (frame slot pointer pushed by FLdRfVar at
+                # TOS, source string below it), convert the string to ANSI,
+                # store the pointer in the frame slot.  The pointer is loaded
+                # separately by the following FLdI4.  VB converts a String
+                # implicitly when passing it to an ANSI API, so record an
+                # alias for the slot: the FLdI4 load then resolves to the
+                # original string expression instead of a bare temp.
+                slot_ref = self.pop()
+                src = self.pop()
+                slot = strip(slot_ref.text)
+                if slot and not slot.startswith("<"):
+                    self.temp_aliases[slot] = strip(src.text)
+                    if src.effects:
+                        self._alias_effects[slot] = list(src.effects)
+            elif label == "CStr2Uni":
+                # CStr2Uni: pop 2 (ANSI pointer + destination slot pointer).
+                # The converted-back value is only used by the string-free
+                # epilogue, so we pop 2 and push 0 without recording an alias.
                 self.pop()
                 self.pop()
             else:
@@ -855,6 +835,18 @@ class StackMachine(object):
                 del self.temp_aliases[slot]
             else:
                 self.push(slot)
+        elif label in ("FLdI2", "FLdI4", "FLdR4", "FLdR8", "FLdUI1"):
+            # Frame value load.  If the slot has an alias (e.g. the ANSI
+            # conversion temp recorded by CStr2Ansi), resolve to the alias
+            # expression instead of the raw slot reference.
+            slot = self._subst_param(parse_mem(operand))
+            alias = self.temp_aliases.get(slot)
+            if alias is not None:
+                effects = self._alias_effects.pop(slot, [])
+                self.push(alias, effects=effects)
+                del self.temp_aliases[slot]
+            else:
+                self.push(slot)
         else:
             self.push(self._subst_param(parse_mem(operand)))
 
@@ -940,17 +932,21 @@ class StackMachine(object):
             return
         nargs = self.arg_map.get(name)
         if nargs is None:
-            # Try runtime/Win32 specs for external calls.
+            # Try runtime/Win32/Declare specs for external calls.
             nargs = RUNTIME_SPECS.get(name)
             if nargs is None:
                 nargs = WIN32_SPECS.get(name)
-        # Determine argument push order convention.
-        # Win32 API targets (kernel32.*, user32.*, etc.) use right-to-left
-        # push order (stdcall ABI) regardless of call instruction.
-        # All other targets (internal VB, Pal.*, VB40032.rtc*) use
-        # left-to-right push order (VB internal convention).
-        reverse = not _is_stdcall_target(name)
-        args = self._collect_args(nargs, reverse=reverse)
+            if nargs is None:
+                nargs = declare_specs.DECLARE_SPECS.get(name)
+        # Argument order.  The p-code evaluates a call's arguments onto
+        # its eval stack, and the runtime hands them to the callee so
+        # that the *last* pushed value (the eval-stack TOS) becomes the
+        # callee's first parameter (ARG1).  Popping TOS-first therefore
+        # already yields source order, so _collect_args must NOT reverse
+        # the popped items -- for internal `pub_*`/`priv_*` procedures,
+        # for Declare-table stdcall targets (Pal.*, kernel32.*, ...) and
+        # for the VB40032 runtime helpers (VB40032.rtc*) alike.
+        args = self._collect_args(nargs, reverse=False)
         if label in CALL_NORETURN:
             if args:
                 self.emit(va, 0, "%s %s" % (name, args))
@@ -1051,14 +1047,12 @@ class StackMachine(object):
         and other pre-call stack values for subsequent operations).
         Otherwise drain the whole stack.
 
-        When reverse=True (default, internal VB calling convention), the
-        p-code pushes arguments left-to-right (first arg at bottom, last
-        arg at TOS).  Popping TOS-first and reversing restores source order.
-
-        When reverse=False (stdcall convention for Win32 API and Declare-
-        table targets via ImpAdCallAd), the p-code pushes arguments
-        right-to-left (last arg at bottom, first arg at TOS).  Popping
-        TOS-first already gives source order — no reversal needed.
+        The p-code evaluates a call's arguments onto its eval stack and
+        the runtime maps the *last* pushed value (the TOS) to the
+        callee's first parameter (ARG1).  Popping TOS-first therefore
+        already gives source order, so callers pass reverse=False.  The
+        parameter is kept for the few call shapes whose argument order
+        still needs an explicit reversal.
         """
         if not self.stack:
             return ""

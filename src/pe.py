@@ -190,6 +190,10 @@ class PEImage:
     def _load_exports(self):
         """Read the PE export directory into self.exports: {ordinal -> name}.
 
+        Also fills self.export_addrs: {name -> function VA}, which callers use
+        to look up an exported function by name (e.g. to read its stdcall
+        parameter count from the trailing `ret N`).
+
         Only named exports are recorded.  Ordinal-only exports (no name)
         are skipped, since a name is required to resolve import-by-ordinal
         references in the importing image.  This lets us derive the
@@ -197,6 +201,7 @@ class PEImage:
         table, instead of a hand-maintained vbXapi.txt file.
         """
         self.exports = {}
+        self.export_addrs = {}
         if IMAGE_DIRECTORY_ENTRY_EXPORT >= len(self.data_dirs):
             return
         exp_rva, _ = self.data_dirs[IMAGE_DIRECTORY_ENTRY_EXPORT]
@@ -206,12 +211,16 @@ class PEImage:
         if off is None:
             return
         d = self.data
-        # IMAGE_EXPORT_DIRECTORY: Base@+16, NumberOfNames@+24,
-        # AddressOfNames@+32, AddressOfNameOrdinals@+36
+        # IMAGE_EXPORT_DIRECTORY: Base@+16, NumberOfFunctions@+20,
+        # NumberOfNames@+24, AddressOfFunctions@+28, AddressOfNames@+32,
+        # AddressOfNameOrdinals@+36
         base_ord = struct.unpack_from("<I", d, off + 16)[0]
+        n_funcs = struct.unpack_from("<I", d, off + 20)[0]
         n_names = struct.unpack_from("<I", d, off + 24)[0]
+        funcs_rva = struct.unpack_from("<I", d, off + 28)[0]
         names_rva = struct.unpack_from("<I", d, off + 32)[0]
         ords_rva = struct.unpack_from("<I", d, off + 36)[0]
+        funcs_off = self.rva_to_off(funcs_rva) if funcs_rva else None
         names_off = self.rva_to_off(names_rva)
         ords_off = self.rva_to_off(ords_rva)
         if names_off is None or ords_off is None:
@@ -226,5 +235,10 @@ class PEImage:
             if end < 0:
                 end = len(d)
             name = d[no:end].decode("latin1")
-            if name:
-                self.exports[base_ord + bias] = name
+            if not name:
+                continue
+            self.exports[base_ord + bias] = name
+            if funcs_off is not None and bias < n_funcs:
+                frva = struct.unpack_from("<I", d, funcs_off + bias * 4)[0]
+                if frva:
+                    self.export_addrs[name] = self.base + frva
