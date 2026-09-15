@@ -282,13 +282,19 @@ def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> s
         else:
             current_func["stack_vars"] = None
 
-        # 替换参数列表中的 a0, a1, ... 为有意义的名称
+        # 替换参数列表中的 a0, a1, ... 为有意义的名称（保留 pseudocode 签名里的 ByRef 前缀）
         new_params = params_str
         if base in params_map:
             param_names = params_map[base]
             orig_params = [p.strip() for p in params_str[1:-1].split(",") if p.strip()]
             if len(orig_params) == len(param_names):
-                new_params = "(" + ", ".join(param_names) + ")"
+                rendered = []
+                for i, name in enumerate(param_names):
+                    if orig_params[i].startswith("ByRef "):
+                        rendered.append("ByRef " + name)
+                    else:
+                        rendered.append(name)
+                new_params = "(" + ", ".join(rendered) + ")"
 
         if readable != full_name:
             new_line = f"{indent}{keyword} {readable}{new_params}"

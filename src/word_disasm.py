@@ -4,6 +4,7 @@ The renderer intentionally prints raw operands instead of guessing their
 individual formats.  Opcode names come from CodeView labels when the debug
 VB40032 build is available; boundary recovery is supplied by word_probe.
 """
+import re
 import struct
 
 from word_probe import (
@@ -227,6 +228,63 @@ def format_operand(opcode, label, raw, branch_base, call_names, declares,
     return operand.hex(" ").upper()
 
 
+# ---------------------------------------------------------------------------
+# Per-parameter ByRef/ByVal classification.
+# ---------------------------------------------------------------------------
+# A procedure's incoming argument slots are the positive frame offsets
+# (stack+12, +16, +20, ...; stack+8 is the implicit Me/object base).  The
+# opcode family the callee uses reveals whether a slot holds ByRef or ByVal:
+#   - I* / indirect family (ILdI2, ILdI4, IStI2, IStI4, ...) dereferences
+#     THROUGH the pointer stored in the slot: it reads/writes the caller's
+#     variable.  That is the ByRef calling convention.
+#   - F* / direct family (FLdI2, FLdI4, FStI2, FStI4, FLdR*, FLdUI1, ...)
+#     accesses the frame slot directly (a local copy / ByVal Long value).
+#   - reference-pushing ops (FLdRfVar / CVarRef / ImpAdLdRf / ...) push the
+#     slot's address to forward a reference onward: also ByRef.
+# Handlers in VB40032.DLL confirm the semantics, e.g.:
+#   IStI2 (0x0422): mov eax,[ebp+off]; mov [eax],bx     -> indirect store
+#   ILdI2 (0x0402): mov eax,[ebp+off]; mov ax,[eax]      -> indirect load
+#   FLdI2 (0x03A2): mov ax,[eax+ebp]                    -> direct load
+#   FStI2 (0x03C2): mov [eax+ebp],bx                    -> direct store
+#   FLdRfVar (0x03B8): push ebp+off                     -> push address
+_INDIRECT_PREFIXES = ("ILd", "ISt",)
+_REF_OPS = frozenset({
+    "FLdRfVar", "FLdRf", "CVarRef", "FLdZeroAd",
+    "PopTmpLdAd2", "PopTmpLdAd4", "PopTmpLdAdStr", "PopTmpLdAd1",
+    "ImpAdLdRf", "ImpAdLdPr", "FMemLdRf", "FMemLdRfVar",
+})
+_PARAM_SLOT = re.compile(r"mem=stack\+(\d+)")
+
+
+def classify_params(ops):
+    """Classify a procedure's parameter slots as ByRef/ByVal.
+
+    ``ops`` is an iterable of ``(label, operand)`` pairs decoded from the
+    procedure body.  Returns ``(nargs, kinds)`` where ``nargs`` is the number
+    of parameters and ``kinds`` is a list of ``"ByRef"``/``"ByVal"`` strings
+    indexed by parameter position (kinds[0] corresponds to a0 / stack+12).
+
+    A slot is ByRef when any indirect (I*) or reference-pushing op touches
+    it; otherwise (only direct F* frame access / untouched) it is ByVal.
+    """
+    slots = {}
+    for label, operand in ops:
+        m = _PARAM_SLOT.search(operand or "")
+        if not m:
+            continue
+        n = int(m.group(1))
+        if n >= 12 and (n - 8) % 4 == 0:
+            slots.setdefault(n, set()).add(label)
+    maxarg = max(((n - 12) // 4 + 1 for n in slots), default=0)
+    kinds = []
+    for i in range(maxarg):
+        labels = slots.get(12 + 4 * i, set())
+        indirect = any(lb.startswith(_INDIRECT_PREFIXES) for lb in labels)
+        referenced = bool(labels & _REF_OPS)
+        kinds.append("ByRef" if (indirect or referenced) else "ByVal")
+    return maxarg, kinds
+
+
 def format_proc(pal, analysis, index, name):
     """Render one procedure from the recovered word boundary path."""
     start, end, path = analysis["paths"][index]
@@ -243,6 +301,9 @@ def format_proc(pal, analysis, index, name):
     out.append("%s  ProcDsc=0x%08X  ProcSize=0x%X  codeStart=0x%08X%s" %
                (name, end, end - start, start, entry_text))
     out.append("=" * 70)
+
+    # Decode every instruction once, then classify params from the body.
+    decoded = []
     for pos, opcode, size, fallback in path:
         raw = pal.bytes_at(pos, size)
         target = entries.get(opcode, 0)
@@ -256,6 +317,15 @@ def format_proc(pal, analysis, index, name):
                 opcode, label, raw, start,  # per-proc branch base
                 analysis["stub_names"], analysis["declares"], pal)
         byte_hex = raw.hex(" ").upper()
+        decoded.append((pos, byte_hex, display_label, operand))
+
+    nargs, kinds = classify_params([(d[2], d[3]) for d in decoded])
+    if nargs:
+        out.append("; params (%d): %s" % (
+            nargs, ", ".join("%s a%d" % (k, i)
+                              for i, k in enumerate(kinds))))
+
+    for pos, byte_hex, display_label, operand in decoded:
         out.append("%08X  %-24s %s  %s" %
                    (pos, byte_hex, display_label, operand))
     return "\n".join(out)

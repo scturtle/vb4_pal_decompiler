@@ -827,14 +827,23 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
     start, end, instrs = build_instrs(pal, analysis, index)
     entry_stub = analysis["method_stubs"].get(end)
 
+    # Classify each param slot ByRef/ByVal using the same rule as the disasm
+    # (word_disasm.classify_params).  The ByRef/ByVal annotation goes directly
+    # into the pseudocode signature here, so remap.py only needs to do plain
+    # name substitution (preserving the prefix) on pal_code.txt.
+    kinds = word_disasm.classify_params([(i.label, i.operand) for i in instrs])[1]
+
     # Build parameter list and a substitution map for stack+N references.
     nargs = (arg_map or {}).get(name, 0)
     params = []
     param_map = {8: "Me"}   # stack+8 is always the implicit object base
     for i in range(nargs):
         pname = "a%d" % i
-        params.append(pname)
-        param_map[8 + 4 * (i + 1)] = pname   # stack+12 = a0, stack+16 = a1, ...
+        if i < len(kinds) and kinds[i] == "ByRef":
+            params.append("ByRef " + pname)   # signature: prefix ByRef
+        else:
+            params.append(pname)   # body refs stay plain a0/a1/...
+        param_map[8 + 4 * (i + 1)] = pname
 
     sig = "Sub %s(%s)" % (name, ", ".join(params))
     if entry_stub:

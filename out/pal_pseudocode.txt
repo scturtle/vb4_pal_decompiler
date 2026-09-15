@@ -31,14 +31,14 @@ Sub pub_004_004032E4()
     Exit Sub
 End Sub
 
-Sub pub_005_00403324_hot(a0, a1)
+Sub pub_005_00403324_hot(ByRef a0, ByRef a1)
     stack-134 = a0
     a0 = a1
     a1 = stack-134
     Exit Sub
 End Sub
 
-Sub pub_006_00403368_hot(a0, a1)
+Sub pub_006_00403368_hot(ByRef a0, ByRef a1)
     stack-134 = (Me.f068C(a0).f001C + 6) * a1
     Exit Sub
 End Sub
@@ -54,7 +54,7 @@ Sub pub_008_00403408()
     Exit Sub
 End Sub
 
-Sub pub_009_0040345C(a0)
+Sub pub_009_0040345C(ByRef a0)
     If a0 = 32767 Then
         stack-134 = -32768
         Exit Sub
@@ -72,7 +72,7 @@ Sub pub_010_004034B4_hot()
     Exit Sub
 End Sub
 
-Sub pub_011_00403510_hot(a0, a1)
+Sub pub_011_00403510_hot(ByRef a0, ByRef a1)
     If Me.f0238 <> 0 Then
         If Me.f023A And (a0 > 0) Then
             Call Pal.PlayDSound(a1, a0)
@@ -88,12 +88,12 @@ Sub pub_012_00403570()
     Exit Sub
 End Sub
 
-Sub pub_013_004035D0_hot(a0)
+Sub pub_013_004035D0_hot(ByRef a0)
     Call Pal.copymen(32, Me.f0048(a0 * 32), Me.f0824(0).f0000)
     Exit Sub
 End Sub
 
-Sub pub_014_00403630_hot(a0)
+Sub pub_014_00403630_hot(ByRef a0)
     For stack-134 = 1 To a0
         stack-136 = pub_008_00403408()
         If stack-136 Then
@@ -110,12 +110,12 @@ Sub pub_015_00403694(a0)
     Exit Sub
 End Sub
 
-Sub pub_016_0040375C_hot(a0, a1, a2, a3, a4)
+Sub pub_016_0040375C_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4)
     Call Pal.DrawString(Me.f02A4, a4, a3, a1, a0, stack-136)
     Exit Sub
 End Sub
 
-Sub pub_017_004037C4(a0, a1)
+Sub pub_017_004037C4(ByRef a0, ByRef a1)
     If Me.f059C(Me.f02C2).f0002 = 8 Then
         Me.f02C2 = Me.f02DA
     End If
@@ -151,7 +151,7 @@ L_004038E8:
     Exit Sub
 End Sub
 
-Sub pub_020_00403924_hot(a0, a1, a2, a3)
+Sub pub_020_00403924_hot(a0, a1, ByRef a2, a3)
     Call pub_016_0040375C_hot(a3, 0, Me.f0344(a2), a1, a0)
     Exit Sub
 End Sub
@@ -176,7 +176,7 @@ Sub pub_022_00403A18()
     Exit Sub
 End Sub
 
-Sub pub_023_00403A94(a0)
+Sub pub_023_00403A94(ByRef a0)
     For stack-134 = 0 To 15
         Me.f0724(a0, stack-134).f0000 = 0
         Me.f06E4(a0, stack-134).f0000 = 0
@@ -252,7 +252,7 @@ Sub pub_031_00403E9C()
     Exit Sub
 End Sub
 
-Sub pub_032_00403F28(a0, a1, a2)
+Sub pub_032_00403F28(ByRef a0, ByRef a1, ByRef a2)
     Call Pal.exgm1(stack-136, Me.f0180(0), a1, a0)
     If stack-136 Then
         Call Pal.exgm2(stack-136, Me.f07DC(1).f0000, a1, a0, a2, Me.f0296)
@@ -280,7 +280,7 @@ Sub pub_034_00404040()
     Exit Sub
 End Sub
 
-Sub pub_035_004040D0(a0, a1)
+Sub pub_035_004040D0(ByRef a0, ByRef a1)
     stack-136 = 0
     For stack-138 = 32 To 63
         If Me.f079C(Me.f04AC(a0).f0000, stack-138).f0000 = a1 Then
@@ -291,7 +291,7 @@ Sub pub_035_004040D0(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_036_00404160(a0)
+Sub pub_036_00404160(ByRef a0)
     stack-136 = -1
     For stack-138 = 0 To 255
         If (Me.f075C(stack-138).f0002 > 0) And (Me.f075C(stack-138).f0000 = a0) Then
@@ -302,7 +302,7 @@ Sub pub_036_00404160(a0)
     Exit Sub
 End Sub
 
-Sub pub_037_004041F0(a0)
+Sub pub_037_004041F0(ByRef a0)
     stack-136 = 'FBP.MKF'
     Call Pal.unpak(pub_026_00403C0C(a0), pub_025_00403B8C_hot(a0 + 1, stack-136), Me.f01B0(64000), Me.f01C8(0))
     Exit Sub
@@ -334,7 +334,7 @@ Sub pub_039_00404318()
     Exit Sub
 End Sub
 
-Sub pub_040_004043B0_hot(a0, a1)
+Sub pub_040_004043B0_hot(ByRef a0, ByRef a1)
     stack-136 = Me.f079C(a0, a1).f0000
     For stack-138 = 11 To 17
         stack-136 = stack-136 + Me.f0774(a0, stack-138, a1).f0000
@@ -343,7 +343,7 @@ Sub pub_040_004043B0_hot(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_041_00404448(a0, a1, a2, a3, a4, a5)
+Sub pub_041_00404448(a0, a1, a2, ByRef a3, a4, ByRef a5)
     For stack-136 = 0 To (a5 - 1)
         Me.f04DC(stack-136) = a3 + stack-136
         Me.f04DC(stack-136 + 100) = -1
@@ -427,13 +427,13 @@ Sub pub_047_004047FC()
     Exit Sub
 End Sub
 
-Sub pub_048_004048A4(a0)
+Sub pub_048_004048A4(ByRef a0)
     Call Pal.copymen(8, Me.f0120(a0 * 4), Me.f080C(0))
     Call Pal.copymen(Me.f080C(1) - Me.f080C(0), Me.f0120(Me.f080C(0)), Me.f01C8(0))
     Exit Sub
 End Sub
 
-Sub pub_049_0040494C(a0, a1)
+Sub pub_049_0040494C(ByRef a0, ByRef a1)
     Call Pal.copymen(12, Me.f0018(12 * Me.f0280), Me.f04F4(0))
     stack-136 = a0
     If (a1 > 0) And (a1 <= 5) Then
@@ -443,7 +443,7 @@ Sub pub_049_0040494C(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_050_004049F4(a0, a1)
+Sub pub_050_004049F4(a0, ByRef a1)
     Me.f0000 = pub_061_00405194(a0, Me.f000C)
     Call kernel32._hread(Me.f000C, Me.f01C8(0), Me.f0000)
     Call Pal.unpak(Me.f0198(a1), Me.f01C8(0))
@@ -461,7 +461,7 @@ Sub pub_051_00404AA0()
     Exit Sub
 End Sub
 
-Sub pub_052_00404B4C(a0)
+Sub pub_052_00404B4C(ByRef a0)
     Me.f05CC(a0).f0002 = Me.f05CC(a0).f0008
     Me.f05CC(a0).f0004 = Me.f05CC(a0).f000A
     Me.f05CC(a0).f000C = Me.f05CC(a0).f000E
@@ -469,7 +469,7 @@ Sub pub_052_00404B4C(a0)
     Exit Sub
 End Sub
 
-Sub pub_053_00404BF8_hot(a0, a1)
+Sub pub_053_00404BF8_hot(ByRef a0, ByRef a1)
     stack-140 = kernel32._llseek(Me.f0254, Me.f080C(a0), 0)
     stack-136 = stack-140
     Me.f0000 = Me.f080C(a0 + 1) - Me.f080C(a0)
@@ -503,7 +503,7 @@ Sub pub_055_00404D50(a0)
     Exit Sub
 End Sub
 
-Sub pub_056_00404DFC_hot(a0, a1)
+Sub pub_056_00404DFC_hot(ByRef a0, ByRef a1)
     If a1 Then
         stack-148 = kernel32._lcreat(stack-144, 0)
         stack-140 = stack-148
@@ -526,7 +526,7 @@ Sub pub_057_00404EAC()
     Exit Sub
 End Sub
 
-Sub pub_058_00404F64(a0)
+Sub pub_058_00404F64(ByRef a0)
     Call Pal.copymen(2, Me.f0048(a0 * 32), stack-134)
     If stack-134 < 55 Then
         stack-140 = 'FIRE.MKF'
@@ -535,7 +535,7 @@ Sub pub_058_00404F64(a0)
     Exit Sub
 End Sub
 
-Sub pub_059_0040501C(a0)
+Sub pub_059_0040501C(ByRef a0)
     stack-136 = 0
     For stack-138 = 0 To Me.f0266
         stack-140 = Me.f04AC(stack-138).f0000
@@ -549,7 +549,7 @@ Sub pub_059_0040501C(a0)
     Exit Sub
 End Sub
 
-Sub pub_060_004050D4(a0, a1)
+Sub pub_060_004050D4(ByRef a0, ByRef a1)
     stack-136 = 0
     If a0 > 0 Then
         stack-138 = a0 - a1
@@ -569,7 +569,7 @@ Sub pub_060_004050D4(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_061_00405194(a0, a1)
+Sub pub_061_00405194(ByRef a0, ByRef a1)
     stack-144 = kernel32._llseek(a0, a1 * 4, 0)
     stack-140 = stack-144
     Call kernel32._hread(a0, Me.f080C(0), 8)
@@ -579,7 +579,7 @@ Sub pub_061_00405194(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_062_00405254_hot(a0, a1, a2, a3)
+Sub pub_062_00405254_hot(a0, a1, ByRef a2, a3)
     Call Pal.copymen(Me.f02B0, Me.f0090(0), Me.f01C8(0))
     Me.f04F4(0) = 44
     For stack-134 = 1 To a2
@@ -590,7 +590,7 @@ Sub pub_062_00405254_hot(a0, a1, a2, a3)
     Exit Sub
 End Sub
 
-Sub pub_063_00405318(a0)
+Sub pub_063_00405318(ByRef a0)
     Me.f0296 = Me.f038C(a0 + 1).f0006 - Me.f038C(a0).f0006
     If Me.f0296 > 160 Then
         Me.f0296 = 160
@@ -610,7 +610,7 @@ Sub pub_064_004053DC()
     Exit Sub
 End Sub
 
-Sub pub_065_004054A4(a0)
+Sub pub_065_004054A4(ByRef a0)
     If Me.f0250 Then
         Me.f0250 = 0
         If a0 > 0 Then
@@ -625,7 +625,7 @@ Sub pub_065_004054A4(a0)
     Exit Sub
 End Sub
 
-Sub pub_066_00405570(a0, a1, a2, a3, a4)
+Sub pub_066_00405570(ByRef a0, ByRef a1, ByRef a2, a3, a4)
     Call pub_062_00405254_hot(a4, 5, a2, a1)
     Call pub_016_0040375C_hot(0, 3, Me.f0344(a0), a2 + 10, a1 + 10)
     Call pub_100_004076F0(6, a3, a2 + 15, a1 + 48)
@@ -648,7 +648,7 @@ Sub pub_067_0040563C()
     Exit Sub
 End Sub
 
-Sub pub_068_0040570C(a0)
+Sub pub_068_0040570C(ByRef a0)
     stack-140 = Len (a0)
     Do
         stack-208 = Mid(a0, 1, stack-140)
@@ -659,14 +659,14 @@ Sub pub_068_0040570C(a0)
     Exit Sub
 End Sub
 
-Sub pub_069_004057E4(a0, a1)
+Sub pub_069_004057E4(ByRef a0, ByRef a1)
     Call Pal.copymen(Me.f02B0, Me.f0090(0), Me.f01C8(0))
     Call Pal.putp(3, 0, Me.f02A4, Me.f01C8(Me.f01C8(69)), a1 + 2, a0 + 3)
     Call Pal.putp(0, 0, Me.f02A4, Me.f01C8(Me.f01C8(69)), a1, a0)
     Exit Sub
 End Sub
 
-Sub pub_070_004058BC(a0, a1)
+Sub pub_070_004058BC(ByRef a0, ByRef a1)
     For stack-134 = 1 To a1
         For stack-136 = 0 To Me.f0266
             stack-138 = Me.f04AC(stack-136).f0000
@@ -682,7 +682,7 @@ L_0040595E:
     Exit Sub
 End Sub
 
-Sub pub_071_00405994(a0)
+Sub pub_071_00405994(ByRef a0)
     Call Pal.fupate(Me.f0150(Me.f026C), Me.f0150(1152), a0)
     Call Pal.copymen(768, Me.f0150(Me.f026C), Me.f0150(768))
     For stack-134 = 1 To 25
@@ -693,7 +693,7 @@ Sub pub_071_00405994(a0)
     Exit Sub
 End Sub
 
-Sub pub_072_00405A74(a0, a1, a2)
+Sub pub_072_00405A74(ByRef a0, ByRef a1, a2)
     stack-144 = 'RGM.MKF'
     stack-134 = Me.f01C8(0)
     stack-136 = a0 - (Me.f01C8(stack-134) \ 2)
@@ -734,7 +734,7 @@ Sub pub_074_00405C38_hot()
     Exit Sub
 End Sub
 
-Sub pub_075_00405D20(a0)
+Sub pub_075_00405D20(ByRef a0)
     stack-134 = (Me.f068C(a0).f0000 + Me.f068C(a0).f0002) - 1
     If Me.f068C(a0).f0002 > 0 Then
         For stack-136 = Me.f068C(a0).f0000 To stack-134
@@ -747,7 +747,7 @@ Sub pub_075_00405D20(a0)
     Exit Sub
 End Sub
 
-Sub pub_076_00405E08(a0, a1)
+Sub pub_076_00405E08(ByRef a0, ByRef a1)
     Call Pal.copymen(64000, Me.f01B0(0), Me.f00D8(0))
     If a0 >= 0 Then
         Call pub_026_00403C0C(a0)
@@ -763,7 +763,7 @@ Sub pub_076_00405E08(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_077_00405EF8(a0, a1, a2, a3)
+Sub pub_077_00405EF8(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     If a2 < 0 Then
         Exit Sub
     End If
@@ -812,7 +812,7 @@ Sub pub_079_004060D8()
     Exit Sub
 End Sub
 
-Sub pub_080_004061CC(a0)
+Sub pub_080_004061CC(ByRef a0)
     Me.f0250 = 0
     stack-134 = 0
     stack-136 = 64
@@ -832,7 +832,7 @@ Sub pub_080_004061CC(a0)
     Exit Sub
 End Sub
 
-Sub pub_081_004062C4(a0)
+Sub pub_081_004062C4(ByRef a0)
     Call Pal.copymen(8, Me.f00F0(a0 * 4), Me.f080C(0))
     stack-136 = Me.f080C(1) - Me.f080C(0)
     Me.f020C(0) = stack-136
@@ -863,7 +863,7 @@ Sub pub_082_004063BC()
     Exit Sub
 End Sub
 
-Sub pub_083_004064B4(a0, a1)
+Sub pub_083_004064B4(ByRef a0, ByRef a1)
     stack-134 = Me.f0198(Me.f05CC(a0).f0010 + Me.f05CC(a0).f000C) + Me.f05CC(a0).f0010
     stack-136 = Me.f05CC(a0).f0002 - (Me.f0198(stack-134) \ 2)
     stack-138 = Me.f05CC(a0).f0004 - Me.f0198(stack-134 + 1)
@@ -871,7 +871,7 @@ Sub pub_083_004064B4(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_084_004065B0(a0)
+Sub pub_084_004065B0(ByRef a0)
     If Me.f0250 = 0 Then
         Me.f0250 = 1
         If a0 > 0 Then
@@ -898,7 +898,7 @@ Sub pub_085_004066AC()
     Exit Sub
 End Sub
 
-Sub pub_086_004067A8(a0)
+Sub pub_086_004067A8(ByRef a0)
     Call pub_007_004033B4()
     Me.f05E4(1) = Me.f05CC(a0).f0002
     Me.f05FC(1) = Me.f05CC(a0).f0004
@@ -913,7 +913,7 @@ Sub pub_086_004067A8(a0)
     Exit Sub
 End Sub
 
-Sub pub_087_004068A8(a0)
+Sub pub_087_004068A8(ByRef a0)
     For stack-134 = 0 To Me.f02DE
         If Me.f0494(stack-134) > 0 Then
             stack-136 = Me.f05B4(stack-134).f0012 - Me.f0494(stack-134)
@@ -932,7 +932,7 @@ Sub pub_087_004068A8(a0)
     Exit Sub
 End Sub
 
-Sub pub_088_004069B0(a0, a1, a2, a3)
+Sub pub_088_004069B0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     stack-134 = a0
     For stack-136 = 0 To a2
         stack-138 = Me.f01C8(Me.f04F4(stack-136))
@@ -945,7 +945,7 @@ Sub pub_088_004069B0(a0, a1, a2, a3)
     Exit Sub
 End Sub
 
-Sub pub_089_00406ABC_hot(a0, a1, a2, a3)
+Sub pub_089_00406ABC_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     If a2 <= 0 Then
         Exit Sub
     End If
@@ -1001,7 +1001,7 @@ Sub priv_092_00406DF0()  ' MethCallEngine entry
     Exit Sub
 End Sub
 
-Sub pub_093_00406F08_hot(a0)
+Sub pub_093_00406F08_hot(ByRef a0)
     stack-136 = -1
     stack-136 = stack-136 And (Me.f06C4(a0, 0).f0000 <= 0)
     stack-136 = stack-136 And (Me.f06C4(a0, 1).f0000 <= 0)
@@ -1018,7 +1018,7 @@ Sub pub_093_00406F08_hot(a0)
     Exit Sub
 End Sub
 
-Sub pub_094_00407024(a0, a1, a2)
+Sub pub_094_00407024(a0, a1, ByRef a2)
     stack-136 = 0
     If Me.f0266 > 0 Then
         If stack-138 > Me.f0266 Then
@@ -1062,7 +1062,7 @@ L_00407140:
     Exit Sub
 End Sub
 
-Sub pub_096_0040725C(a0, a1, a2)
+Sub pub_096_0040725C(ByRef a0, ByRef a1, ByRef a2)
     stack-134 = Me.f0744(a2).f0000
     If stack-134 Then
         Call Pal.putp(3, 0, Me.f02A4, Me.f01C8(Me.f01C8(70)), a1 + 4, a0 + 5)
@@ -1072,7 +1072,7 @@ Sub pub_096_0040725C(a0, a1, a2)
     Exit Sub
 End Sub
 
-Sub pub_097_00407378(a0)
+Sub pub_097_00407378(ByRef a0)
     Call pub_062_00405254_hot(-1, 10, 100, 60)
     Call pub_016_0040375C_hot(0, 3, Me.f0344(9), 110, 70)
     Call pub_100_004076F0(6, a0, 114, 148)
@@ -1093,7 +1093,7 @@ Sub pub_098_004074A0()
     Exit Sub
 End Sub
 
-Sub pub_099_004075C8_hot(a0, a1, a2, a3)
+Sub pub_099_004075C8_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call Pal.copymen(Me.f02B0, Me.f0090(0), Me.f01C8(0))
     If a2 < 0 Then
         Exit Sub
@@ -1118,7 +1118,7 @@ Sub pub_099_004075C8_hot(a0, a1, a2, a3)
     Exit Sub
 End Sub
 
-Sub pub_100_004076F0(a0, a1, a2, a3)
+Sub pub_100_004076F0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call Pal.copymen(Me.f02B0, Me.f0090(0), Me.f01C8(0))
     If a2 < 0 Then
         Exit Sub
@@ -1171,7 +1171,7 @@ Sub pub_101_00407818()
     Exit Sub
 End Sub
 
-Sub pub_102_00407940(a0, a1)
+Sub pub_102_00407940(ByRef a0, ByRef a1)
     If a0 <= 0 Then
         Exit Sub
     End If
@@ -1192,7 +1192,7 @@ Sub pub_102_00407940(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_103_00407A6C(a0)
+Sub pub_103_00407A6C(ByRef a0)
     stack-134 = 8
     For stack-136 = 1 To a0
         For stack-138 = 0 To 1
@@ -1213,7 +1213,7 @@ Sub pub_103_00407A6C(a0)
     Exit Sub
 End Sub
 
-Sub pub_104_00407B9C_hot(a0, a1)
+Sub pub_104_00407B9C_hot(a0, ByRef a1)
     stack-134 = a1
     If stack-134 = 0 Then
         stack-134 = 88
@@ -1238,7 +1238,7 @@ Sub pub_104_00407B9C_hot(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_105_00407CD0(a0, a1, a2)
+Sub pub_105_00407CD0(ByRef a0, ByRef a1, ByRef a2)
     Call Pal.pushscr(Me.f00C0(0))
     For stack-134 = 0 To a1
         stack-136 = stack-134 Mod 6
@@ -1267,7 +1267,7 @@ Sub pub_106_00407E04()
     Exit Sub
 End Sub
 
-Sub pub_107_00407F40(a0, a1)
+Sub pub_107_00407F40(ByRef a0, ByRef a1)
     For stack-134 = 1 To 15
         Call Pal.wtime(2)
         For stack-136 = a0 To a1
@@ -1292,7 +1292,7 @@ Sub pub_108_0040807C()
     Exit Sub
 End Sub
 
-Sub pub_109_004081C0(a0)
+Sub pub_109_004081C0(ByRef a0)
     If Me.f038C(a0).f0000 <> Me.f025E Then
         stack-140 = 'MAP.MKF'
         Call Pal.unpak(pub_025_00403B8C_hot(Me.f038C(a0).f0000, stack-140), Me.f0180(0), Me.f01C8(0))
@@ -1306,7 +1306,7 @@ Sub pub_109_004081C0(a0)
     Exit Sub
 End Sub
 
-Sub pub_110_00408308(a0, a1)
+Sub pub_110_00408308(ByRef a0, ByRef a1)
     Me.f05CC(a0).f000C = 0
     stack-134 = 4
     For stack-136 = 1 To 4
@@ -1325,7 +1325,7 @@ Sub pub_110_00408308(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_111_00408454(a0)
+Sub pub_111_00408454(ByRef a0)
     stack-134 = Me.f0168(Me.f0314)
     For stack-136 = 1 To Me.f02CC
         stack-138 = Me.f05E4(stack-136) - (Me.f0168(stack-134) \ 2)
@@ -1340,7 +1340,7 @@ Sub pub_111_00408454(a0)
     Exit Sub
 End Sub
 
-Sub pub_112_004085A8(a0, a1)
+Sub pub_112_004085A8(ByRef a0, ByRef a1)
     Call Pal.clsmen(25, Me.f04DC(0))
     If Me.f06C4(a0, 8).f0000 > 0 Then
         stack-134 = 1
@@ -1445,7 +1445,7 @@ Sub pub_117_00408C90()
     Exit Sub
 End Sub
 
-Sub pub_118_00408E08_hot(a0, a1)
+Sub pub_118_00408E08_hot(ByRef a0, ByRef a1)
     Me.f07DC(a0).f0002 = Me.f07DC(a0).f0002 + (Me.f044C(Me.f07DC(a0).f0014) * (a1 + a1))
     Me.f07DC(a0).f0004 = Me.f07DC(a0).f0004 + (Me.f0464(Me.f07DC(a0).f0014) * a1)
     stack-134 = Me.f07DC(a0).f0012
@@ -1491,7 +1491,7 @@ L_004090CA:
     Exit Sub
 End Sub
 
-Sub pub_120_00409104(a0, a1)
+Sub pub_120_00409104(ByRef a0, ByRef a1)
     stack-134 = a1
     For stack-136 = 0 To 255
         If ((Me.f075C(stack-136).f0000 = a0) And (Me.f075C(stack-136).f0002 > 0)) And (stack-134 > 0) Then
@@ -1558,7 +1558,7 @@ L_004092F6:
     Exit Sub
 End Sub
 
-Sub pub_122_00409410(a0)
+Sub pub_122_00409410(ByRef a0)
     Call Pal.clsmen(150, Me.f04DC(0))
     stack-134 = -1
     For stack-136 = 32 To 63
@@ -1580,7 +1580,7 @@ Sub pub_122_00409410(a0)
     Exit Sub
 End Sub
 
-Sub pub_123_0040959C(a0, a1, a2)
+Sub pub_123_0040959C(ByRef a0, ByRef a1, ByRef a2)
     stack-134 = CSng (100) / CSng (a2)
     Call Pal.copymen(64000, Me.f01B0(0), Me.f00D8(0))
     For stack-136 = a0 To a1
@@ -1604,7 +1604,7 @@ Sub pub_123_0040959C(a0, a1, a2)
     Exit Sub
 End Sub
 
-Sub pub_124_0040972C(a0, a1, a2)
+Sub pub_124_0040972C(ByRef a0, a1, ByRef a2)
     If Me.f023C = 2 Then
         Call pub_114_00408850()
         Call pub_078_00405FE8()
@@ -1670,7 +1670,7 @@ Sub pub_126_00409A70()
     Exit Sub
 End Sub
 
-Sub pub_127_00409C24(a0, a1)
+Sub pub_127_00409C24(ByRef a0, ByRef a1)
     stack-136 = 120
     stack-138 = 100
     stack-140 = -1
@@ -1866,7 +1866,7 @@ Sub pub_131_0040A344()
     Exit Sub
 End Sub
 
-Sub pub_132_0040A524(a0, a1, a2)
+Sub pub_132_0040A524(a0, ByRef a1, ByRef a2)
     Call pub_013_004035D0_hot(a0)
     If a2 < 9 Then
         Call pub_011_00403510_hot(0, Me.f0824(0).f001E)
@@ -1895,7 +1895,7 @@ Sub pub_132_0040A524(a0, a1, a2)
     Exit Sub
 End Sub
 
-Sub pub_133_0040A710(a0)
+Sub pub_133_0040A710(ByRef a0)
     For stack-134 = 0 To Me.f02DA
         stack-136 = Me.f04AC(stack-134).f0000
         stack-138 = Me.f079C(stack-136, 9).f0000 - Me.f047C(stack-134).f0000
@@ -1979,7 +1979,7 @@ Sub pub_135_0040AB1C()
     Exit Sub
 End Sub
 
-Sub pub_136_0040AD28(a0, a1)
+Sub pub_136_0040AD28(ByRef a0, a1)
     Call pub_062_00405254_hot(-1, 10, 0, 78)
     stack-152 = pub_068_0040570C(Me.f0344(Me.f079C(a0, 3).f0000))
     stack-160 = pub_068_0040570C(Me.f0344(48))
@@ -2099,7 +2099,7 @@ Sub pub_139_0040B398()
     Exit Sub
 End Sub
 
-Sub pub_140_0040B5C8(a0, a1, a2)
+Sub pub_140_0040B5C8(a0, ByRef a1, ByRef a2)
     stack-134 = CSng (100) / CSng (a2)
     Call pub_037_004041F0(a0)
     If a1 > 0 Then
@@ -2158,7 +2158,7 @@ Sub pub_141_0040B7F8()
     Exit Sub
 End Sub
 
-Sub pub_142_0040BA30(a0, a1, a2)
+Sub pub_142_0040BA30(ByRef a0, ByRef a1, ByRef a2)
     stack-134 = -1
     stack-136 = 0
     For stack-138 = 63 To 32 Step -1
@@ -2182,7 +2182,7 @@ Sub pub_142_0040BA30(a0, a1, a2)
     Exit Sub
 End Sub
 
-Sub pub_143_0040BC70(a0, a1, a2, a3, a4)
+Sub pub_143_0040BC70(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4)
     stack-136 = a3 - 1
     stack-138 = a4 - 1
     Call pub_145_0040C104(-1, a4, a3, 0, a2, a1)
@@ -2233,7 +2233,7 @@ L_0040BD8E:
     Exit Sub
 End Sub
 
-Sub pub_144_0040BEB8(a0, a1, a2, a3)
+Sub pub_144_0040BEB8(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     stack-134 = Me.f01C8(48 + a2)
     If a3 = 0 Then
         Call Pal.putp(0, 0, Me.f02A4, Me.f01C8(stack-134), a1, a0 - 3)
@@ -2249,7 +2249,7 @@ Sub pub_144_0040BEB8(a0, a1, a2, a3)
     Exit Sub
 End Sub
 
-Sub pub_145_0040C104(a0, a1, a2, a3, a4, a5)
+Sub pub_145_0040C104(a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
     If a3 < 0 Then
         Exit Sub
     End If
@@ -2312,7 +2312,7 @@ Sub pub_146_0040C350()
     Exit Sub
 End Sub
 
-Sub pub_147_0040C5A4(a0, a1)
+Sub pub_147_0040C5A4(ByRef a0, ByRef a1)
     Me.f05B4(a0).f0014 = a1
     If a1 > 0 Then
         Me.f05B4(a0).f0000 = Me.f0744(a1).f0000
@@ -2336,7 +2336,7 @@ Sub pub_147_0040C5A4(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_148_0040C804(a0, a1, a2)
+Sub pub_148_0040C804(a0, ByRef a1, ByRef a2)
     stack-134 = CSng (100) / CSng (a2)
     stack-144 = 'FBP.MKF'
     Call Pal.unpak(pub_025_00403B8C_hot(a0, stack-144), Me.f0198(0), Me.f01C8(0))
@@ -2402,7 +2402,7 @@ L_0040CC0C:
     Exit Sub
 End Sub
 
-Sub pub_150_0040CCC8(a0)
+Sub pub_150_0040CCC8(ByRef a0)
     Me.f029E = -1
     stack-134 = Me.f0744(a0).f0000
     Me.f02D4 = 0
@@ -2432,7 +2432,7 @@ Sub pub_150_0040CCC8(a0)
     Exit Sub
 End Sub
 
-Sub pub_151_0040CF2C(a0, a1, a2, a3)
+Sub pub_151_0040CF2C(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call pub_099_004075C8_hot(0, Me.f079C(a2, 6), a1 + 4, a0 + 58)
     stack-134 = a1
     For stack-136 = 48 To 55
@@ -2458,7 +2458,7 @@ Sub pub_151_0040CF2C(a0, a1, a2, a3)
     Exit Sub
 End Sub
 
-Sub pub_152_0040D194_hot(a0, a1, a2, a3, a4, a5)
+Sub pub_152_0040D194_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
     Call Pal.vwindow(a3, a2, a1, a0)
     stack-134 = a4 \ 32
     stack-138 = -a4 Mod 32 - 16
@@ -2519,7 +2519,7 @@ Sub pub_153_0040D680()
     Exit Sub
 End Sub
 
-Sub pub_154_0040D904(a0)
+Sub pub_154_0040D904(ByRef a0)
     stack-136 = -2
     While stack-136 = -2
         stack-138 = pub_008_00403408()
@@ -2567,7 +2567,7 @@ L_0040DB3E:
     Exit Sub
 End Sub
 
-Sub pub_155_0040DB90(a0, a1, a2)
+Sub pub_155_0040DB90(ByRef a0, ByRef a1, ByRef a2)
     If Me.f079C(a1, 4).f0000 Then
         Call pub_112_004085A8(a1, a0)
         Exit Sub
@@ -2600,7 +2600,7 @@ Sub pub_155_0040DB90(a0, a1, a2)
     Exit Sub
 End Sub
 
-Sub pub_156_0040DE24(a0)
+Sub pub_156_0040DE24(ByRef a0)
     stack-136 = 1
 L_0040DE2A:
     If a0 = 0 Then
@@ -2660,7 +2660,7 @@ L_0040E00C:
     Exit Sub
 End Sub
 
-Sub pub_157_0040E0BC(a0, a1, a2)
+Sub pub_157_0040E0BC(ByRef a0, ByRef a1, ByRef a2)
     If a1 <= 2 Then
         Me.f079C(a0, 8 + a1).f0000 = Me.f079C(a0, 8 + a1).f0000 + a2
         stack-138 = a1 + 6
@@ -2683,7 +2683,7 @@ Sub pub_157_0040E0BC(a0, a1, a2)
     Exit Sub
 End Sub
 
-Sub pub_158_0040E36C(a0, a1)
+Sub pub_158_0040E36C(ByRef a0, ByRef a1)
     stack-134 = Me.f04AC(a0).f0000
     If a1 = 0 Then
         stack-136 = a0
@@ -2779,7 +2779,7 @@ Sub pub_159_0040E640()
     Exit Sub
 End Sub
 
-Sub pub_160_0040E938(a0, a1)
+Sub pub_160_0040E938(ByRef a0, ByRef a1)
     If Me.f023C Then
         Call pub_114_00408850()
         Call pub_078_00405FE8()
@@ -2814,7 +2814,7 @@ Sub pub_160_0040E938(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_161_0040EC34(a0, a1)
+Sub pub_161_0040EC34(ByRef a0, ByRef a1)
     Me.f033C = pub_008_00403408()
     stack-138 = 0
     stack-140 = 0
@@ -2957,7 +2957,7 @@ Sub priv_163_0040F264()  ' MethCallEngine entry
     Exit Sub
 End Sub
 
-Sub pub_164_0040F58C_hot(a0, a1)
+Sub pub_164_0040F58C_hot(ByRef a0, ByRef a1)
     stack-168 = VB40032.rtcRandomNext()
     Me.f0322 = CSng (Me.f0322) + (CSng (Me.f0324) * stack-168)
     stack-134 = a0
@@ -3000,7 +3000,7 @@ Sub pub_164_0040F58C_hot(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_165_0040F8D4(a0, a1, a2)
+Sub pub_165_0040F8D4(ByRef a0, ByRef a1, ByRef a2)
     stack-136 = a0
     stack-138 = a1
     Me.f0554(0) = stack-136
@@ -3043,7 +3043,7 @@ L_0040FBF8:
     Exit Sub
 End Sub
 
-Sub pub_166_0040FC2C(a0, a1)
+Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
     Me.f0204 = a0
     Me.f0206 = a1
     Me.f0208 = 0
@@ -3096,7 +3096,7 @@ Sub pub_166_0040FC2C(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_167_0040FF88(a0, a1)
+Sub pub_167_0040FF88(ByRef a0, ByRef a1)
 L_0040FF88:
     stack-136 = 0
     Call Pal.copymen(2, a1, stack-136)
@@ -3173,7 +3173,7 @@ L_004102CE:
     Exit Sub
 End Sub
 
-Sub pub_168_0041030C(a0)
+Sub pub_168_0041030C(ByRef a0)
     stack-144 = VB40032.rtcBstrFromAnsi(48 + a0)
     stack-136 = VB40032.rtcBstrFromAnsi(48 + a0) & '.RPG'
     Me.f0258 = a0
@@ -3212,7 +3212,7 @@ Sub pub_168_0041030C(a0)
     Exit Sub
 End Sub
 
-Sub pub_169_00410A40(a0)
+Sub pub_169_00410A40(ByRef a0)
     stack-144 = VB40032.rtcBstrFromAnsi(48 + a0)
     stack-136 = VB40032.rtcBstrFromAnsi(48 + a0) & '.RPG'
     Me.f0258 = a0
@@ -3257,7 +3257,7 @@ Sub pub_169_00410A40(a0)
     Exit Sub
 End Sub
 
-Sub pub_170_00410DFC(a0, a1)
+Sub pub_170_00410DFC(ByRef a0, ByRef a1)
     Me.f02CC = 0
     Call pub_007_004033B4()
     For stack-134 = 1 To 3
@@ -3296,7 +3296,7 @@ Sub pub_170_00410DFC(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_171_004111BC(a0, a1, a2, a3, a4, a5)
+Sub pub_171_004111BC(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
     If a5 = 0 Then
         stack-134 = Me.f01E0(Me.f04AC(a3).f0008 + a4) + Me.f04AC(a3).f0008
         stack-136 = Me.f01E0(stack-134)
@@ -3386,7 +3386,7 @@ L_00411784:
     Exit Sub
 End Sub
 
-Sub pub_173_00411998(a0)
+Sub pub_173_00411998(ByRef a0)
     Call pub_062_00405254_hot(-1, 8, 60, 76)
     Call pub_016_0040375C_hot(0, 3, Me.f0344(30), 70, 90)
     Call pub_099_004075C8_hot(0, a0, 75, 200)
@@ -3527,7 +3527,7 @@ Sub pub_175_0041220C()
     Exit Sub
 End Sub
 
-Sub pub_176_0041265C(a0)
+Sub pub_176_0041265C(ByRef a0)
     stack-134 = -1
     For stack-136 = 0 To 8
         stack-138 = Me.f03FC(stack-136, a0).f0000
@@ -3597,7 +3597,7 @@ Sub pub_176_0041265C(a0)
     Exit Sub
 End Sub
 
-Sub pub_177_00412AE4(a0, a1, a2)
+Sub pub_177_00412AE4(ByRef a0, ByRef a1, ByRef a2)
     For stack-134 = 1 To a1
         Me.f079C(a0, 6).f0000 = Me.f079C(a0, 6).f0000 + 1
         Me.f07BC(a0, 0).f0004 = Me.f079C(a0, 6).f0000
@@ -3636,7 +3636,7 @@ Sub pub_177_00412AE4(a0, a1, a2)
     Exit Sub
 End Sub
 
-Sub pub_178_00412F6C(a0, a1)
+Sub pub_178_00412F6C(ByRef a0, ByRef a1)
     stack-134 = Me.f04AC(a1).f0000
     stack-136 = pub_040_004043B0_hot(19, stack-134)
     If Me.f05CC(a1).f000C = 3 Then
@@ -3694,7 +3694,7 @@ Sub pub_178_00412F6C(a0, a1)
     Exit Sub
 End Sub
 
-Sub pub_179_0041342C(a0, a1, a2, a3)
+Sub pub_179_0041342C(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call Pal.copymen(Me.f02B0, Me.f0090(0), Me.f01C8(0))
     If (a0 < 0) Or (a0 > Me.f0266) Then
         a0 = 0
@@ -3773,7 +3773,7 @@ L_00413902:
     Exit Sub
 End Sub
 
-Sub pub_180_00413938(a0)
+Sub pub_180_00413938(ByRef a0)
     If Me.f0250 <> 0 Then
         Exit Sub
     End If
@@ -3890,7 +3890,7 @@ Sub pub_181_00413E4C()
     Exit Sub
 End Sub
 
-Sub pub_182_004143C8(a0, a1)
+Sub pub_182_004143C8(ByRef a0, ByRef a1)
     stack-134 = Me.f04AC(a0).f0000
     stack-136 = 69
     stack-148 = CSng (1)
@@ -4081,7 +4081,7 @@ L_00414CF4:
     Exit Sub
 End Sub
 
-Sub pub_184_00414F18(a0, a1, a2)
+Sub pub_184_00414F18(ByRef a0, a1, a2)
     Me.f031C = -1
     If Me.f06E4(a0, 0).f0000 <= 0 Then
         Call pub_189_00417834_hot(Me.f05B4(a0).f001A, a0)
@@ -4164,7 +4164,7 @@ L_004154DC:
     Exit Sub
 End Sub
 
-Sub pub_185_00415514(a0, a1, a2, a3)
+Sub pub_185_00415514(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     stack-134 = Me.f04AC(a0).f0000
     Me.f02CC = 0
     Call pub_007_004033B4()
@@ -4342,7 +4342,7 @@ L_004160F6:
     Exit Sub
 End Sub
 
-Sub pub_187_00416138(a0)
+Sub pub_187_00416138(ByRef a0)
     stack-134 = Me.f04AC(a0).f0000
     stack-156 = Pal.arrayptr(pub_026_00403C0C(0), Me.f01B0(0))
     Me.f02A4 = stack-156
@@ -4401,7 +4401,7 @@ Sub pub_187_00416138(a0)
     Exit Sub
 End Sub
 
-Sub pub_188_0041678C(a0, a1, a2)
+Sub pub_188_0041678C(ByRef a0, ByRef a1, ByRef a2)
     Call Pal.clsmen(pub_122_00409410(a0), 32, Me.f04DC(0))
     stack-136 = -1
     For stack-138 = 32 To 63
@@ -4564,7 +4564,7 @@ L_00416D32:
     Exit Sub
 End Sub
 
-Sub pub_189_00417834_hot(a0, a1)
+Sub pub_189_00417834_hot(ByRef a0, ByRef a1)
     Me.f0302 = -1
     stack-138 = 0
     stack-140 = a1
@@ -4878,7 +4878,7 @@ Sub priv_190_004180D0()  ' MethCallEngine entry
     Exit Sub
 End Sub
 
-Sub pub_191_004189B0(a0, a1, a2)
+Sub pub_191_004189B0(ByRef a0, ByRef a1, ByRef a2)
     stack-140 = 0
     stack-142 = 0
     stack-144 = 0
@@ -5076,7 +5076,7 @@ L_00418F3C:
     Exit Sub
 End Sub
 
-Sub pub_192_00419328(a0, a1, a2, a3)
+Sub pub_192_00419328(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call Pal.clsmen(20, Me.f04DC(0))
     stack-134 = Me.f04AC(a1).f0000
     stack-136 = pub_040_004043B0_hot(19, stack-134)
@@ -5201,7 +5201,7 @@ Sub pub_192_00419328(a0, a1, a2, a3)
     Exit Sub
 End Sub
 
-Sub pub_193_00419DA0(a0, a1, a2, a3)
+Sub pub_193_00419DA0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call Pal.clsmen(25, Me.f04DC(0))
     stack-134 = Me.f0744(a2).f0000
     Call pub_013_004035D0_hot(stack-134)
@@ -5556,7 +5556,7 @@ L_0041B14A:
     GoTo L_0041B14A
 End Sub
 
-Sub pub_195_0041B530(a0, a1, a2, a3)
+Sub pub_195_0041B530(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     stack-134 = 0
     stack-136 = Me.f0744(a2).f0000
     Call pub_013_004035D0_hot(stack-136)
@@ -5739,7 +5739,7 @@ L_0041BE8C:
     Exit Sub
 End Sub
 
-Sub pub_196_0041D56C(a0, a1)
+Sub pub_196_0041D56C(ByRef a0, ByRef a1)
     Me.f031E = a1
     For stack-136 = 0 To Me.f0266
         stack-140 = Me.f04AC(stack-136).f0000
@@ -6693,7 +6693,7 @@ L_00420C0E:
     Exit Sub
 End Sub
 
-Sub pub_197_00420FC0(a0, a1, a2, a3, a4, a5)
+Sub pub_197_00420FC0(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
     Call pub_002_00403264()
     If a2 <= 10 Then
         Exit Sub

@@ -569,13 +569,13 @@
       "roleIdx"
     ],
     "pub_087": [
-      "unused"
+      "thyrgyType"
     ],
     "pub_097": [
       "amount"
     ],
     "pub_133": [
-      "unused"
+      "thyrgyType"
     ],
     "pub_075": [
       "enemyIdx"
@@ -654,8 +654,8 @@
       "channel"
     ],
     "pub_017": [
-      "unused1",
-      "unused2"
+      "actionParam",
+      "directionParam"
     ],
     "pub_020": [
       "x",
@@ -761,7 +761,7 @@
     "pub_124": [
       "trackNum",
       "musicNum",
-      "unused"
+      "trackValid"
     ],
     "pub_127": [
       "optionFlags",
@@ -787,7 +787,7 @@
     ],
     "pub_182": [
       "roleIdx",
-      "unused"
+      "animate"
     ],
     "pub_184": [
       "enemyIdx",
@@ -958,19 +958,19 @@
       "enemyIdx",
       "targetIdx",
       "targetRole",
-      "unused"
+      "useMagic"
     ],
     "pub_193": [
       "enemyIdx",
       "targetRole",
       "itemID",
-      "unused"
+      "power"
     ],
     "pub_195": [
       "enemyIdx",
       "targetRole",
       "itemID",
-      "unused"
+      "power"
     ],
     "pub_041": [
       "y",

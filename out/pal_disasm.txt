@@ -51,6 +51,7 @@ pub_004_004032E4  ProcDsc=0x004032FC  ProcSize=0x18  codeStart=0x004032E4
 ======================================================================
 pub_005_00403324_hot  ProcDsc=0x0040333E  ProcSize=0x1A  codeStart=0x00403324
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00403324  02 04 0C 00              ILdI2  mem=stack+12
 00403328  C2 03 7A FF              FStI2  mem=stack-134
 0040332C  02 04 10 00              ILdI2  mem=stack+16
@@ -62,6 +63,7 @@ pub_005_00403324_hot  ProcDsc=0x0040333E  ProcSize=0x1A  codeStart=0x00403324
 ======================================================================
 pub_006_00403368_hot  ProcDsc=0x0040338A  ProcSize=0x22  codeStart=0x00403368
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00403368  02 04 0C 00              ILdI2  mem=stack+12
 0040336C  1E 02                    CI4I2  -
 0040336E  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C
@@ -105,6 +107,7 @@ pub_008_00403408  ProcDsc=0x00403432  ProcSize=0x2A  codeStart=0x00403408
 ======================================================================
 pub_009_0040345C  ProcDsc=0x0040348A  ProcSize=0x2E  codeStart=0x0040345C
 ======================================================================
+; params (1): ByRef a0
 0040345C  02 04 0C 00              ILdI2  mem=stack+12
 00403460  4A 07 FF 7F              LitI2  val=32767
 00403464  54 00                    EqUI1  -
@@ -139,6 +142,7 @@ pub_010_004034B4_hot  ProcDsc=0x004034E6  ProcSize=0x32  codeStart=0x004034B4
 ======================================================================
 pub_011_00403510_hot  ProcDsc=0x00403548  ProcSize=0x38  codeStart=0x00403510
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00403510  82 05 08 00 38 02        FMemLdI2  mem=stack+8.f0238
 00403516  92 02                    LitI2  val=0
 00403518  6A 00                    NeI2  -
@@ -177,6 +181,7 @@ pub_012_00403570  ProcDsc=0x004035A6  ProcSize=0x36  codeStart=0x00403570
 ======================================================================
 pub_013_004035D0_hot  ProcDsc=0x00403606  ProcSize=0x36  codeStart=0x004035D0
 ======================================================================
+; params (1): ByRef a0
 004035D0  50 07 20 00 00 00        LitI4  val=32
 004035D6  02 04 0C 00              ILdI2  mem=stack+12
 004035DA  4A 07 20 00              LitI2  val=32
@@ -195,6 +200,7 @@ pub_013_004035D0_hot  ProcDsc=0x00403606  ProcSize=0x36  codeStart=0x004035D0
 ======================================================================
 pub_014_00403630_hot  ProcDsc=0x0040366C  ProcSize=0x3C  codeStart=0x00403630
 ======================================================================
+; params (1): ByRef a0
 00403630  94 02                    LitI2  val=1
 00403632  B8 03 7A FF              FLdRfVar  mem=stack-134
 00403636  02 04 0C 00              ILdI2  mem=stack+12
@@ -214,6 +220,7 @@ pub_014_00403630_hot  ProcDsc=0x0040366C  ProcSize=0x3C  codeStart=0x00403630
 ======================================================================
 pub_015_00403694  ProcDsc=0x004036CE  ProcSize=0x3A  codeStart=0x00403694
 ======================================================================
+; params (1): ByVal a0
 00403694  18 04 0C 00              FLdI4  mem=stack+12
 00403698  98 05 08 00 08 00        FMemLdRf  mem=stack+8.f0008
 0040369E  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
@@ -230,6 +237,7 @@ pub_015_00403694  ProcDsc=0x004036CE  ProcSize=0x3A  codeStart=0x00403694
 ======================================================================
 pub_016_0040375C_hot  ProcDsc=0x00403798  ProcSize=0x3C  codeStart=0x0040375C
 ======================================================================
+; params (5): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4
 0040375C  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
 00403762  02 04 1C 00              ILdI2  mem=stack+28
 00403766  02 04 18 00              ILdI2  mem=stack+24
@@ -250,6 +258,7 @@ pub_016_0040375C_hot  ProcDsc=0x00403798  ProcSize=0x3C  codeStart=0x0040375C
 ======================================================================
 pub_017_004037C4  ProcDsc=0x0040380A  ProcSize=0x46  codeStart=0x004037C4
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004037C4  82 05 08 00 C2 02        FMemLdI2  mem=stack+8.f02C2
 004037CA  1E 02                    CI4I2  -
 004037CC  98 05 08 00 9C 05        FMemLdRf  mem=stack+8.f059C
@@ -316,6 +325,7 @@ pub_019_004038AC  ProcDsc=0x004038FA  ProcSize=0x4E  codeStart=0x004038AC
 ======================================================================
 pub_020_00403924_hot  ProcDsc=0x0040396E  ProcSize=0x4A  codeStart=0x00403924
 ======================================================================
+; params (4): ByVal a0, ByVal a1, ByRef a2, ByVal a3
 00403924  18 04 18 00              FLdI4  mem=stack+24
 00403928  92 02                    LitI2  val=0
 0040392A  66 05 76 FF              PopTmpLdAd2  mem=stack-138
@@ -394,6 +404,7 @@ pub_022_00403A18  ProcDsc=0x00403A66  ProcSize=0x4E  codeStart=0x00403A18
 ======================================================================
 pub_023_00403A94  ProcDsc=0x00403AE8  ProcSize=0x54  codeStart=0x00403A94
 ======================================================================
+; params (1): ByRef a0
 00403A94  92 02                    LitI2  val=0
 00403A96  B8 03 7A FF              FLdRfVar  mem=stack-134
 00403A9A  4A 07 0F 00              LitI2  val=15
@@ -446,6 +457,7 @@ pub_024_00403B10  ProcDsc=0x00403B62  ProcSize=0x52  codeStart=0x00403B10
 ======================================================================
 pub_025_00403B8C_hot  ProcDsc=0x00403BE2  ProcSize=0x56  codeStart=0x00403B8C
 ======================================================================
+; params (2): ByVal a0, ByVal a1
 00403B8C  92 02                    LitI2  val=0
 00403B8E  66 05 76 FF              PopTmpLdAd2  mem=stack-138
 00403B92  18 04 0C 00              FLdI4  mem=stack+12
@@ -470,6 +482,7 @@ pub_025_00403B8C_hot  ProcDsc=0x00403BE2  ProcSize=0x56  codeStart=0x00403B8C
 ======================================================================
 pub_026_00403C0C  ProcDsc=0x00403C60  ProcSize=0x54  codeStart=0x00403C0C
 ======================================================================
+; params (1): ByVal a0
 00403C0C  18 04 0C 00              FLdI4  mem=stack+12
 00403C10  5E 07 14 00 0E 00 00 00 46 00 42 00 50 00 2E 00 4D 00 4B 00 46 00 00 00 LitStr  index=0014 byteLen=14 text='FBP.MKF'
 00403C28  E2 03 78 FF              FStStrCopy  mem=stack-136
@@ -517,6 +530,7 @@ pub_027_00403C8C  ProcDsc=0x00403CE2  ProcSize=0x56  codeStart=0x00403C8C
 ======================================================================
 pub_028_00403D0C  ProcDsc=0x00403D64  ProcSize=0x58  codeStart=0x00403D0C
 ======================================================================
+; params (1): ByVal a0
 00403D0C  18 04 0C 00              FLdI4  mem=stack+12
 00403D10  22 06 84 CF 41 00        ImpAdCallAd  call=pub_036_00404160@0041CF84
 00403D16  C2 03 78 FF              FStI2  mem=stack-136
@@ -545,6 +559,7 @@ pub_028_00403D0C  ProcDsc=0x00403D64  ProcSize=0x58  codeStart=0x00403D0C
 ======================================================================
 pub_029_00403D8C  ProcDsc=0x00403DE6  ProcSize=0x5A  codeStart=0x00403D8C
 ======================================================================
+; params (1): ByVal a0
 00403D8C  18 04 0C 00              FLdI4  mem=stack+12
 00403D90  5E 07 14 00 0E 00 00 00 50 00 41 00 54 00 2E 00 4D 00 4B 00 46 00 00 00 LitStr  index=0014 byteLen=14 text='PAT.MKF'
 00403DA8  E2 03 78 FF              FStStrCopy  mem=stack-136
@@ -622,6 +637,7 @@ pub_031_00403E9C  ProcDsc=0x00403F00  ProcSize=0x64  codeStart=0x00403E9C
 ======================================================================
 pub_032_00403F28  ProcDsc=0x00403F8C  ProcSize=0x64  codeStart=0x00403F28
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 00403F28  B8 03 78 FF              FLdRfVar  mem=stack-136
 00403F2C  50 07 00 00 00 00        LitI4  val=0
 00403F32  98 05 08 00 80 01        FMemLdRf  mem=stack+8.f0180
@@ -708,6 +724,7 @@ pub_034_00404040  ProcDsc=0x004040A8  ProcSize=0x68  codeStart=0x00404040
 ======================================================================
 pub_035_004040D0  ProcDsc=0x00404136  ProcSize=0x66  codeStart=0x004040D0
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004040D0  92 02                    LitI2  val=0
 004040D2  C2 03 78 FF              FStI2  mem=stack-136
 004040D6  4A 07 20 00              LitI2  val=32
@@ -739,6 +756,7 @@ pub_035_004040D0  ProcDsc=0x00404136  ProcSize=0x66  codeStart=0x004040D0
 ======================================================================
 pub_036_00404160  ProcDsc=0x004041C8  ProcSize=0x68  codeStart=0x00404160
 ======================================================================
+; params (1): ByRef a0
 00404160  94 02                    LitI2  val=1
 00404162  72 01                    UMiI2  -
 00404164  C2 03 78 FF              FStI2  mem=stack-136
@@ -773,6 +791,7 @@ pub_036_00404160  ProcDsc=0x004041C8  ProcSize=0x68  codeStart=0x00404160
 ======================================================================
 pub_037_004041F0  ProcDsc=0x00404256  ProcSize=0x66  codeStart=0x004041F0
 ======================================================================
+; params (1): ByRef a0
 004041F0  18 04 0C 00              FLdI4  mem=stack+12
 004041F4  38 06 EC C7 41 00        ImpAdCall  call=pub_026_00403C0C@0041C7EC
 004041FA  02 04 0C 00              ILdI2  mem=stack+12
@@ -860,6 +879,7 @@ pub_039_00404318  ProcDsc=0x00404386  ProcSize=0x6E  codeStart=0x00404318
 ======================================================================
 pub_040_004043B0_hot  ProcDsc=0x0040441E  ProcSize=0x6E  codeStart=0x004043B0
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004043B0  02 04 0C 00              ILdI2  mem=stack+12
 004043B4  1E 02                    CI4I2  -
 004043B6  02 04 10 00              ILdI2  mem=stack+16
@@ -893,6 +913,7 @@ pub_040_004043B0_hot  ProcDsc=0x0040441E  ProcSize=0x6E  codeStart=0x004043B0
 ======================================================================
 pub_041_00404448  ProcDsc=0x004044B6  ProcSize=0x6E  codeStart=0x00404448
 ======================================================================
+; params (6): ByVal a0, ByVal a1, ByVal a2, ByRef a3, ByVal a4, ByRef a5
 00404448  92 02                    LitI2  val=0
 0040444A  B8 03 78 FF              FLdRfVar  mem=stack-136
 0040444E  02 04 20 00              ILdI2  mem=stack+32
@@ -992,6 +1013,7 @@ pub_043_00404578  ProcDsc=0x004045EA  ProcSize=0x72  codeStart=0x00404578
 ======================================================================
 pub_044_00404614_hot  ProcDsc=0x00404686  ProcSize=0x72  codeStart=0x00404614
 ======================================================================
+; params (1): ByVal a0
 00404614  82 05 08 00 4E 02        FMemLdI2  mem=stack+8.f024E
 0040461A  94 02                    LitI2  val=1
 0040461C  24 00                    XorUI1  -
@@ -1136,6 +1158,7 @@ pub_047_004047FC  ProcDsc=0x0040487A  ProcSize=0x7E  codeStart=0x004047FC
 ======================================================================
 pub_048_004048A4  ProcDsc=0x00404922  ProcSize=0x7E  codeStart=0x004048A4
 ======================================================================
+; params (1): ByRef a0
 004048A4  50 07 08 00 00 00        LitI4  val=8
 004048AA  02 04 0C 00              ILdI2  mem=stack+12
 004048AE  1E 02                    CI4I2  -
@@ -1170,6 +1193,7 @@ pub_048_004048A4  ProcDsc=0x00404922  ProcSize=0x7E  codeStart=0x004048A4
 ======================================================================
 pub_049_0040494C  ProcDsc=0x004049CC  ProcSize=0x80  codeStart=0x0040494C
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040494C  50 07 0C 00 00 00        LitI4  val=12
 00404952  4A 07 0C 00              LitI2  val=12
 00404956  82 05 08 00 80 02        FMemLdI2  mem=stack+8.f0280
@@ -1213,6 +1237,7 @@ pub_049_0040494C  ProcDsc=0x004049CC  ProcSize=0x80  codeStart=0x0040494C
 ======================================================================
 pub_050_004049F4  ProcDsc=0x00404A76  ProcSize=0x82  codeStart=0x004049F4
 ======================================================================
+; params (2): ByVal a0, ByRef a1
 004049F4  18 04 0C 00              FLdI4  mem=stack+12
 004049F8  98 05 08 00 0C 00        FMemLdRf  mem=stack+8.f000C
 004049FE  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
@@ -1285,6 +1310,7 @@ pub_051_00404AA0  ProcDsc=0x00404B1E  ProcSize=0x7E  codeStart=0x00404AA0
 ======================================================================
 pub_052_00404B4C  ProcDsc=0x00404BCE  ProcSize=0x82  codeStart=0x00404B4C
 ======================================================================
+; params (1): ByRef a0
 00404B4C  02 04 0C 00              ILdI2  mem=stack+12
 00404B50  1E 02                    CI4I2  -
 00404B52  98 05 08 00 CC 05        FMemLdRf  mem=stack+8.f05CC
@@ -1326,6 +1352,7 @@ pub_052_00404B4C  ProcDsc=0x00404BCE  ProcSize=0x82  codeStart=0x00404B4C
 ======================================================================
 pub_053_00404BF8_hot  ProcDsc=0x00404C78  ProcSize=0x80  codeStart=0x00404BF8
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00404BF8  50 07 00 00 00 00        LitI4  val=0
 00404BFE  02 04 0C 00              ILdI2  mem=stack+12
 00404C02  1E 02                    CI4I2  -
@@ -1399,6 +1426,7 @@ pub_054_00404CA4  ProcDsc=0x00404D26  ProcSize=0x82  codeStart=0x00404CA4
 ======================================================================
 pub_055_00404D50  ProcDsc=0x00404DCE  ProcSize=0x7E  codeStart=0x00404D50
 ======================================================================
+; params (1): ByVal a0
 00404D50  18 04 0C 00              FLdI4  mem=stack+12
 00404D54  98 05 08 00 14 00        FMemLdRf  mem=stack+8.f0014
 00404D5A  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
@@ -1427,6 +1455,7 @@ pub_055_00404D50  ProcDsc=0x00404DCE  ProcSize=0x7E  codeStart=0x00404D50
 ======================================================================
 pub_056_00404DFC_hot  ProcDsc=0x00404E7E  ProcSize=0x82  codeStart=0x00404DFC
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00404DFC  02 04 10 00              ILdI2  mem=stack+16
 00404E00  E8 03 42 00              BranchF  to=00404E3E
 00404E04  50 07 00 00 00 00        LitI4  val=0
@@ -1498,6 +1527,7 @@ pub_057_00404EAC  ProcDsc=0x00404F3A  ProcSize=0x8E  codeStart=0x00404EAC
 ======================================================================
 pub_058_00404F64  ProcDsc=0x00404FEE  ProcSize=0x8A  codeStart=0x00404F64
 ======================================================================
+; params (1): ByRef a0
 00404F64  50 07 02 00 00 00        LitI4  val=2
 00404F6A  02 04 0C 00              ILdI2  mem=stack+12
 00404F6E  4A 07 20 00              LitI2  val=32
@@ -1531,6 +1561,7 @@ pub_058_00404F64  ProcDsc=0x00404FEE  ProcSize=0x8A  codeStart=0x00404F64
 ======================================================================
 pub_059_0040501C  ProcDsc=0x004050AA  ProcSize=0x8E  codeStart=0x0040501C
 ======================================================================
+; params (1): ByRef a0
 0040501C  92 02                    LitI2  val=0
 0040501E  C2 03 78 FF              FStI2  mem=stack-136
 00405022  92 02                    LitI2  val=0
@@ -1572,6 +1603,7 @@ pub_059_0040501C  ProcDsc=0x004050AA  ProcSize=0x8E  codeStart=0x0040501C
 ======================================================================
 pub_060_004050D4  ProcDsc=0x0040516A  ProcSize=0x96  codeStart=0x004050D4
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004050D4  92 02                    LitI2  val=0
 004050D6  C2 03 78 FF              FStI2  mem=stack-136
 004050DA  02 04 0C 00              ILdI2  mem=stack+12
@@ -1625,6 +1657,7 @@ pub_060_004050D4  ProcDsc=0x0040516A  ProcSize=0x96  codeStart=0x004050D4
 ======================================================================
 pub_061_00405194  ProcDsc=0x0040522C  ProcSize=0x98  codeStart=0x00405194
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00405194  50 07 00 00 00 00        LitI4  val=0
 0040519A  02 04 10 00              ILdI2  mem=stack+16
 0040519E  9A 02                    LitI2  val=4
@@ -1666,6 +1699,7 @@ pub_061_00405194  ProcDsc=0x0040522C  ProcSize=0x98  codeStart=0x00405194
 ======================================================================
 pub_062_00405254_hot  ProcDsc=0x004052EE  ProcSize=0x9A  codeStart=0x00405254
 ======================================================================
+; params (4): ByVal a0, ByVal a1, ByRef a2, ByVal a3
 00405254  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
 0040525A  50 07 00 00 00 00        LitI4  val=0
 00405260  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090
@@ -1708,6 +1742,7 @@ pub_062_00405254_hot  ProcDsc=0x004052EE  ProcSize=0x9A  codeStart=0x00405254
 ======================================================================
 pub_063_00405318  ProcDsc=0x004053B2  ProcSize=0x9A  codeStart=0x00405318
 ======================================================================
+; params (1): ByRef a0
 00405318  02 04 0C 00              ILdI2  mem=stack+12
 0040531C  94 02                    LitI2  val=1
 0040531E  02 01                    AddI2  -
@@ -1799,6 +1834,7 @@ pub_064_004053DC  ProcDsc=0x0040547C  ProcSize=0xA0  codeStart=0x004053DC
 ======================================================================
 pub_065_004054A4  ProcDsc=0x00405546  ProcSize=0xA2  codeStart=0x004054A4
 ======================================================================
+; params (1): ByRef a0
 004054A4  82 05 08 00 50 02        FMemLdI2  mem=stack+8.f0250
 004054AA  E8 03 A0 00              BranchF  to=00405544
 004054AE  92 02                    LitI2  val=0
@@ -1843,6 +1879,7 @@ pub_065_004054A4  ProcDsc=0x00405546  ProcSize=0xA2  codeStart=0x004054A4
 ======================================================================
 pub_066_00405570  ProcDsc=0x00405610  ProcSize=0xA0  codeStart=0x00405570
 ======================================================================
+; params (5): ByRef a0, ByRef a1, ByRef a2, ByVal a3, ByVal a4
 00405570  18 04 1C 00              FLdI4  mem=stack+28
 00405574  9C 02                    LitI2  val=5
 00405576  66 05 7A FF              PopTmpLdAd2  mem=stack-134
@@ -1933,6 +1970,7 @@ pub_067_0040563C  ProcDsc=0x004056E0  ProcSize=0xA4  codeStart=0x0040563C
 ======================================================================
 pub_068_0040570C  ProcDsc=0x004057AA  ProcSize=0x9E  codeStart=0x0040570C
 ======================================================================
+; params (1): ByRef a0
 0040570C  0E 04 0C 00              ILdI4  mem=stack+12
 00405710  BC 01                    FnLenStr  -
 00405712  10 02                    CI2I4  -
@@ -1980,6 +2018,7 @@ pub_068_0040570C  ProcDsc=0x004057AA  ProcSize=0x9E  codeStart=0x0040570C
 ======================================================================
 pub_069_004057E4  ProcDsc=0x00405894  ProcSize=0xB0  codeStart=0x004057E4
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004057E4  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
 004057EA  50 07 00 00 00 00        LitI4  val=0
 004057F0  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090
@@ -2028,6 +2067,7 @@ pub_069_004057E4  ProcDsc=0x00405894  ProcSize=0xB0  codeStart=0x004057E4
 ======================================================================
 pub_070_004058BC  ProcDsc=0x0040596A  ProcSize=0xAE  codeStart=0x004058BC
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004058BC  94 02                    LitI2  val=1
 004058BE  B8 03 7A FF              FLdRfVar  mem=stack-134
 004058C2  02 04 10 00              ILdI2  mem=stack+16
@@ -2076,6 +2116,7 @@ pub_070_004058BC  ProcDsc=0x0040596A  ProcSize=0xAE  codeStart=0x004058BC
 ======================================================================
 pub_071_00405994  ProcDsc=0x00405A4A  ProcSize=0xB6  codeStart=0x00405994
 ======================================================================
+; params (1): ByRef a0
 00405994  82 05 08 00 6C 02        FMemLdI2  mem=stack+8.f026C
 0040599A  1E 02                    CI4I2  -
 0040599C  98 05 08 00 50 01        FMemLdRf  mem=stack+8.f0150
@@ -2123,6 +2164,7 @@ pub_071_00405994  ProcDsc=0x00405A4A  ProcSize=0xB6  codeStart=0x00405994
 ======================================================================
 pub_072_00405A74  ProcDsc=0x00405B26  ProcSize=0xB2  codeStart=0x00405A74
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByVal a2
 00405A74  18 04 14 00              FLdI4  mem=stack+20
 00405A78  5E 07 14 00 0E 00 00 00 52 00 47 00 4D 00 2E 00 4D 00 4B 00 46 00 00 00 LitStr  index=0014 byteLen=14 text='RGM.MKF'
 00405A90  E2 03 70 FF              FStStrCopy  mem=stack-144
@@ -2271,6 +2313,7 @@ pub_074_00405C38_hot  ProcDsc=0x00405CF6  ProcSize=0xBE  codeStart=0x00405C38
 ======================================================================
 pub_075_00405D20  ProcDsc=0x00405DDE  ProcSize=0xBE  codeStart=0x00405D20
 ======================================================================
+; params (1): ByRef a0
 00405D20  02 04 0C 00              ILdI2  mem=stack+12
 00405D24  1E 02                    CI4I2  -
 00405D26  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C
@@ -2328,6 +2371,7 @@ pub_075_00405D20  ProcDsc=0x00405DDE  ProcSize=0xBE  codeStart=0x00405D20
 ======================================================================
 pub_076_00405E08  ProcDsc=0x00405ED0  ProcSize=0xC8  codeStart=0x00405E08
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00405E08  50 07 00 FA 00 00        LitI4  val=64000
 00405E0E  50 07 00 00 00 00        LitI4  val=0
 00405E14  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0
@@ -2378,6 +2422,7 @@ pub_076_00405E08  ProcDsc=0x00405ED0  ProcSize=0xC8  codeStart=0x00405E08
 ======================================================================
 pub_077_00405EF8  ProcDsc=0x00405FC0  ProcSize=0xC8  codeStart=0x00405EF8
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 00405EF8  02 04 14 00              ILdI2  mem=stack+20
 00405EFC  92 02                    LitI2  val=0
 00405EFE  AC 00                    LtI2  -
@@ -2547,6 +2592,7 @@ pub_079_004060D8  ProcDsc=0x004061A2  ProcSize=0xCA  codeStart=0x004060D8
 ======================================================================
 pub_080_004061CC  ProcDsc=0x0040629A  ProcSize=0xCE  codeStart=0x004061CC
 ======================================================================
+; params (1): ByRef a0
 004061CC  92 02                    LitI2  val=0
 004061CE  A2 05 08 00 50 02        FMemStI2  mem=stack+8.f0250
 004061D4  92 02                    LitI2  val=0
@@ -2604,6 +2650,7 @@ pub_080_004061CC  ProcDsc=0x0040629A  ProcSize=0xCE  codeStart=0x004061CC
 ======================================================================
 pub_081_004062C4  ProcDsc=0x00406394  ProcSize=0xD0  codeStart=0x004062C4
 ======================================================================
+; params (1): ByRef a0
 004062C4  50 07 08 00 00 00        LitI4  val=8
 004062CA  02 04 0C 00              ILdI2  mem=stack+12
 004062CE  1E 02                    CI4I2  -
@@ -2716,6 +2763,7 @@ pub_082_004063BC  ProcDsc=0x0040648A  ProcSize=0xCE  codeStart=0x004063BC
 ======================================================================
 pub_083_004064B4  ProcDsc=0x00406586  ProcSize=0xD2  codeStart=0x004064B4
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004064B4  02 04 0C 00              ILdI2  mem=stack+12
 004064B8  1E 02                    CI4I2  -
 004064BA  98 05 08 00 CC 05        FMemLdRf  mem=stack+8.f05CC
@@ -2782,6 +2830,7 @@ pub_083_004064B4  ProcDsc=0x00406586  ProcSize=0xD2  codeStart=0x004064B4
 ======================================================================
 pub_084_004065B0  ProcDsc=0x00406684  ProcSize=0xD4  codeStart=0x004065B0
 ======================================================================
+; params (1): ByRef a0
 004065B0  82 05 08 00 50 02        FMemLdI2  mem=stack+8.f0250
 004065B6  92 02                    LitI2  val=0
 004065B8  54 00                    EqUI1  -
@@ -2904,6 +2953,7 @@ pub_085_004066AC  ProcDsc=0x00406780  ProcSize=0xD4  codeStart=0x004066AC
 ======================================================================
 pub_086_004067A8  ProcDsc=0x0040687E  ProcSize=0xD6  codeStart=0x004067A8
 ======================================================================
+; params (1): ByRef a0
 004067A8  38 06 1C C8 41 00        ImpAdCall  call=pub_007_004033B4@0041C81C
 004067AE  02 04 0C 00              ILdI2  mem=stack+12
 004067B2  1E 02                    CI4I2  -
@@ -2964,6 +3014,7 @@ pub_086_004067A8  ProcDsc=0x0040687E  ProcSize=0xD6  codeStart=0x004067A8
 ======================================================================
 pub_087_004068A8  ProcDsc=0x00406986  ProcSize=0xDE  codeStart=0x004068A8
 ======================================================================
+; params (1): ByRef a0
 004068A8  92 02                    LitI2  val=0
 004068AA  B8 03 7A FF              FLdRfVar  mem=stack-134
 004068AE  82 05 08 00 DE 02        FMemLdI2  mem=stack+8.f02DE
@@ -3033,6 +3084,7 @@ pub_087_004068A8  ProcDsc=0x00406986  ProcSize=0xDE  codeStart=0x004068A8
 ======================================================================
 pub_088_004069B0  ProcDsc=0x00406A92  ProcSize=0xE2  codeStart=0x004069B0
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 004069B0  02 04 0C 00              ILdI2  mem=stack+12
 004069B4  C2 03 7A FF              FStI2  mem=stack-134
 004069B8  92 02                    LitI2  val=0
@@ -3099,6 +3151,7 @@ pub_088_004069B0  ProcDsc=0x00406A92  ProcSize=0xE2  codeStart=0x004069B0
 ======================================================================
 pub_089_00406ABC_hot  ProcDsc=0x00406BA2  ProcSize=0xE6  codeStart=0x00406ABC
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 00406ABC  02 04 14 00              ILdI2  mem=stack+20
 00406AC0  92 02                    LitI2  val=0
 00406AC2  80 00                    LeI2  -
@@ -3357,6 +3410,7 @@ priv_092_00406DF0  ProcDsc=0x00406ED2  ProcSize=0xE2  codeStart=0x00406DF0  entr
 ======================================================================
 pub_093_00406F08_hot  ProcDsc=0x00406FFA  ProcSize=0xF2  codeStart=0x00406F08
 ======================================================================
+; params (1): ByRef a0
 00406F08  94 02                    LitI2  val=1
 00406F0A  72 01                    UMiI2  -
 00406F0C  C2 03 78 FF              FStI2  mem=stack-136
@@ -3430,6 +3484,7 @@ pub_093_00406F08_hot  ProcDsc=0x00406FFA  ProcSize=0xF2  codeStart=0x00406F08
 ======================================================================
 pub_094_00407024  ProcDsc=0x00407118  ProcSize=0xF4  codeStart=0x00407024
 ======================================================================
+; params (3): ByVal a0, ByVal a1, ByRef a2
 00407024  92 02                    LitI2  val=0
 00407026  C2 03 78 FF              FStI2  mem=stack-136
 0040702A  82 05 08 00 66 02        FMemLdI2  mem=stack+8.f0266
@@ -3568,6 +3623,7 @@ pub_095_00407140  ProcDsc=0x00407234  ProcSize=0xF4  codeStart=0x00407140
 ======================================================================
 pub_096_0040725C  ProcDsc=0x00407350  ProcSize=0xF4  codeStart=0x0040725C
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040725C  02 04 14 00              ILdI2  mem=stack+20
 00407260  1E 02                    CI4I2  -
 00407262  98 05 08 00 44 07        FMemLdRf  mem=stack+8.f0744
@@ -3636,6 +3692,7 @@ pub_096_0040725C  ProcDsc=0x00407350  ProcSize=0xF4  codeStart=0x0040725C
 ======================================================================
 pub_097_00407378  ProcDsc=0x00407474  ProcSize=0xFC  codeStart=0x00407378
 ======================================================================
+; params (1): ByRef a0
 00407378  94 02                    LitI2  val=1
 0040737A  72 01                    UMiI2  -
 0040737C  66 05 74 FF              PopTmpLdAd2  mem=stack-140
@@ -3776,6 +3833,7 @@ pub_098_004074A0  ProcDsc=0x0040759E  ProcSize=0xFE  codeStart=0x004074A0
 ======================================================================
 pub_099_004075C8_hot  ProcDsc=0x004076C6  ProcSize=0xFE  codeStart=0x004075C8
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 004075C8  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
 004075CE  50 07 00 00 00 00        LitI4  val=0
 004075D4  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090
@@ -3852,6 +3910,7 @@ pub_099_004075C8_hot  ProcDsc=0x004076C6  ProcSize=0xFE  codeStart=0x004075C8
 ======================================================================
 pub_100_004076F0  ProcDsc=0x004077F0  ProcSize=0x100  codeStart=0x004076F0
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 004076F0  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
 004076F6  50 07 00 00 00 00        LitI4  val=0
 004076FC  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090
@@ -4003,6 +4062,7 @@ pub_101_00407818  ProcDsc=0x00407918  ProcSize=0x100  codeStart=0x00407818
 ======================================================================
 pub_102_00407940  ProcDsc=0x00407A44  ProcSize=0x104  codeStart=0x00407940
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00407940  02 04 0C 00              ILdI2  mem=stack+12
 00407944  92 02                    LitI2  val=0
 00407946  80 00                    LeI2  -
@@ -4081,6 +4141,7 @@ pub_102_00407940  ProcDsc=0x00407A44  ProcSize=0x104  codeStart=0x00407940
 ======================================================================
 pub_103_00407A6C  ProcDsc=0x00407B72  ProcSize=0x106  codeStart=0x00407A6C
 ======================================================================
+; params (1): ByRef a0
 00407A6C  A2 02                    LitI2  val=8
 00407A6E  C2 03 7A FF              FStI2  mem=stack-134
 00407A72  94 02                    LitI2  val=1
@@ -4159,6 +4220,7 @@ pub_103_00407A6C  ProcDsc=0x00407B72  ProcSize=0x106  codeStart=0x00407A6C
 ======================================================================
 pub_104_00407B9C_hot  ProcDsc=0x00407CA6  ProcSize=0x10A  codeStart=0x00407B9C
 ======================================================================
+; params (2): ByVal a0, ByRef a1
 00407B9C  02 04 10 00              ILdI2  mem=stack+16
 00407BA0  C2 03 7A FF              FStI2  mem=stack-134
 00407BA4  A2 03 7A FF              FLdI2  mem=stack-134
@@ -4224,6 +4286,7 @@ pub_104_00407B9C_hot  ProcDsc=0x00407CA6  ProcSize=0x10A  codeStart=0x00407B9C
 ======================================================================
 pub_105_00407CD0  ProcDsc=0x00407DDA  ProcSize=0x10A  codeStart=0x00407CD0
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 00407CD0  50 07 00 00 00 00        LitI4  val=0
 00407CD6  98 05 08 00 C0 00        FMemLdRf  mem=stack+8.f00C0
 00407CDC  18 03                    Ary1LdRf  -
@@ -4345,6 +4408,7 @@ pub_106_00407E04  ProcDsc=0x00407F00  ProcSize=0xFC  codeStart=0x00407E04
 ======================================================================
 pub_107_00407F40  ProcDsc=0x00408052  ProcSize=0x112  codeStart=0x00407F40
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00407F40  94 02                    LitI2  val=1
 00407F42  B8 03 7A FF              FLdRfVar  mem=stack-134
 00407F46  4A 07 0F 00              LitI2  val=15
@@ -4477,6 +4541,7 @@ pub_108_0040807C  ProcDsc=0x0040817E  ProcSize=0x102  codeStart=0x0040807C
 ======================================================================
 pub_109_004081C0  ProcDsc=0x004082DA  ProcSize=0x11A  codeStart=0x004081C0
 ======================================================================
+; params (1): ByRef a0
 004081C0  02 04 0C 00              ILdI2  mem=stack+12
 004081C4  1E 02                    CI4I2  -
 004081C6  98 05 08 00 8C 03        FMemLdRf  mem=stack+8.f038C
@@ -4540,6 +4605,7 @@ pub_109_004081C0  ProcDsc=0x004082DA  ProcSize=0x11A  codeStart=0x004081C0
 ======================================================================
 pub_110_00408308  ProcDsc=0x0040842C  ProcSize=0x124  codeStart=0x00408308
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00408308  92 02                    LitI2  val=0
 0040830A  02 04 0C 00              ILdI2  mem=stack+12
 0040830E  1E 02                    CI4I2  -
@@ -4626,6 +4692,7 @@ pub_110_00408308  ProcDsc=0x0040842C  ProcSize=0x124  codeStart=0x00408308
 ======================================================================
 pub_111_00408454  ProcDsc=0x00408580  ProcSize=0x12C  codeStart=0x00408454
 ======================================================================
+; params (1): ByRef a0
 00408454  82 05 08 00 14 03        FMemLdI2  mem=stack+8.f0314
 0040845A  1E 02                    CI4I2  -
 0040845C  98 05 08 00 68 01        FMemLdRf  mem=stack+8.f0168
@@ -4712,6 +4779,7 @@ pub_111_00408454  ProcDsc=0x00408580  ProcSize=0x12C  codeStart=0x00408454
 ======================================================================
 pub_112_004085A8  ProcDsc=0x004086D0  ProcSize=0x128  codeStart=0x004085A8
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004085A8  50 07 19 00 00 00        LitI4  val=25
 004085AE  50 07 00 00 00 00        LitI4  val=0
 004085B4  98 05 08 00 DC 04        FMemLdRf  mem=stack+8.f04DC
@@ -4913,6 +4981,7 @@ pub_114_00408850  ProcDsc=0x0040897A  ProcSize=0x12A  codeStart=0x00408850
 ======================================================================
 pub_115_004089B4  ProcDsc=0x00408AF6  ProcSize=0x142  codeStart=0x004089B4
 ======================================================================
+; params (1): ByVal a0
 004089B4  50 07 00 00 00 00        LitI4  val=0
 004089BA  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0
 004089C0  18 03                    Ary1LdRf  -
@@ -5148,6 +5217,7 @@ pub_117_00408C90  ProcDsc=0x00408DD0  ProcSize=0x140  codeStart=0x00408C90
 ======================================================================
 pub_118_00408E08_hot  ProcDsc=0x00408F5C  ProcSize=0x154  codeStart=0x00408E08
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00408E08  02 04 0C 00              ILdI2  mem=stack+12
 00408E0C  1E 02                    CI4I2  -
 00408E0E  98 05 08 00 DC 07        FMemLdRf  mem=stack+8.f07DC
@@ -5345,6 +5415,7 @@ pub_119_00408F84  ProcDsc=0x004090DC  ProcSize=0x158  codeStart=0x00408F84
 ======================================================================
 pub_120_00409104  ProcDsc=0x00409260  ProcSize=0x15C  codeStart=0x00409104
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00409104  02 04 10 00              ILdI2  mem=stack+16
 00409108  C2 03 7A FF              FStI2  mem=stack-134
 0040910C  92 02                    LitI2  val=0
@@ -5536,6 +5607,7 @@ pub_121_00409288  ProcDsc=0x004093E8  ProcSize=0x160  codeStart=0x00409288
 ======================================================================
 pub_122_00409410  ProcDsc=0x00409572  ProcSize=0x162  codeStart=0x00409410
 ======================================================================
+; params (1): ByRef a0
 00409410  50 07 96 00 00 00        LitI4  val=150
 00409416  50 07 00 00 00 00        LitI4  val=0
 0040941C  98 05 08 00 DC 04        FMemLdRf  mem=stack+8.f04DC
@@ -5635,6 +5707,7 @@ pub_122_00409410  ProcDsc=0x00409572  ProcSize=0x162  codeStart=0x00409410
 ======================================================================
 pub_123_0040959C  ProcDsc=0x004096FE  ProcSize=0x162  codeStart=0x0040959C
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040959C  4A 07 64 00              LitI2  val=100
 004095A0  2E 02                    FnCSngUI1  -
 004095A2  02 04 14 00              ILdI2  mem=stack+20
@@ -5723,6 +5796,7 @@ pub_123_0040959C  ProcDsc=0x004096FE  ProcSize=0x162  codeStart=0x0040959C
 ======================================================================
 pub_124_0040972C  ProcDsc=0x00409884  ProcSize=0x158  codeStart=0x0040972C
 ======================================================================
+; params (3): ByRef a0, ByVal a1, ByRef a2
 0040972C  82 05 08 00 3C 02        FMemLdI2  mem=stack+8.f023C
 00409732  96 02                    LitI2  val=2
 00409734  54 00                    EqUI1  -
@@ -5995,6 +6069,7 @@ pub_126_00409A70  ProcDsc=0x00409BFC  ProcSize=0x18C  codeStart=0x00409A70
 ======================================================================
 pub_127_00409C24  ProcDsc=0x00409DBC  ProcSize=0x198  codeStart=0x00409C24
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00409C24  4A 07 78 00              LitI2  val=120
 00409C28  C2 03 78 FF              FStI2  mem=stack-136
 00409C2C  4A 07 64 00              LitI2  val=100
@@ -6597,6 +6672,7 @@ pub_131_0040A344  ProcDsc=0x0040A4FA  ProcSize=0x1B6  codeStart=0x0040A344
 ======================================================================
 pub_132_0040A524  ProcDsc=0x0040A6E4  ProcSize=0x1C0  codeStart=0x0040A524
 ======================================================================
+; params (3): ByVal a0, ByRef a1, ByRef a2
 0040A524  18 04 0C 00              FLdI4  mem=stack+12
 0040A528  38 06 04 CB 41 00        ImpAdCall  call=pub_013_004035D0_hot@0041CB04
 0040A52E  02 04 14 00              ILdI2  mem=stack+20
@@ -6714,6 +6790,7 @@ pub_132_0040A524  ProcDsc=0x0040A6E4  ProcSize=0x1C0  codeStart=0x0040A524
 ======================================================================
 pub_133_0040A710  ProcDsc=0x0040A8E8  ProcSize=0x1D8  codeStart=0x0040A710
 ======================================================================
+; params (1): ByRef a0
 0040A710  92 02                    LitI2  val=0
 0040A712  B8 03 7A FF              FLdRfVar  mem=stack-134
 0040A716  82 05 08 00 DA 02        FMemLdI2  mem=stack+8.f02DA
@@ -7076,6 +7153,7 @@ pub_135_0040AB1C  ProcDsc=0x0040ACD2  ProcSize=0x1B6  codeStart=0x0040AB1C
 ======================================================================
 pub_136_0040AD28  ProcDsc=0x0040AEFE  ProcSize=0x1D6  codeStart=0x0040AD28
 ======================================================================
+; params (2): ByRef a0, ByVal a1
 0040AD28  94 02                    LitI2  val=1
 0040AD2A  72 01                    UMiI2  -
 0040AD2C  66 05 70 FF              PopTmpLdAd2  mem=stack-144
@@ -7613,6 +7691,7 @@ pub_139_0040B398  ProcDsc=0x0040B59E  ProcSize=0x206  codeStart=0x0040B398
 ======================================================================
 pub_140_0040B5C8  ProcDsc=0x0040B7CE  ProcSize=0x206  codeStart=0x0040B5C8
 ======================================================================
+; params (3): ByVal a0, ByRef a1, ByRef a2
 0040B5C8  4A 07 64 00              LitI2  val=100
 0040B5CC  2E 02                    FnCSngUI1  -
 0040B5CE  02 04 14 00              ILdI2  mem=stack+20
@@ -7888,6 +7967,7 @@ pub_141_0040B7F8  ProcDsc=0x0040BA08  ProcSize=0x210  codeStart=0x0040B7F8
 ======================================================================
 pub_142_0040BA30  ProcDsc=0x0040BC44  ProcSize=0x214  codeStart=0x0040BA30
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040BA30  94 02                    LitI2  val=1
 0040BA32  72 01                    UMiI2  -
 0040BA34  C2 03 7A FF              FStI2  mem=stack-134
@@ -8033,6 +8113,7 @@ pub_142_0040BA30  ProcDsc=0x0040BC44  ProcSize=0x214  codeStart=0x0040BA30
 ======================================================================
 pub_143_0040BC70  ProcDsc=0x0040BE90  ProcSize=0x220  codeStart=0x0040BC70
 ======================================================================
+; params (5): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4
 0040BC70  02 04 18 00              ILdI2  mem=stack+24
 0040BC74  94 02                    LitI2  val=1
 0040BC76  12 01                    SubI2  -
@@ -8198,6 +8279,7 @@ pub_143_0040BC70  ProcDsc=0x0040BE90  ProcSize=0x220  codeStart=0x0040BC70
 ======================================================================
 pub_144_0040BEB8  ProcDsc=0x0040C0DC  ProcSize=0x224  codeStart=0x0040BEB8
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 0040BEB8  4A 07 30 00              LitI2  val=48
 0040BEBC  02 04 14 00              ILdI2  mem=stack+20
 0040BEC0  02 01                    AddI2  -
@@ -8348,6 +8430,7 @@ pub_144_0040BEB8  ProcDsc=0x0040C0DC  ProcSize=0x224  codeStart=0x0040BEB8
 ======================================================================
 pub_145_0040C104  ProcDsc=0x0040C326  ProcSize=0x222  codeStart=0x0040C104
 ======================================================================
+; params (6): ByVal a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5
 0040C104  02 04 18 00              ILdI2  mem=stack+24
 0040C108  92 02                    LitI2  val=0
 0040C10A  AC 00                    LtI2  -
@@ -8665,6 +8748,7 @@ pub_146_0040C350  ProcDsc=0x0040C578  ProcSize=0x228  codeStart=0x0040C350
 ======================================================================
 pub_147_0040C5A4  ProcDsc=0x0040C7DC  ProcSize=0x238  codeStart=0x0040C5A4
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040C5A4  02 04 10 00              ILdI2  mem=stack+16
 0040C5A8  02 04 0C 00              ILdI2  mem=stack+12
 0040C5AC  1E 02                    CI4I2  -
@@ -8823,6 +8907,7 @@ pub_147_0040C5A4  ProcDsc=0x0040C7DC  ProcSize=0x238  codeStart=0x0040C5A4
 ======================================================================
 pub_148_0040C804  ProcDsc=0x0040CA38  ProcSize=0x234  codeStart=0x0040C804
 ======================================================================
+; params (3): ByVal a0, ByRef a1, ByRef a2
 0040C804  4A 07 64 00              LitI2  val=100
 0040C808  2E 02                    FnCSngUI1  -
 0040C80A  02 04 14 00              ILdI2  mem=stack+20
@@ -9128,6 +9213,7 @@ pub_149_0040CA64  ProcDsc=0x0040CC9E  ProcSize=0x23A  codeStart=0x0040CA64
 ======================================================================
 pub_150_0040CCC8  ProcDsc=0x0040CF02  ProcSize=0x23A  codeStart=0x0040CCC8
 ======================================================================
+; params (1): ByRef a0
 0040CCC8  94 02                    LitI2  val=1
 0040CCCA  72 01                    UMiI2  -
 0040CCCC  A2 05 08 00 9E 02        FMemStI2  mem=stack+8.f029E
@@ -9271,6 +9357,7 @@ pub_150_0040CCC8  ProcDsc=0x0040CF02  ProcSize=0x23A  codeStart=0x0040CCC8
 ======================================================================
 pub_151_0040CF2C  ProcDsc=0x0040D16A  ProcSize=0x23E  codeStart=0x0040CF2C
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 0040CF2C  92 02                    LitI2  val=0
 0040CF2E  66 05 72 FF              PopTmpLdAd2  mem=stack-142
 0040CF32  02 04 14 00              ILdI2  mem=stack+20
@@ -9426,6 +9513,7 @@ pub_151_0040CF2C  ProcDsc=0x0040D16A  ProcSize=0x23E  codeStart=0x0040CF2C
 ======================================================================
 pub_152_0040D194_hot  ProcDsc=0x0040D3D2  ProcSize=0x23E  codeStart=0x0040D194
 ======================================================================
+; params (6): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5
 0040D194  02 04 18 00              ILdI2  mem=stack+24
 0040D198  1E 02                    CI4I2  -
 0040D19A  02 04 14 00              ILdI2  mem=stack+20
@@ -9762,6 +9850,7 @@ pub_153_0040D680  ProcDsc=0x0040D8D6  ProcSize=0x256  codeStart=0x0040D680
 ======================================================================
 pub_154_0040D904  ProcDsc=0x0040DB68  ProcSize=0x264  codeStart=0x0040D904
 ======================================================================
+; params (1): ByRef a0
 0040D904  96 02                    LitI2  val=2
 0040D906  72 01                    UMiI2  -
 0040D908  C2 03 78 FF              FStI2  mem=stack-136
@@ -9945,6 +10034,7 @@ pub_154_0040D904  ProcDsc=0x0040DB68  ProcSize=0x264  codeStart=0x0040D904
 ======================================================================
 pub_155_0040DB90  ProcDsc=0x0040DDF8  ProcSize=0x268  codeStart=0x0040DB90
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040DB90  02 04 10 00              ILdI2  mem=stack+16
 0040DB94  1E 02                    CI4I2  -
 0040DB96  50 07 04 00 00 00        LitI4  val=4
@@ -10113,6 +10203,7 @@ pub_155_0040DB90  ProcDsc=0x0040DDF8  ProcSize=0x268  codeStart=0x0040DB90
 ======================================================================
 pub_156_0040DE24  ProcDsc=0x0040E092  ProcSize=0x26E  codeStart=0x0040DE24
 ======================================================================
+; params (1): ByRef a0
 0040DE24  94 02                    LitI2  val=1
 0040DE26  C2 03 78 FF              FStI2  mem=stack-136
 0040DE2A  02 04 0C 00              ILdI2  mem=stack+12
@@ -10291,6 +10382,7 @@ pub_156_0040DE24  ProcDsc=0x0040E092  ProcSize=0x26E  codeStart=0x0040DE24
 ======================================================================
 pub_157_0040E0BC  ProcDsc=0x0040E324  ProcSize=0x268  codeStart=0x0040E0BC
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040E0BC  02 04 10 00              ILdI2  mem=stack+16
 0040E0C0  96 02                    LitI2  val=2
 0040E0C2  80 00                    LeI2  -
@@ -10456,6 +10548,7 @@ pub_157_0040E0BC  ProcDsc=0x0040E324  ProcSize=0x268  codeStart=0x0040E0BC
 ======================================================================
 pub_158_0040E36C  ProcDsc=0x0040E616  ProcSize=0x2AA  codeStart=0x0040E36C
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040E36C  02 04 0C 00              ILdI2  mem=stack+12
 0040E370  1E 02                    CI4I2  -
 0040E372  98 05 08 00 AC 04        FMemLdRf  mem=stack+8.f04AC
@@ -10853,6 +10946,7 @@ pub_159_0040E640  ProcDsc=0x0040E906  ProcSize=0x2C6  codeStart=0x0040E640
 ======================================================================
 pub_160_0040E938  ProcDsc=0x0040EBE8  ProcSize=0x2B0  codeStart=0x0040E938
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040E938  82 05 08 00 3C 02        FMemLdI2  mem=stack+8.f023C
 0040E93E  E8 03 AE 02              BranchF  to=0040EBE6
 0040E942  38 06 54 D2 41 00        ImpAdCall  call=pub_114_00408850@0041D254
@@ -10987,6 +11081,7 @@ pub_160_0040E938  ProcDsc=0x0040EBE8  ProcSize=0x2B0  codeStart=0x0040E938
 ======================================================================
 pub_161_0040EC34  ProcDsc=0x0040EF22  ProcSize=0x2EE  codeStart=0x0040EC34
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040EC34  22 06 F4 D4 41 00        ImpAdCallAd  call=pub_008_00403408@0041D4F4
 0040EC3A  A2 05 08 00 3C 03        FMemStI2  mem=stack+8.f033C
 0040EC40  92 02                    LitI2  val=0
@@ -11573,6 +11668,7 @@ priv_163_0040F264  ProcDsc=0x0040F538  ProcSize=0x2D4  codeStart=0x0040F264  ent
 ======================================================================
 pub_164_0040F58C_hot  ProcDsc=0x0040F8A8  ProcSize=0x31C  codeStart=0x0040F58C
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040F58C  B2 02 5C FF              LitVar_Missing  mem=stack-164
 0040F590  32 06 0C 10 40 00        ImpAdCall  call=VB40032.rtcRandomNext@0040100C
 0040F596  D2 03 58 FF              FStFPR4  mem=stack-168
@@ -11777,6 +11873,7 @@ pub_164_0040F58C_hot  ProcDsc=0x0040F8A8  ProcSize=0x31C  codeStart=0x0040F58C
 ======================================================================
 pub_165_0040F8D4  ProcDsc=0x0040FC02  ProcSize=0x32E  codeStart=0x0040F8D4
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040F8D4  02 04 0C 00              ILdI2  mem=stack+12
 0040F8D8  C2 03 78 FF              FStI2  mem=stack-136
 0040F8DC  02 04 10 00              ILdI2  mem=stack+16
@@ -12011,6 +12108,7 @@ pub_165_0040F8D4  ProcDsc=0x0040FC02  ProcSize=0x32E  codeStart=0x0040F8D4
 ======================================================================
 pub_166_0040FC2C  ProcDsc=0x0040FF38  ProcSize=0x30C  codeStart=0x0040FC2C
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040FC2C  02 04 0C 00              ILdI2  mem=stack+12
 0040FC30  A2 05 08 00 04 02        FMemStI2  mem=stack+8.f0204
 0040FC36  02 04 10 00              ILdI2  mem=stack+16
@@ -12238,6 +12336,7 @@ pub_166_0040FC2C  ProcDsc=0x0040FF38  ProcSize=0x30C  codeStart=0x0040FC2C
 ======================================================================
 pub_167_0040FF88  ProcDsc=0x004102DE  ProcSize=0x356  codeStart=0x0040FF88
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0040FF88  50 07 00 00 00 00        LitI4  val=0
 0040FF8E  C4 03 78 FF              FStI4  mem=stack-136
 0040FF92  50 07 02 00 00 00        LitI4  val=2
@@ -12477,6 +12576,7 @@ pub_167_0040FF88  ProcDsc=0x004102DE  ProcSize=0x356  codeStart=0x0040FF88
 ======================================================================
 pub_168_0041030C  ProcDsc=0x00410668  ProcSize=0x35C  codeStart=0x0041030C
 ======================================================================
+; params (1): ByRef a0
 0041030C  4A 07 30 00              LitI2  val=48
 00410310  02 04 0C 00              ILdI2  mem=stack+12
 00410314  02 01                    AddI2  -
@@ -12664,6 +12764,7 @@ pub_168_0041030C  ProcDsc=0x00410668  ProcSize=0x35C  codeStart=0x0041030C
 ======================================================================
 pub_169_00410A40  ProcDsc=0x00410DCC  ProcSize=0x38C  codeStart=0x00410A40
 ======================================================================
+; params (1): ByRef a0
 00410A40  4A 07 30 00              LitI2  val=48
 00410A44  02 04 0C 00              ILdI2  mem=stack+12
 00410A48  02 01                    AddI2  -
@@ -12863,6 +12964,7 @@ pub_169_00410A40  ProcDsc=0x00410DCC  ProcSize=0x38C  codeStart=0x00410A40
 ======================================================================
 pub_170_00410DFC  ProcDsc=0x00411194  ProcSize=0x398  codeStart=0x00410DFC
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00410DFC  92 02                    LitI2  val=0
 00410DFE  A2 05 08 00 CC 02        FMemStI2  mem=stack+8.f02CC
 00410E04  38 06 1C C8 41 00        ImpAdCall  call=pub_007_004033B4@0041C81C
@@ -13127,6 +13229,7 @@ pub_170_00410DFC  ProcDsc=0x00411194  ProcSize=0x398  codeStart=0x00410DFC
 ======================================================================
 pub_171_004111BC  ProcDsc=0x00411558  ProcSize=0x39C  codeStart=0x004111BC
 ======================================================================
+; params (6): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5
 004111BC  02 04 20 00              ILdI2  mem=stack+32
 004111C0  92 02                    LitI2  val=0
 004111C2  54 00                    EqUI1  -
@@ -13656,6 +13759,7 @@ pub_172_00411580  ProcDsc=0x00411970  ProcSize=0x3F0  codeStart=0x00411580
 ======================================================================
 pub_173_00411998  ProcDsc=0x00411D8C  ProcSize=0x3F4  codeStart=0x00411998
 ======================================================================
+; params (1): ByRef a0
 00411998  94 02                    LitI2  val=1
 0041199A  72 01                    UMiI2  -
 0041199C  66 05 6C FF              PopTmpLdAd2  mem=stack-148
@@ -14510,6 +14614,7 @@ pub_175_0041220C  ProcDsc=0x00412632  ProcSize=0x426  codeStart=0x0041220C
 ======================================================================
 pub_176_0041265C  ProcDsc=0x00412ABC  ProcSize=0x460  codeStart=0x0041265C
 ======================================================================
+; params (1): ByRef a0
 0041265C  94 02                    LitI2  val=1
 0041265E  72 01                    UMiI2  -
 00412660  C2 03 7A FF              FStI2  mem=stack-134
@@ -14820,6 +14925,7 @@ pub_176_0041265C  ProcDsc=0x00412ABC  ProcSize=0x460  codeStart=0x0041265C
 ======================================================================
 pub_177_00412AE4  ProcDsc=0x00412F40  ProcSize=0x45C  codeStart=0x00412AE4
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 00412AE4  94 02                    LitI2  val=1
 00412AE6  B8 03 7A FF              FLdRfVar  mem=stack-134
 00412AEA  02 04 10 00              ILdI2  mem=stack+16
@@ -15109,6 +15215,7 @@ pub_177_00412AE4  ProcDsc=0x00412F40  ProcSize=0x45C  codeStart=0x00412AE4
 ======================================================================
 pub_178_00412F6C  ProcDsc=0x00413404  ProcSize=0x498  codeStart=0x00412F6C
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00412F6C  02 04 10 00              ILdI2  mem=stack+16
 00412F70  1E 02                    CI4I2  -
 00412F72  98 05 08 00 AC 04        FMemLdRf  mem=stack+8.f04AC
@@ -15438,6 +15545,7 @@ pub_178_00412F6C  ProcDsc=0x00413404  ProcSize=0x498  codeStart=0x00412F6C
 ======================================================================
 pub_179_0041342C  ProcDsc=0x00413910  ProcSize=0x4E4  codeStart=0x0041342C
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 0041342C  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
 00413432  50 07 00 00 00 00        LitI4  val=0
 00413438  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090
@@ -15771,6 +15879,7 @@ pub_179_0041342C  ProcDsc=0x00413910  ProcSize=0x4E4  codeStart=0x0041342C
 ======================================================================
 pub_180_00413938  ProcDsc=0x00413E22  ProcSize=0x4EA  codeStart=0x00413938
 ======================================================================
+; params (1): ByRef a0
 00413938  82 05 08 00 50 02        FMemLdI2  mem=stack+8.f0250
 0041393E  92 02                    LitI2  val=0
 00413940  6A 00                    NeI2  -
@@ -16410,6 +16519,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 ======================================================================
 pub_182_004143C8  ProcDsc=0x00414928  ProcSize=0x560  codeStart=0x004143C8
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 004143C8  02 04 0C 00              ILdI2  mem=stack+12
 004143CC  1E 02                    CI4I2  -
 004143CE  98 05 08 00 AC 04        FMemLdRf  mem=stack+8.f04AC
@@ -17177,6 +17287,7 @@ pub_183_00414954  ProcDsc=0x00414EEE  ProcSize=0x59A  codeStart=0x00414954
 ======================================================================
 pub_184_00414F18  ProcDsc=0x004154E6  ProcSize=0x5CE  codeStart=0x00414F18
 ======================================================================
+; params (3): ByRef a0, ByVal a1, ByVal a2
 00414F18  94 02                    LitI2  val=1
 00414F1A  72 01                    UMiI2  -
 00414F1C  A2 05 08 00 1C 03        FMemStI2  mem=stack+8.f031C
@@ -17583,6 +17694,7 @@ pub_184_00414F18  ProcDsc=0x004154E6  ProcSize=0x5CE  codeStart=0x00414F18
 ======================================================================
 pub_185_00415514  ProcDsc=0x00415AF0  ProcSize=0x5DC  codeStart=0x00415514
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 00415514  02 04 0C 00              ILdI2  mem=stack+12
 00415518  1E 02                    CI4I2  -
 0041551A  98 05 08 00 AC 04        FMemLdRf  mem=stack+8.f04AC
@@ -18414,6 +18526,7 @@ pub_186_00415B1C  ProcDsc=0x0041610E  ProcSize=0x5F2  codeStart=0x00415B1C
 ======================================================================
 pub_187_00416138  ProcDsc=0x00416762  ProcSize=0x62A  codeStart=0x00416138
 ======================================================================
+; params (1): ByRef a0
 00416138  02 04 0C 00              ILdI2  mem=stack+12
 0041613C  1E 02                    CI4I2  -
 0041613E  98 05 08 00 AC 04        FMemLdRf  mem=stack+8.f04AC
@@ -18818,6 +18931,7 @@ pub_187_00416138  ProcDsc=0x00416762  ProcSize=0x62A  codeStart=0x00416138
 ======================================================================
 pub_188_0041678C  ProcDsc=0x00416F82  ProcSize=0x7F6  codeStart=0x0041678C
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0041678C  18 04 0C 00              FLdI4  mem=stack+12
 00416790  38 06 54 C9 41 00        ImpAdCall  call=pub_122_00409410@0041C954
 00416796  50 07 20 00 00 00        LitI4  val=32
@@ -19389,6 +19503,7 @@ pub_188_0041678C  ProcDsc=0x00416F82  ProcSize=0x7F6  codeStart=0x0041678C
 ======================================================================
 pub_189_00417834_hot  ProcDsc=0x004180A0  ProcSize=0x86C  codeStart=0x00417834
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 00417834  94 02                    LitI2  val=1
 00417836  72 01                    UMiI2  -
 00417838  A2 05 08 00 02 03        FMemStI2  mem=stack+8.f0302
@@ -20505,6 +20620,7 @@ priv_190_004180D0  ProcDsc=0x00418984  ProcSize=0x8B4  codeStart=0x004180D0  ent
 ======================================================================
 pub_191_004189B0  ProcDsc=0x00419300  ProcSize=0x950  codeStart=0x004189B0
 ======================================================================
+; params (3): ByRef a0, ByRef a1, ByRef a2
 004189B0  92 02                    LitI2  val=0
 004189B2  C2 03 74 FF              FStI2  mem=stack-140
 004189B6  92 02                    LitI2  val=0
@@ -21180,6 +21296,7 @@ pub_191_004189B0  ProcDsc=0x00419300  ProcSize=0x950  codeStart=0x004189B0
 ======================================================================
 pub_192_00419328  ProcDsc=0x00419D70  ProcSize=0xA48  codeStart=0x00419328
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 00419328  50 07 14 00 00 00        LitI4  val=20
 0041932E  50 07 00 00 00 00        LitI4  val=0
 00419334  98 05 08 00 DC 04        FMemLdRf  mem=stack+8.f04DC
@@ -21928,6 +22045,7 @@ pub_192_00419328  ProcDsc=0x00419D70  ProcSize=0xA48  codeStart=0x00419328
 ======================================================================
 pub_193_00419DA0  ProcDsc=0x0041A850  ProcSize=0xAB0  codeStart=0x00419DA0
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 00419DA0  50 07 19 00 00 00        LitI4  val=25
 00419DA6  50 07 00 00 00 00        LitI4  val=0
 00419DAC  98 05 08 00 DC 04        FMemLdRf  mem=stack+8.f04DC
@@ -23317,6 +23435,7 @@ Sub_Main  ProcDsc=0x0041B4E2  ProcSize=0xC66  codeStart=0x0041A87C
 ======================================================================
 pub_195_0041B530  ProcDsc=0x0041C30E  ProcSize=0xDDE  codeStart=0x0041B530
 ======================================================================
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 0041B530  92 02                    LitI2  val=0
 0041B532  C2 03 7A FF              FStI2  mem=stack-134
 0041B536  02 04 14 00              ILdI2  mem=stack+20
@@ -24291,6 +24410,7 @@ pub_195_0041B530  ProcDsc=0x0041C30E  ProcSize=0xDDE  codeStart=0x0041B530
 ======================================================================
 pub_196_0041D56C  ProcDsc=0x00420F92  ProcSize=0x3A26  codeStart=0x0041D56C
 ======================================================================
+; params (2): ByRef a0, ByRef a1
 0041D56C  02 04 10 00              ILdI2  mem=stack+16
 0041D570  A2 05 08 00 1E 03        FMemStI2  mem=stack+8.f031E
 0041D576  92 02                    LitI2  val=0
@@ -28162,6 +28282,7 @@ pub_196_0041D56C  ProcDsc=0x00420F92  ProcSize=0x3A26  codeStart=0x0041D56C
 ======================================================================
 pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 ======================================================================
+; params (6): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5
 00420FC0  38 06 24 D5 41 00        ImpAdCall  call=pub_002_00403264@0041D524
 00420FC6  02 04 14 00              ILdI2  mem=stack+20
 00420FCA  A6 02                    LitI2  val=10
