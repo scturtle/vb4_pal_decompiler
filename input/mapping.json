@@ -1,2532 +1,2532 @@
 {
-    "_meta": {
-        "description": "VB4 p-code (pal_pseudocode.txt) → readable name mapping",
-        "sections": "functions / globals / global_refs / pal_funcs / params / stack_vars / struct_fields / var_to_struct",
-        "source": "docs/vb40032.md",
-        "rules": "命名以 DOS 版为准，sdlpal 仅作结构参考"
-    },
-    "functions": {
-        "Sub_Main": "Sub_Main",
-        "pub_000": "entry_stub_show_text",
-        "pub_001": "entry_stub_show_text_and_dialog",
-        "pub_002": "DoEvents_check_exit",
-        "pub_004": "battle_set_action_code",
-        "pub_005": "swap_values",
-        "pub_006": "calc_sprite_y_offset",
-        "pub_007": "load_battle_effect_sprites",
-        "pub_008": "check_key_pressed",
-        "pub_009": "increment_script_ip",
-        "pub_010": "read_key",
-        "pub_011": "play_sound",
-        "pub_012": "battle_set_action_walk",
-        "pub_013": "copy_subfile_data",
-        "pub_014": "wait_frame",
-        "pub_015": "load_subfile_to_buf",
-        "pub_016": "draw_string",
-        "pub_017": "check_battle_action",
-        "pub_018": "push_screen_buffer",
-        "pub_019": "check_trigger_flag",
-        "pub_020": "draw_text_at",
-        "pub_021": "count_alive_enemies",
-        "pub_022": "random_enemy_id",
-        "pub_023": "clear_enemy_poison",
-        "pub_024": "load_event_objects",
-        "pub_025": "read_file_and_close",
-        "pub_026": "load_fbp_subfile",
-        "pub_027": "draw_npc_sprite",
-        "pub_028": "count_item_total",
-        "pub_029": "read_palette",
-        "pub_030": "restore_screen",
-        "pub_031": "menu_inventory",
-        "pub_032": "load_map_data",
-        "pub_033": "update_trail_data",
-        "pub_034": "check_party_alive",
-        "pub_035": "find_magic_index",
-        "pub_036": "find_inventory_item",
-        "pub_037": "load_fbp_two_scene",
-        "pub_038": "update_shake",
-        "pub_039": "set_auto_battle_targets",
-        "pub_040": "get_player_attribute_total",
-        "pub_041": "menu_loop",
-        "pub_042": "show_dialog_image_and_wait",
-        "pub_043": "get_party_role_id",
-        "pub_044": "check_in_battle",
-        "pub_045": "menu_Status",
-        "pub_046": "update_party_position",
-        "pub_047": "update_walk_frame",
-        "pub_048": "read_ball_mkf_index",
-        "pub_049": "calc_magic_damage",
-        "pub_050": "read_file_to_buf",
-        "pub_051": "random_alive_party_member",
-        "pub_052": "reset_battle_sprite_pos",
-        "pub_053": "read_mkf_subfile",
-        "pub_054": "load_battle_sprites",
-        "pub_055": "read_rng_subfile",
-        "pub_056": "open_file",
-        "pub_057": "load_sound_data",
-        "pub_058": "load_theurgy_image",
-        "pub_059": "count_equipped_items",
-        "pub_060": "calc_battle_damage",
-        "pub_061": "get_subfile_len",
-        "pub_062": "frame_menu",
-        "pub_063": "load_scene_events",
-        "pub_064": "draw_battle_status_bar",
-        "pub_065": "fade_out_palette",
-        "pub_066": "draw_menu_with_text_and_hp",
-        "pub_067": "release_resources_exit",
-        "pub_068": "trim_string",
-        "pub_069": "make_dialog_frame",
-        "pub_070": "unequip_item",
-        "pub_071": "fade_palette_to",
-        "pub_072": "show_face",
-        "pub_073": "process_menu",
-        "pub_074": "draw_battle_row_sprite",
-        "pub_075": "enemy_cast_anim",
-        "pub_076": "show_fbp_picture",
-        "pub_077": "show_number_to_tree",
-        "pub_078": "cd_stop",
-        "pub_079": "adjust_battle_sprite_pos",
-        "pub_080": "cross_fade_out",
-        "pub_081": "load_script_data",
-        "pub_082": "sell_item_menu",
-        "pub_083": "get_sprite_frame_data",
-        "pub_084": "fade_in",
-        "pub_085": "update_damage_numbers",
-        "pub_086": "play_battle_effect",
-        "pub_087": "show_enemy_damage",
-        "pub_088": "draw_menu_frame",
-        "pub_089": "add_damage_number",
-        "pub_090": "apply_enemy_poison_damage",
-        "pub_091": "check_trigger_events",
-        "pub_093": "check_player_alive",
-        "pub_094": "menu_select_party",
-        "pub_095": "select_magic",
-        "pub_096": "draw_object_icon",
-        "pub_097": "show_money",
-        "pub_098": "init_enemy_positions",
-        "pub_099": "display_number",
-        "pub_100": "show_small_number",
-        "pub_101": "select_battle_target",
-        "pub_102": "add_inventory_item",
-        "pub_103": "enemy_hit_reaction",
-        "pub_104": "play_rng_effect",
-        "pub_105": "draw_rng_frame",
-        "pub_106": "query_midi_status",
-        "pub_107": "animate_battle_sprites",
-        "pub_108": "query_cd_status",
-        "pub_109": "get_scene_map_source",
-        "pub_110": "player_attack_anim",
-        "pub_111": "draw_effect_sprites",
-        "pub_112": "player_attack_execute",
-        "pub_113": "cd_stopplay",
-        "pub_114": "midi_close",
-        "pub_115": "render_scene_and_fade",
-        "pub_116": "init_walk_frames",
-        "pub_117": "stop_all_and_exit",
-        "pub_118": "npc_walk_one_step",
-        "pub_119": "render_scene_with_rng",
-        "pub_120": "remove_inventory_item",
-        "pub_121": "scene_transition",
-        "pub_122": "sort_player_magic",
-        "pub_123": "walk_party_fastest",
-        "pub_124": "play_cd",
-        "pub_125": "compact_inventory",
-        "pub_126": "init_battle_state",
-        "pub_127": "yes_no_menu",
-        "pub_128": "select_enemy_target",
-        "pub_129": "get_sprites_curr_scene",
-        "pub_130": "menu_system",
-        "pub_131": "select_party_member",
-        "pub_132": "play_theurgy_anim",
-        "pub_133": "show_party_hp_mp_change",
-        "pub_134": "load_npc_sprites",
-        "pub_135": "stop_app_and_music",
-        "pub_136": "show_equip_detail",
-        "pub_137": "use_item_menu",
-        "pub_138": "load_team_mgo",
-        "pub_139": "load_enemy_sprites",
-        "pub_140": "scroll_scene_with_fbp",
-        "pub_141": "play_theurgy_rng_anim",
-        "pub_142": "add_magic_to_player",
-        "pub_143": "menu_select",
-        "pub_144": "draw_player_status",
-        "pub_145": "draw_menu_table",
-        "pub_146": "draw_role_battle_frame",
-        "pub_147": "load_enemy_data",
-        "pub_148": "fade_in_pic",
-        "pub_149": "update_player_battle_status",
-        "pub_150": "cast_theurgy_anim",
-        "pub_151": "show_role_attributes",
-        "pub_152": "redraw_tile",
-        "pub_153": "update_enemy_battle_anim",
-        "pub_154": "select_direction_menu",
-        "pub_155": "calc_player_attack_damage",
-        "pub_156": "select_battle_action",
-        "pub_157": "increase_player_attr",
-        "pub_158": "flee_from_battle",
-        "pub_159": "check_save_file",
-        "pub_160": "play_all_kinds_music",
-        "pub_161": "read_direction_input",
-        "pub_162": "play_opening_anim",
-        "pub_164": "draw_battle_scene",
-        "pub_165": "produce_screen_map",
-        "pub_166": "render_dialog_control",
-        "pub_167": "process_AutoScript",
-        "pub_168": "SaveRPG_internal",
-        "pub_169": "LoadRPG_internal",
-        "pub_170": "enemy_attack_enemy",
-        "pub_171": "add_sprite_to_tree",
-        "pub_172": "set_team_draw",
-        "pub_173": "calc_display_exp",
-        "pub_174": "show_status_icons",
-        "pub_175": "draw_enemy_battle_frame",
-        "pub_176": "buy_item_menu",
-        "pub_177": "level_up_player",
-        "pub_178": "player_attack_player",
-        "pub_179": "show_item_description",
-        "pub_180": "process_event_objects",
-        "pub_181": "Load_system_files",
-        "pub_182": "player_attack_all",
-        "pub_183": "update_viewport_scroll",
-        "pub_184": "enemy_attack_role",
-        "pub_185": "role_physical_attack",
-        "pub_186": "inventory_use_menu",
-        "pub_187": "show_role_status",
-        "pub_188": "select_thurgy",
-        "pub_189": "process_Script",
-        "pub_191": "select_item_with_filter",
-        "pub_192": "enemy_physical_attack",
-        "pub_193": "calc_display_theurgy",
-        "pub_195": "enemy_magical_attack",
-        "pub_196": "process_Battle",
-        "pub_197": "process_scripts",
-        "priv_003": "timer_entry_stub",
-        "priv_092": "fade_in_or_out_internal",
-        "priv_163": "timer_midi_cd_callback",
-        "priv_190": "init_key_definitions"
-    },
-    "globals": {
-        "Me.f0000": "tmp_file_size",
-        "Me.f0004": "fh_M_MSG",
-        "Me.f0008": "fh_MGO_MKF",
-        "Me.f000C": "fh_F_MKF",
-        "Me.f0010": "fh_ABC_MKF",
-        "Me.f0014": "fh_RNG_MKF",
-        "Me.f0018": "data_battlefield",
-        "Me.f0030": "data_levelup_exp",
-        "Me.f0048": "data_magic",
-        "Me.f0060": "data_enemy_team",
-        "Me.f0078": "data_enemy",
-        "Me.f0090": "menu_bg_data",
-        "Me.f00A8": "data_object_ext",
-        "Me.f00C0": "screen_buf",
-        "Me.f00D8": "bg_buf",
-        "Me.f00F0": "sss_script_data",
-        "Me.f0108": "sss_script_data_2",
-        "Me.f0120": "ball_mkf_data",
-        "Me.f0138": "events",
-        "Me.f0150": "palette_data",
-        "Me.f0168": "fire_mkf_data",
-        "Me.f0180": "map_data_buf",
-        "Me.f0198": "mgo_frame_offsets",
-        "Me.f01B0": "global_buf_1",
-        "Me.f01C8": "global_buf_2",
-        "Me.f01E0": "word_glyph_index",
-        "Me.f01F8": "rng_anim_data",
-        "Me.f0224": "dialog_width",
-        "Me.f0226": "dialog_height",
-        "Me.f0228": "dialog_type",
-        "Me.f022A": "dialog_x",
-        "Me.f022C": "dialog_y",
-        "Me.f022E": "dialog_color",
-        "Me.f0232": "music_mode_init",
-        "Me.f0234": "flag_trigger",
-        "Me.f0236": "flag_key_updown",
-        "Me.f0238": "has_sfx_raw",
-        "Me.f023A": "has_sfx",
-        "Me.f023C": "music_mode",
-        "Me.f023E": "use_cd_flag",
-        "Me.f0240": "midi_active",
-        "Me.f0242": "midi_playing",
-        "Me.f0244": "cd_active",
-        "Me.f0246": "cd_track_valid",
-        "Me.f0248": "cd_track_num",
-        "Me.f024E": "mutex_shaking",
-        "Me.f0250": "palette_fade_active",
-        "Me.f0254": "fh_temp",
-        "Me.f0258": "rpg_to_load",
-        "Me.f025A": "max_save_number",
-        "Me.f025C": "RPG_save_number",
-        "Me.f025E": "curr_scene_id_cache",
-        "Me.f0260": "RPG_other_peoples",
-        "Me.f0262": "RPG_viewport_x",
-        "Me.f0264": "RPG_viewport_y",
-        "Me.f0266": "RPG_team_number",
-        "Me.f0268": "RPG_curr_scene",
-        "Me.f026A": "scene_to_load",
-        "Me.f026C": "RPG_color_begin_ptr",
-        "Me.f026E": "RPG_team_direction",
-        "Me.f0274": "x_off",
-        "Me.f0276": "y_off",
-        "Me.f0278": "team_abstract_x",
-        "Me.f027A": "team_abstract_y",
-        "Me.f027C": "RPG_music_number",
-        "Me.f027E": "RPG_battle_music_number",
-        "Me.f0280": "RPG_battle_scene_number",
-        "Me.f0286": "party_abs_x",
-        "Me.f0288": "party_abs_y",
-        "Me.f028A": "RPG_role_locate_layer",
-        "Me.f028C": "scene_flags",
-        "Me.f0290": "sss_subfile_count",
-        "Me.f0294": "event_object_count",
-        "Me.f0296": "curr_scene_event_count",
-        "Me.f0298": "RPG_screen_wave_grade",
-        "Me.f029A": "wave_progression",
-        "Me.f029C": "shake_intensity",
-        "Me.f02A0": "shake_duration",
-        "Me.f02A4": "screen_buffer_ptr",
-        "Me.f02A8": "dialog_y_pos",
-        "Me.f02B0": "menu_bg_size",
-        "Me.f02B4": "RPG_money",
-        "Me.f02B8": "RPG_current_calabash_number",
-        "Me.f02BA": "multi_event_state",
-        "Me.f02C2": "battle_curr_role_idx",
-        "Me.f02C4": "battle_target_cursor",
-        "Me.f02C8": "mutex_can_change_palette",
-        "Me.f02CA": "flag_parallel_mutex",
-        "Me.f02CC": "effect_particle_count",
-        "Me.f02D0": "auto_battle_flag",
-        "Me.f02D4": "attack_done_flag",
-        "Me.f02DA": "enemy_pos_count",
-        "Me.f02DC": "enemy_max_id",
-        "Me.f02DE": "team_number",
-        "Me.f02E0": "battle_action_queue",
-        "Me.f02E8": "npc_curr_frame",
-        "Me.f02EA": "npc_direction",
-        "Me.f02EC": "curr_npc_idx",
-        "Me.f02EE": "sprite_frame_count",
-        "Me.f02F0": "magic_select_tmp",
-        "Me.f02F4": "damage_target_hp",
-        "Me.f02FA": "battle_max_hp_sum",
-        "Me.f0300": "coop_magic_tmp",
-        "Me.f0302": "redraw_hp_mp_flag",
-        "Me.f0304": "flag_battling",
-        "Me.f0306": "redraw_flag",
-        "Me.f030A": "battle_viewport_x",
-        "Me.f030C": "battle_viewport_y",
-        "Me.f030E": "RPG_ememy_chase_rate",
-        "Me.f0310": "RPG_change_chaserate_times",
-        "Me.f0312": "battle_enemy_idx",
-        "Me.f0314": "effect_frame_count",
-        "Me.f0318": "data_mkf_handle",
-        "Me.f031C": "in_battle_action",
-        "Me.f031E": "battle_param",
-        "Me.f0324": "blow_away_flag",
-        "Me.f0326": "battle_y_offset",
-        "Me.f0328": "relative_viewport_x",
-        "Me.f032A": "relative_viewport_y",
-        "Me.f0330": "viewport_x_bak",
-        "Me.f0332": "viewport_y_bak",
-        "Me.f0334": "viewport_width",
-        "Me.f0336": "viewport_height",
-        "Me.f0338": "viewport_offset",
-        "Me.f033A": "frame_counter",
-        "Me.f033C": "key_pressed",
-        "Me.f0342": "battle_sub_flag",
-        "Me.f0344": "word_dat_data",
-        "Me.f035C": "data_mkf_chunk12",
-        "Me.f0374": "damage_numbers",
-        "Me.f038C": "scenes",
-        "Me.f03DC": "data_levelup_magic",
-        "Me.f03FC": "data_store",
-        "Me.f04AC": "party",
-        "Me.f04C4": "trail",
-        "Me.f04DC": "battle_order_array",
-        "Me.f04F4": "save_temp_buf",
-        "Me.f050C": "rng_anim_frames",
-        "Me.f0524": "battle_action_queue_ext",
-        "Me.f053C": "battle_sprite_ext",
-        "Me.f0584": "battle_role_data_copy",
-        "Me.f059C": "battle_role_action",
-        "Me.f05B4": "enemy_battle_data",
-        "Me.f05CC": "player_battle_sprite",
-        "Me.f05E4": "effect_x_coords",
-        "Me.f05FC": "effect_y_coords",
-        "Me.f0614": "effect_frames",
-        "Me.f062C": "player_hit_flags",
-        "Me.f068C": "enemy_runtime_data",
-        "Me.f06A4": "enemy_pos_data",
-        "Me.f06C4": "player_status",
-        "Me.f06E4": "enemy_status",
-        "Me.f0704": "poison_status",
-        "Me.f0724": "enemy_poison_status",
-        "Me.f0744": "objects",
-        "Me.f075C": "inventory",
-        "Me.f0774": "equipment_effect",
-        "Me.f079C": "playerRoles",
-        "Me.f07BC": "playerExp",
-        "Me.f07DC": "npc_display_data",
-        "Me.f07F4": "battle_effect_data",
-        "Me.f0824": "theurgy_data",
-        "Me.f083C": "key_direction_map",
-        "Me.f0854": "key_scan_codes",
-        "Me.f0870": "exit_flag",
-        "Me.f0872": "init_done_flag",
-        "Me.f01FC": "max_subfile_size",
-        "Me.f0200": "dialog_text_x",
-        "Me.f0202": "dialog_text_y",
-        "Me.f0204": "image_draw_x",
-        "Me.f0206": "image_draw_y",
-        "Me.f0208": "image_lookup_key",
-        "Me.f020A": "image_draw_flag",
-        "Me.f020C": "image_offset_table",
-        "Me.f0230": "menu_cursor_pos",
-        "Me.f024A": "music_track_arg",
-        "Me.f024C": "music_mode_arg",
-        "Me.f0270": "viewport_flags",
-        "Me.f0272": "viewport_flags_2",
-        "Me.f0282": "scene_enter_flag",
-        "Me.f0284": "scene_leave_flag",
-        "Me.f029E": "shake_active",
-        "Me.f02A2": "battle_enemy_hp",
-        "Me.f02AA": "theurgy_effect_count",
-        "Me.f02AC": "theurgy_effect_max",
-        "Me.f02BC": "multi_event_param",
-        "Me.f02BE": "multi_event_param_2",
-        "Me.f02C0": "multi_event_param_3",
-        "Me.f02C6": "battle_role_idx_2",
-        "Me.f02CE": "effect_sub_count",
-        "Me.f02D2": "battle_action_param",
-        "Me.f02D8": "battle_extra_param",
-        "Me.f02E2": "npc_frame_base",
-        "Me.f02E4": "npc_sprite_num",
-        "Me.f02E6": "npc_dir_frame",
-        "Me.f02F2": "magic_select_idx",
-        "Me.f02F6": "battle_select_idx",
-        "Me.f02F8": "battle_select_max",
-        "Me.f02FC": "battle_action_type",
-        "Me.f0308": "fade_step_count",
-        "Me.f0322": "battle_dest_x",
-        "Me.f032C": "viewport_scroll_x",
-        "Me.f032E": "viewport_scroll_y",
-        "Me.f0340": "battle_extra_flag",
-        "Me.f03A4": "key_state_array",
-        "Me.f041C": "fh_M_MSG_global",
-        "Me.f0434": "key_repeat_delay",
-        "Me.f044C": "key_pressed_flags",
-        "Me.f0464": "key_direction_flags",
-        "Me.f047C": "battle_role_data_ext",
-        "Me.f0494": "battle_enemy_data_ext",
-        "Me.f0554": "battle_sprite_data",
-        "Me.f056C": "battle_sprite_data_ext",
-        "Me.f0644": "enemy_battle_data_ext",
-        "Me.f065C": "key_scan_map",
-        "Me.f0674": "key_action_map",
-        "Me.f086C": "vb_form_ref",
-        "Me.f080C": "file_offset_table"
-    },
-    "global_refs": {
-        "global_00000240": "midi_active",
-        "global_00000242": "midi_playing",
-        "global_00000244": "cd_active",
-        "global_00000246": "cd_track_valid",
-        "global_00000248": "cd_track_num",
-        "global_000003BC": "key_mapping_table",
-        "global_0000041C": "fh_M_MSG_global",
-        "global_00000434": "key_repeat_delay",
-        "global_0000044C": "key_pressed_flags",
-        "global_00000464": "key_direction_flags",
-        "global_0000050C": "rng_anim_frames_global",
-        "global_0000065C": "key_scan_map",
-        "global_00000674": "key_action_map",
-        "global_0000083C": "key_dir_order",
-        "global_00000854": "key_scan_codes_global",
-        "global_00000870": "exit_flag",
-        "global_00000878": "vb_com_object_1",
-        "global_0000087C": "vb_com_object_2",
-        "global_000002A4": "screen_flag",
-        "global_00000334": "screen_y_offset",
-        "global_00000336": "screen_width",
-        "global_00000338": "screen_height",
-        "global_000001FC": "screen_flag_2"
-    },
-    "pal_funcs": {
-        "Pal.CKey": "PAL_CheckKey",
-        "Pal.ClrScr": "PAL_ClearScreen",
-        "Pal.DrawString": "PAL_DrawString",
-        "Pal.FlushDSound": "PAL_FlushDSound",
-        "Pal.GetActiveWindow": "PAL_GetActiveWindow",
-        "Pal.GetKeyDefine": "PAL_GetKeyDefine",
-        "Pal.InitCD": "PAL_InitCD",
-        "Pal.InitDSound": "PAL_InitDSound",
-        "Pal.InitInput": "PAL_InitInput",
-        "Pal.LoadDSound": "PAL_LoadDSound",
-        "Pal.PlayAvi": "PAL_PlayAvi",
-        "Pal.PlayDSound": "PAL_PlayDSound",
-        "Pal.ReadKey": "PAL_ReadKey",
-        "Pal.ResetMode": "PAL_ResetMode",
-        "Pal.ShutDownInput": "PAL_ShutDownInput",
-        "Pal.ShutdownDSound": "PAL_ShutdownDSound",
-        "Pal.addtre": "PAL_AddToTree",
-        "Pal.adpic": "PAL_AddPic",
-        "Pal.adpic0": "PAL_AddPic0",
-        "Pal.arrayptr": "PAL_ArrayPtr",
-        "Pal.cleartre": "PAL_ClearTree",
-        "Pal.clripna": "PAL_ClearClipNA",
-        "Pal.clsmen": "PAL_ClearMenu",
-        "Pal.copymen": "PAL_CopyMem",
-        "Pal.corpate": "PAL_CorPalate",
-        "Pal.cvlong": "PAL_CvLong",
-        "Pal.cvpate": "PAL_CvPalate",
-        "Pal.delay1": "PAL_Delay",
-        "Pal.exbb": "PAL_ExBB",
-        "Pal.exgm1": "PAL_ExGm1",
-        "Pal.exgm2": "PAL_ExGm2",
-        "Pal.exgop": "PAL_ExGop",
-        "Pal.exmap": "PAL_ExMap",
-        "Pal.exmyll": "PAL_ExMyll",
-        "Pal.expate": "PAL_ExPalate",
-        "Pal.exrij": "PAL_ExRij",
-        "Pal.extf": "PAL_ExTF",
-        "Pal.ffxy": "PAL_Ffxy",
-        "Pal.fupate": "PAL_FuPalate",
-        "Pal.getbin": "PAL_GetBin",
-        "Pal.intpate": "PAL_IntPalate",
-        "Pal.killtimer": "PAL_KillTimer",
-        "Pal.nipwa": "PAL_NipWA",
-        "Pal.nipwb": "PAL_NipWB",
-        "Pal.nipwseg": "PAL_NipWSeg",
-        "Pal.ntre": "PAL_NTree",
-        "Pal.paksize": "PAL_PakSize",
-        "Pal.popscr": "PAL_PopScreen",
-        "Pal.popscr6": "PAL_PopScreen6",
-        "Pal.popscr6a": "PAL_PopScreen6a",
-        "Pal.popscrb": "PAL_PopScreenB",
-        "Pal.pushscr": "PAL_PushScreen",
-        "Pal.putipna": "PAL_PutIpNA",
-        "Pal.putp": "PAL_PutP",
-        "Pal.rblk": "PAL_Rblk",
-        "Pal.rhrff": "PAL_Rhrff",
-        "Pal.rngput": "PAL_RngPut",
-        "Pal.rripa": "PAL_RripA",
-        "Pal.rripafreeze": "PAL_RripAFreeze",
-        "Pal.settimer": "PAL_SetTimer",
-        "Pal.unpak": "PAL_Unpak",
-        "Pal.vmap": "PAL_VMap",
-        "Pal.vwindow": "PAL_VWindow",
-        "Pal.wtime": "PAL_WaitTime"
-    },
-    "params": {
-        "pub_009": [
-            "ip"
-        ],
-        "pub_013": [
-            "magicIdx"
-        ],
-        "pub_014": [
-            "frames"
-        ],
-        "pub_015": [
-            "subfileNum"
-        ],
-        "pub_023": [
-            "enemyIdx"
-        ],
-        "pub_026": [
-            "subfileNum"
-        ],
-        "pub_028": [
-            "itemID"
-        ],
-        "pub_029": [
-            "subfileNum"
-        ],
-        "pub_037": [
-            "subfileNum"
-        ],
-        "pub_036": [
-            "itemID"
-        ],
-        "pub_063": [
-            "sceneID"
-        ],
-        "pub_065": [
-            "speed"
-        ],
-        "pub_068": [
-            "str"
-        ],
-        "pub_071": [
-            "speed"
-        ],
-        "pub_081": [
-            "subfileNum"
-        ],
-        "pub_084": [
-            "speed"
-        ],
-        "pub_086": [
-            "roleIdx"
-        ],
-        "pub_087": [
-            "thyrgyType"
-        ],
-        "pub_097": [
-            "amount"
-        ],
-        "pub_133": [
-            "thyrgyType"
-        ],
-        "pub_075": [
-            "enemyIdx"
-        ],
-        "pub_080": [
-            "speed"
-        ],
-        "pub_055": [
-            "subfileNum"
-        ],
-        "pub_058": [
-            "magicIdx"
-        ],
-        "pub_059": [
-            "itemID"
-        ],
-        "pub_044": [
-            "shakeMode"
-        ],
-        "pub_048": [
-            "subfileNum"
-        ],
-        "pub_115": [
-            "fadeSpeed"
-        ],
-        "pub_111": [
-            "useOverlay"
-        ],
-        "pub_150": [
-            "itemID"
-        ],
-        "pub_156": [
-            "menuType"
-        ],
-        "pub_093": [
-            "roleIdx"
-        ],
-        "pub_187": [
-            "roleIdx"
-        ],
-        "pub_164": [
-            "frameCount",
-            "speed"
-        ],
-        "pub_168": [
-            "saveSlot"
-        ],
-        "pub_169": [
-            "saveSlot"
-        ],
-        "pub_173": [
-            "exp"
-        ],
-        "pub_176": [
-            "storeID"
-        ],
-        "pub_180": [
-            "checkTrigger"
-        ],
-        "pub_122": [
-            "roleID"
-        ],
-        "pub_154": [
-            "direction"
-        ],
-        "pub_005": [
-            "v1",
-            "v2"
-        ],
-        "pub_006": [
-            "enemyIdx",
-            "multiplier"
-        ],
-        "pub_011": [
-            "soundNum",
-            "keepFlag"
-        ],
-        "pub_017": [
-            "actionParam",
-            "directionParam"
-        ],
-        "pub_020": [
-            "x",
-            "y",
-            "wordIdx",
-            "color"
-        ],
-        "pub_025": [
-            "filename",
-            "subfileNum"
-        ],
-        "pub_032": [
-            "x",
-            "y",
-            "layer"
-        ],
-        "pub_035": [
-            "partyIdx",
-            "magicID"
-        ],
-        "pub_040": [
-            "roleID",
-            "attrIdx"
-        ],
-        "pub_049": [
-            "baseDamage",
-            "elementIdx"
-        ],
-        "pub_050": [
-            "subfileNum",
-            "destIdx"
-        ],
-        "pub_052": [
-            "roleIdx"
-        ],
-        "pub_053": [
-            "subfileNum",
-            "destBuf"
-        ],
-        "pub_056": [
-            "filename",
-            "writeMode"
-        ],
-        "pub_060": [
-            "attack",
-            "defense"
-        ],
-        "pub_061": [
-            "fileHandle",
-            "subfileNum"
-        ],
-        "pub_069": [
-            "x",
-            "y"
-        ],
-        "pub_070": [
-            "itemID",
-            "count"
-        ],
-        "pub_076": [
-            "subfileNum",
-            "rngSubfile"
-        ],
-        "pub_083": [
-            "roleIdx",
-            "frame"
-        ],
-        "pub_136": [
-            "roleID",
-            "equipIdx"
-        ],
-        "pub_102": [
-            "itemID",
-            "amount"
-        ],
-        "pub_104": [
-            "rngSubfile",
-            "frameCount"
-        ],
-        "pub_107": [
-            "startIdx",
-            "endIdx"
-        ],
-        "pub_109": [
-            "sceneID"
-        ],
-        "pub_110": [
-            "roleIdx",
-            "hasEffect"
-        ],
-        "pub_112": [
-            "roleIdx",
-            "targetRole"
-        ],
-        "pub_118": [
-            "npcIdx",
-            "stepCount"
-        ],
-        "pub_120": [
-            "itemID",
-            "amount"
-        ],
-        "pub_124": [
-            "trackNum",
-            "musicNum",
-            "trackValid"
-        ],
-        "pub_127": [
-            "optionFlags",
-            "labelIdx"
-        ],
-        "pub_151": [
-            "x",
-            "y",
-            "roleID",
-            "showEquip"
-        ],
-        "pub_167": [
-            "npcIdx",
-            "scriptEntry"
-        ],
-        "pub_170": [
-            "attackerIdx",
-            "targetIdx"
-        ],
-        "pub_178": [
-            "attackerIdx",
-            "targetIdx"
-        ],
-        "pub_182": [
-            "roleIdx",
-            "animate"
-        ],
-        "pub_184": [
-            "enemyIdx",
-            "targetRole",
-            "itemID"
-        ],
-        "pub_158": [
-            "roleIdx",
-            "isFleeing"
-        ],
-        "pub_160": [
-            "musicNum",
-            "loopFlag"
-        ],
-        "pub_161": [
-            "dx",
-            "dy"
-        ],
-        "pub_196": [
-            "battleScene",
-            "surpriseFlag"
-        ],
-        "pub_189": [
-            "eventObjID",
-            "scriptEntry"
-        ],
-        "pub_147": [
-            "enemyIdx",
-            "objectID"
-        ],
-        "pub_072": [
-            "x",
-            "y",
-            "faceID"
-        ],
-        "pub_096": [
-            "x",
-            "y",
-            "invIdx"
-        ],
-        "pub_094": [
-            "x",
-            "y",
-            "spriteNum"
-        ],
-        "pub_077": [
-            "x",
-            "y",
-            "number",
-            "colorType"
-        ],
-        "pub_099": [
-            "x",
-            "y",
-            "number",
-            "colorType"
-        ],
-        "pub_100": [
-            "x",
-            "y",
-            "number",
-            "digitCount"
-        ],
-        "pub_105": [
-            "frameDelay",
-            "frameCount",
-            "yPos"
-        ],
-        "pub_123": [
-            "startFrame",
-            "endFrame",
-            "speed"
-        ],
-        "pub_132": [
-            "magicIdx",
-            "startFrame",
-            "minFrames"
-        ],
-        "pub_140": [
-            "fbpSubfile",
-            "rngSubfile",
-            "speed"
-        ],
-        "pub_142": [
-            "roleID",
-            "magicID",
-            "magicType"
-        ],
-        "pub_148": [
-            "fbpSubfile",
-            "rngSubfile",
-            "speed"
-        ],
-        "pub_155": [
-            "targetRole",
-            "attackerRole",
-            "isCritical"
-        ],
-        "pub_157": [
-            "roleID",
-            "attrType",
-            "amount"
-        ],
-        "pub_165": [
-            "x",
-            "y",
-            "viewportIdx"
-        ],
-        "pub_166": [
-            "x",
-            "y"
-        ],
-        "pub_188": [
-            "roleID",
-            "cursorIdx",
-            "filterMask"
-        ],
-        "pub_016": [
-            "x",
-            "y",
-            "wordData",
-            "shadow",
-            "color"
-        ],
-        "pub_062": [
-            "x",
-            "y",
-            "midBlocks",
-            "highlight"
-        ],
-        "pub_066": [
-            "wordIdx",
-            "x",
-            "y",
-            "hp",
-            "labelIdx"
-        ],
-        "pub_088": [
-            "x",
-            "y",
-            "lastBlockIdx",
-            "highlight"
-        ],
-        "pub_089": [
-            "x",
-            "y",
-            "number",
-            "colorType"
-        ],
-        "pub_179": [
-            "roleIdx",
-            "labelIdx",
-            "rowTop",
-            "invIdx"
-        ],
-        "pub_185": [
-            "attackerIdx",
-            "targetIdx",
-            "targetRole",
-            "isCritical"
-        ],
-        "pub_191": [
-            "cursorIdx",
-            "bgMode",
-            "filterMask"
-        ],
-        "pub_192": [
-            "enemyIdx",
-            "targetIdx",
-            "targetRole",
-            "useMagic"
-        ],
-        "pub_193": [
-            "enemyIdx",
-            "targetRole",
-            "itemID",
-            "power"
-        ],
-        "pub_195": [
-            "enemyIdx",
-            "targetRole",
-            "itemID",
-            "power"
-        ],
-        "pub_041": [
-            "cursorPos",
-            "x",
-            "y",
-            "labelIdx",
-            "midBlocks",
-            "rowCount"
-        ],
-        "pub_143": [
-            "cursorPos",
-            "x",
-            "y",
-            "midBlocks",
-            "rowCount"
-        ],
-        "pub_145": [
-            "x",
-            "y",
-            "wordIdx",
-            "midBlocks",
-            "rowCount",
-            "highlight"
-        ],
-        "pub_152": [
-            "x",
-            "y",
-            "right",
-            "bottom",
-            "tileX",
-            "tileY"
-        ],
-        "pub_171": [
-            "x",
-            "y",
-            "depth",
-            "roleIdx",
-            "frameIdx",
-            "useNPC"
-        ],
-        "pub_197": [
-            "eventObjID",
-            "scriptEntry",
-            "opcode",
-            "operand1",
-            "operand2",
-            "operand3"
-        ],
-        "pub_103": [
-            "shakeCount"
-        ],
-        "pub_144": [
-            "x",
-            "y",
-            "roleID",
-            "highlight"
-        ],
-        "pub_177": [
-            "roleID",
-            "levelCount",
-            "restoreHPMP"
-        ]
-    },
-    "stack_vars": {
-        "pub_005": {
-            "stack-134": "retval"
-        },
-        "pub_006": {},
-        "pub_008": {
-            "stack-136": "result"
-        },
-        "pub_009": {},
-        "pub_010": {},
-        "pub_012": {
-            "stack-134": "i"
-        },
-        "pub_014": {
-            "stack-134": "i",
-            "stack-136": "result"
-        },
-        "pub_016": {
-            "stack-136": "tmp2"
-        },
-        "pub_021": {
-            "stack-136": "i",
-            "stack-138": "j"
-        },
-        "pub_022": {
-            "stack-136": "rng"
-        },
-        "pub_023": {
-            "stack-134": "i"
-        },
-        "pub_025": {
-            "stack-136": "result"
-        },
-        "pub_026": {
-            "stack-136": "filename"
-        },
-        "pub_027": {
-            "stack-134": "retval",
-            "stack-136": "x"
-        },
-        "pub_028": {
-            "stack-136": "result",
-            "stack-138": "j"
-        },
-        "pub_029": {
-            "stack-136": "filename"
-        },
-        "pub_031": {
-            "stack-134": "retval",
-            "stack-136": "tmp",
-            "stack-148": "tmp2"
-        },
-        "pub_032": {
-            "stack-136": "tmp2"
-        },
-        "pub_034": {
-            "stack-138": "i",
-            "stack-136": "foundIdx"
-        },
-        "pub_035": {
-            "stack-138": "i",
-            "stack-136": "foundIdx"
-        },
-        "pub_036": {
-            "stack-138": "i",
-            "stack-136": "foundIdx"
-        },
-        "pub_037": {
-            "stack-136": "filename"
-        },
-        "pub_038": {
-            "stack-134": "retval"
-        },
-        "pub_039": {
-            "stack-136": "i",
-            "stack-138": "result"
-        },
-        "pub_040": {
-            "stack-138": "i",
-            "stack-136": "total"
-        },
-        "pub_041": {
-            "stack-136": "i"
-        },
-        "pub_042": {
-            "stack-134": "retval"
-        },
-        "pub_043": {
-            "stack-134": "i"
-        },
-        "pub_045": {
-            "stack-134": "retval"
-        },
-        "pub_049": {
-            "stack-136": "i"
-        },
-        "pub_050": {
-            "stack-134": "retval"
-        },
-        "pub_051": {
-            "stack-136": "rng"
-        },
-        "pub_053": {
-            "stack-136": "tmp",
-            "stack-140": "filePos",
-            "stack-144": "seekResult"
-        },
-        "pub_054": {
-            "stack-136": "i",
-            "stack-134": "retval"
-        },
-        "pub_055": {
-            "stack-136": "lockMem"
-        },
-        "pub_056": {
-            "stack-136": "fh",
-            "stack-140": "fhTemp",
-            "stack-144": "openedName",
-            "stack-148": "fhTmp"
-        },
-        "pub_058": {
-            "stack-134": "tmp",
-            "stack-140": "filename"
-        },
-        "pub_059": {
-            "stack-138": "i",
-            "stack-142": "j",
-            "stack-136": "count",
-            "stack-140": "k"
-        },
-        "pub_060": {
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "k"
-        },
-        "pub_061": {
-            "stack-136": "fileSize",
-            "stack-140": "tmp",
-            "stack-144": "seekResult"
-        },
-        "pub_062": {
-            "stack-134": "i"
-        },
-        "pub_064": {
-            "stack-134": "i"
-        },
-        "pub_065": {
-            "stack-134": "i"
-        },
-        "pub_068": {
-            "stack-136": "result",
-            "stack-138": "charCode",
-            "stack-140": "strLen",
-            "stack-208": "substr"
-        },
-        "pub_070": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-140": "k",
-            "stack-138": "l"
-        },
-        "pub_071": {
-            "stack-134": "i"
-        },
-        "pub_072": {
-            "stack-134": "frameIdx",
-            "stack-136": "px",
-            "stack-138": "py",
-            "stack-144": "filename"
-        },
-        "pub_073": {
-            "stack-134": "retval",
-            "stack-136": "tmp",
-            "stack-148": "tmp2"
-        },
-        "pub_074": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "k"
-        },
-        "pub_075": {
-            "stack-136": "i",
-            "stack-134": "retval"
-        },
-        "pub_077": {
-            "stack-134": "colorBase",
-            "stack-136": "screenX",
-            "stack-138": "remaining",
-            "stack-140": "digit"
-        },
-        "pub_078": {
-            "stack-196": "tmp",
-            "stack-200": "tmp2",
-            "stack-204": "tmp3",
-            "stack-208": "tmp4",
-            "stack-212": "tmp5",
-            "stack-220": "mciResult"
-        },
-        "pub_079": {
-            "stack-134": "i",
-            "stack-136": "j"
-        },
-        "pub_080": {
-            "stack-138": "i",
-            "stack-134": "retval",
-            "stack-136": "j"
-        },
-        "pub_081": {
-            "stack-136": "fileSize",
-            "stack-140": "tmp",
-            "stack-144": "seekResult"
-        },
-        "pub_082": {
-            "stack-134": "retval",
-            "stack-136": "menuItemSelected",
-            "stack-138": "tmp",
-            "stack-140": "result"
-        },
-        "pub_083": {
-            "stack-134": "retval",
-            "stack-136": "baseIdx",
-            "stack-138": "y"
-        },
-        "pub_084": {
-            "stack-134": "i"
-        },
-        "pub_085": {
-            "stack-134": "i"
-        },
-        "pub_086": {
-            "stack-134": "i"
-        },
-        "pub_087": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "k"
-        },
-        "pub_088": {
-            "stack-136": "i",
-            "stack-134": "cursorX",
-            "stack-138": "k"
-        },
-        "pub_089": {
-            "stack-134": "i"
-        },
-        "pub_090": {
-            "stack-134": "i"
-        },
-        "pub_091": {
-            "stack-136": "i",
-            "stack-134": "retval"
-        },
-        "priv_092": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "k",
-            "stack-152": "tmp",
-            "stack-156": "tmp2"
-        },
-        "pub_093": {
-            "stack-136": "i"
-        },
-        "pub_094": {
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "k"
-        },
-        "pub_095": {
-            "stack-134": "retval",
-            "stack-136": "magicCount",
-            "stack-138": "i",
-            "stack-140": "j",
-            "stack-148": "maxMagic"
-        },
-        "pub_096": {
-            "stack-134": "retval"
-        },
-        "pub_098": {
-            "stack-134": "i"
-        },
-        "pub_099": {
-            "stack-134": "screenX",
-            "stack-136": "remaining",
-            "stack-138": "colorBase",
-            "stack-140": "digit"
-        },
-        "pub_100": {
-            "stack-134": "screenX",
-            "stack-136": "i",
-            "stack-138": "digit",
-            "stack-144": "num"
-        },
-        "pub_101": {
-            "stack-136": "i",
-            "stack-138": "result"
-        },
-        "pub_102": {
-            "stack-134": "i"
-        },
-        "pub_103": {
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "k",
-            "stack-134": "retval"
-        },
-        "pub_104": {
-            "stack-134": "retval",
-            "stack-136": "j",
-            "stack-140": "bufPtr"
-        },
-        "pub_105": {
-            "stack-134": "i",
-            "stack-136": "tmp"
-        },
-        "pub_106": {
-            "stack-198": "tmp",
-            "stack-204": "tmp2",
-            "stack-208": "tmp3",
-            "stack-212": "tmp4",
-            "stack-216": "tmp5",
-            "stack-224": "tmp6"
-        },
-        "pub_107": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "k",
-            "stack-140": "l",
-            "stack-142": "frameData"
-        },
-        "pub_108": {
-            "stack-198": "tmp",
-            "stack-204": "tmp2",
-            "stack-208": "tmp3",
-            "stack-212": "tmp4",
-            "stack-216": "tmp5",
-            "stack-224": "tmp6"
-        },
-        "pub_109": {
-            "stack-136": "result",
-            "stack-140": "filename"
-        },
-        "pub_110": {
-            "stack-136": "i",
-            "stack-134": "retval"
-        },
-        "pub_111": {
-            "stack-134": "frameIdx",
-            "stack-136": "i",
-            "stack-138": "y",
-            "stack-140": "x",
-            "stack-148": "bufPtr"
-        },
-        "pub_112": {
-            "stack-136": "i",
-            "stack-134": "retval",
-            "stack-164": "rng"
-        },
-        "pub_113": {
-            "stack-196": "tmp",
-            "stack-200": "tmp2",
-            "stack-204": "tmp3",
-            "stack-208": "tmp4",
-            "stack-212": "tmp5",
-            "stack-216": "tmp6",
-            "stack-220": "tmp7"
-        },
-        "pub_114": {
-            "stack-196": "tmp",
-            "stack-200": "tmp2",
-            "stack-204": "tmp3",
-            "stack-208": "tmp4",
-            "stack-212": "tmp5",
-            "stack-216": "tmp6",
-            "stack-220": "tmp7"
-        },
-        "pub_115": {
-            "stack-136": "bufPtr"
-        },
-        "pub_116": {
-            "stack-136": "i",
-            "stack-134": "retval"
-        },
-        "pub_117": {
-            "stack-196": "tmp",
-            "stack-200": "tmp2",
-            "stack-204": "tmp3",
-            "stack-208": "tmp4",
-            "stack-212": "tmp5",
-            "stack-216": "tmp6",
-            "stack-220": "tmp7"
-        },
-        "pub_118": {
-            "stack-134": "retval"
-        },
-        "pub_119": {
-            "stack-134": "ratio",
-            "stack-136": "tmp",
-            "stack-138": "tmp2"
-        },
-        "pub_120": {
-            "stack-134": "found",
-            "stack-136": "i",
-            "stack-138": "j"
-        },
-        "pub_122": {
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-134": "retval"
-        },
-        "pub_123": {
-            "stack-136": "i",
-            "stack-134": "floatVal",
-            "stack-144": "lockMem"
-        },
-        "pub_124": {
-            "stack-196": "tmp",
-            "stack-200": "cmdStr",
-            "stack-204": "tmp2",
-            "stack-224": "trackStr",
-            "stack-228": "cmdStr2",
-            "stack-264": "tmp3",
-            "stack-268": "trackStr2",
-            "stack-272": "mciResult"
-        },
-        "pub_125": {
-            "stack-138": "i",
-            "stack-136": "foundIdx",
-            "stack-164": "k"
-        },
-        "pub_126": {
-            "stack-134": "i",
-            "stack-138": "j",
-            "stack-136": "k"
-        },
-        "pub_127": {
-            "stack-136": "menuX",
-            "stack-138": "menuY",
-            "stack-140": "selection",
-            "stack-142": "isYes",
-            "stack-144": "inputResult",
-            "stack-146": "tmpX",
-            "stack-148": "i",
-            "stack-150": "keyResult"
-        },
-        "pub_128": {
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "k"
-        },
-        "pub_129": {
-            "stack-134": "i",
-            "stack-136": "npcX",
-            "stack-138": "npcY",
-            "stack-140": "layerVal",
-            "stack-142": "spriteNum",
-            "stack-144": "frameCount"
-        },
-        "pub_130": {
-            "stack-134": "retval",
-            "stack-136": "tmp",
-            "stack-138": "result",
-            "stack-140": "result2",
-            "stack-152": "tmp2"
-        },
-        "pub_131": {
-            "stack-140": "inputResult",
-            "stack-142": "selection",
-            "stack-144": "y",
-            "stack-146": "x",
-            "stack-148": "highlight",
-            "stack-150": "selectedIndex",
-            "stack-152": "keyResult",
-            "stack-156": "bufPtr"
-        },
-        "pub_132": {
-            "stack-134": "i",
-            "stack-136": "j"
-        },
-        "pub_133": {
-            "stack-134": "i",
-            "stack-136": "roleID",
-            "stack-138": "hpDiff",
-            "stack-140": "j"
-        },
-        "pub_134": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "overlap",
-            "stack-140": "dup",
-            "stack-142": "spriteNum",
-            "stack-144": "found",
-            "stack-146": "tmp",
-            "stack-156": "bufPtr"
-        },
-        "pub_135": {
-            "stack-196": "tmp",
-            "stack-200": "tmp2",
-            "stack-204": "tmp3",
-            "stack-208": "tmp4",
-            "stack-212": "tmp5",
-            "stack-216": "tmp6",
-            "stack-220": "tmp7",
-            "stack-224": "tmp8",
-            "stack-228": "tmp9",
-            "stack-264": "tmp10",
-            "stack-268": "tmp11",
-            "stack-272": "tmp12",
-            "stack-278": "tmp13"
-        },
-        "pub_136": {
-            "stack-136": "name",
-            "stack-152": "name1",
-            "stack-160": "name2",
-            "stack-168": "name3",
-            "stack-172": "tmp"
-        },
-        "pub_137": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "itemID",
-            "stack-140": "cursorIdx",
-            "stack-142": "itemObjID",
-            "stack-144": "cursorPos",
-            "stack-146": "selection",
-            "stack-148": "keyResult",
-            "stack-152": "bufPtr",
-            "stack-150": "tmp"
-        },
-        "pub_138": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "k",
-            "stack-140": "l",
-            "stack-142": "roleID",
-            "stack-144": "found",
-            "stack-154": "bufPtr"
-        },
-        "pub_139": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-138": "k",
-            "stack-140": "l",
-            "stack-142": "spriteIdx",
-            "stack-144": "found",
-            "stack-154": "bufPtr"
-        },
-        "pub_140": {
-            "stack-134": "stepDelay",
-            "stack-136": "frameIdx",
-            "stack-138": "frameCount",
-            "stack-140": "i",
-            "stack-142": "j",
-            "stack-148": "offset",
-            "stack-156": "bufPtr"
-        },
-        "pub_141": {
-            "stack-134": "i",
-            "stack-136": "tmp"
-        },
-        "pub_142": {
-            "stack-138": "i",
-            "stack-134": "retval",
-            "stack-136": "foundIdx"
-        },
-        "pub_143": {
-            "stack-136": "maxCol",
-            "stack-138": "inputResult",
-            "stack-140": "selection",
-            "stack-142": "textX",
-            "stack-144": "rowY",
-            "stack-146": "i",
-            "stack-148": "j"
-        },
-        "pub_144": {
-            "stack-134": "retval"
-        },
-        "pub_145": {
-            "stack-134": "lastRow",
-            "stack-136": "lastMid",
-            "stack-138": "rowY",
-            "stack-140": "blockIdx",
-            "stack-142": "k",
-            "stack-144": "l"
-        },
-        "pub_146": {
-            "stack-134": "i",
-            "stack-136": "frameIdx",
-            "stack-138": "y",
-            "stack-140": "x",
-            "stack-142": "rng"
-        },
-        "pub_148": {
-            "stack-140": "i",
-            "stack-134": "floatVal",
-            "stack-136": "frameIdx",
-            "stack-138": "frameCount",
-            "stack-144": "filename",
-            "stack-152": "bufPtr"
-        },
-        "pub_149": {
-            "stack-134": "count",
-            "stack-136": "i",
-            "stack-138": "roleID"
-        },
-        "pub_150": {
-            "stack-138": "i",
-            "stack-140": "j",
-            "stack-134": "retval",
-            "stack-136": "k"
-        },
-        "pub_151": {
-            "stack-136": "i",
-            "stack-134": "rowY",
-            "stack-156": "result"
-        },
-        "pub_152": {
-            "stack-134": "tileCol",
-            "stack-136": "endTileCol",
-            "stack-138": "xPixelOffset",
-            "stack-140": "yPixelOffset",
-            "stack-142": "tileRow",
-            "stack-144": "endTileRow",
-            "stack-146": "screenY",
-            "stack-148": "i",
-            "stack-150": "j",
-            "stack-152": "screenX",
-            "stack-154": "k",
-            "stack-160": "tileData",
-            "stack-164": "tileData2",
-            "stack-168": "tileFrame",
-            "stack-172": "tileFrame2",
-            "stack-188": "bufPtr"
-        },
-        "pub_153": {
-            "stack-134": "i",
-            "stack-136": "idleSpeed",
-            "stack-138": "j",
-            "stack-140": "k",
-            "stack-142": "tmp"
-        },
-        "pub_154": {
-            "stack-140": "i",
-            "stack-136": "result",
-            "stack-138": "keyResult"
-        },
-        "pub_155": {
-            "stack-134": "baseDamage",
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "k",
-            "stack-154": "atkPower",
-            "stack-156": "defPower",
-            "stack-176": "rng"
-        },
-        "pub_156": {
-            "stack-136": "menuItemSelected",
-            "stack-138": "menuStarted",
-            "stack-140": "result",
-            "stack-142": "tmp",
-            "stack-144": "tmp2",
-            "stack-146": "tmp3",
-            "stack-148": "tmp4",
-            "stack-152": "tmp5"
-        },
-        "pub_157": {
-            "stack-136": "tmp",
-            "stack-138": "attrName",
-            "stack-156": "str1",
-            "stack-164": "str2",
-            "stack-172": "str3",
-            "stack-176": "tmp2"
-        },
-        "pub_158": {
-            "stack-134": "roleID",
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "fleeChance",
-            "stack-142": "k",
-            "stack-144": "l",
-            "stack-172": "rng"
-        },
-        "pub_159": {
-            "stack-136": "i",
-            "stack-138": "retryCount",
-            "stack-140": "fileResult",
-            "stack-142": "year",
-            "stack-144": "month",
-            "stack-146": "day",
-            "stack-152": "openResult",
-            "stack-156": "filename",
-            "stack-164": "bstr"
-        },
-        "pub_160": {
-            "stack-136": "cmd",
-            "stack-140": "cmdStr",
-            "stack-204": "tmp",
-            "stack-208": "tmp2",
-            "stack-212": "tmp3",
-            "stack-216": "tmp4",
-            "stack-300": "tmp5",
-            "stack-304": "tmp6",
-            "stack-308": "mciResult"
-        },
-        "pub_161": {
-            "stack-136": "dirChanged",
-            "stack-134": "retval",
-            "stack-138": "dirX1",
-            "stack-140": "dirY1",
-            "stack-142": "dirX2",
-            "stack-144": "dirY2",
-            "stack-146": "tmp",
-            "stack-148": "keyResult",
-            "stack-152": "tmp2"
-        },
-        "pub_162": {
-            "stack-134": "x",
-            "stack-136": "y",
-            "stack-138": "color",
-            "stack-140": "i",
-            "stack-142": "j",
-            "stack-144": "k",
-            "stack-148": "offset",
-            "stack-160": "bufPtr"
-        },
-        "priv_163": {
-            "stack-196": "tmp",
-            "stack-200": "tmp2",
-            "stack-204": "tmp3",
-            "stack-208": "tmp4",
-            "stack-212": "tmp5",
-            "stack-216": "tmp6",
-            "stack-220": "tmp7",
-            "stack-224": "tmp8",
-            "stack-228": "tmp9",
-            "stack-264": "tmp10",
-            "stack-268": "tmp11",
-            "stack-272": "tmp12",
-            "stack-214": "tmp13",
-            "stack-380": "tmp14",
-            "stack-384": "tmp15",
-            "stack-388": "tmp16",
-            "stack-392": "tmp17"
-        },
-        "pub_164": {
-            "stack-134": "i",
-            "stack-136": "magicIdx",
-            "stack-138": "partyX",
-            "stack-140": "j",
-            "stack-142": "spriteIdx",
-            "stack-144": "yOffset",
-            "stack-146": "frameDelay",
-            "stack-168": "rng"
-        },
-        "pub_165": {
-            "stack-136": "viewportX",
-            "stack-138": "viewportY",
-            "stack-140": "i",
-            "stack-142": "baseIdx",
-            "stack-144": "dataIdx",
-            "stack-146": "dataIdx2",
-            "stack-148": "screenX",
-            "stack-150": "j",
-            "stack-152": "mapX",
-            "stack-154": "mapY",
-            "stack-156": "tileData"
-        },
-        "pub_166": {
-            "stack-156": "dialogBuf",
-            "stack-158": "i",
-            "stack-160": "j",
-            "stack-162": "tmp",
-            "stack-164": "tmp2",
-            "stack-170": "k"
-        },
-        "pub_167": {
-            "stack-136": "tmp",
-            "stack-138": "opcode",
-            "stack-140": "operand1",
-            "stack-142": "operand2",
-            "stack-144": "operand3",
-            "stack-146": "tmp2",
-            "stack-148": "tmp3",
-            "stack-168": "rng"
-        },
-        "pub_168": {
-            "stack-136": "filename",
-            "stack-140": "result",
-            "stack-144": "bstr"
-        },
-        "pub_169": {
-            "stack-136": "filename",
-            "stack-140": "result",
-            "stack-144": "bstr"
-        },
-        "pub_170": {
-            "stack-134": "i",
-            "stack-136": "stepSize",
-            "stack-138": "damage",
-            "stack-156": "result",
-            "stack-158": "result2"
-        },
-        "pub_171": {
-            "stack-134": "spriteBase",
-            "stack-136": "frameW",
-            "stack-138": "frameH",
-            "stack-140": "i",
-            "stack-142": "j",
-            "stack-144": "screenX",
-            "stack-146": "screenY",
-            "stack-148": "tmp",
-            "stack-150": "k",
-            "stack-152": "tileIdx",
-            "stack-154": "l"
-        },
-        "pub_172": {
-            "stack-134": "i",
-            "stack-136": "roleID",
-            "stack-138": "trailIdx",
-            "stack-140": "trailX",
-            "stack-142": "trailY",
-            "stack-144": "j",
-            "stack-146": "frameOffset"
-        },
-        "pub_173": {
-            "stack-134": "i",
-            "stack-140": "j",
-            "stack-136": "k",
-            "stack-138": "l",
-            "stack-184": "rng"
-        },
-        "pub_174": {
-            "stack-134": "iconX",
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "k",
-            "stack-142": "statusIcon",
-            "stack-144": "roleID",
-            "stack-148": "l"
-        },
-        "pub_175": {
-            "stack-134": "i",
-            "stack-136": "spriteIdx",
-            "stack-138": "y",
-            "stack-140": "x",
-            "stack-142": "j",
-            "stack-144": "k",
-            "stack-148": "tmp",
-            "stack-152": "bufPtr"
-        },
-        "pub_176": {
-            "stack-134": "retval",
-            "stack-136": "i",
-            "stack-138": "itemID",
-            "stack-140": "menuX",
-            "stack-142": "menuY",
-            "stack-144": "cursorPos",
-            "stack-146": "selection",
-            "stack-148": "maxItems",
-            "stack-150": "wordIdx",
-            "stack-152": "invIdx",
-            "stack-154": "keyResult",
-            "stack-156": "confirmResult"
-        },
-        "pub_177": {
-            "stack-134": "i",
-            "stack-136": "j",
-            "stack-160": "rng"
-        },
-        "pub_178": {
-            "stack-140": "i",
-            "stack-134": "retval",
-            "stack-136": "result",
-            "stack-138": "k",
-            "stack-142": "result2",
-            "stack-152": "result3"
-        },
-        "pub_179": {
-            "stack-134": "i",
-            "stack-136": "colX",
-            "stack-138": "rowY",
-            "stack-140": "j",
-            "stack-142": "colorNum",
-            "stack-144": "amount",
-            "stack-146": "itemID",
-            "stack-148": "descIdx",
-            "stack-152": "bufPtr",
-            "stack-164": "cursorPos"
-        },
-        "pub_180": {
-            "stack-134": "i",
-            "stack-136": "npcX",
-            "stack-138": "npcY",
-            "stack-140": "partyX",
-            "stack-142": "partyY",
-            "stack-144": "dx",
-            "stack-146": "triggerScript"
-        },
-        "pub_181": {
-            "stack-142": "i",
-            "stack-136": "tmp",
-            "stack-140": "tmp2",
-            "stack-148": "filename",
-            "stack-156": "filePos"
-        },
-        "pub_182": {
-            "stack-134": "roleID",
-            "stack-136": "hitCount",
-            "stack-138": "i",
-            "stack-140": "j",
-            "stack-142": "targetIdx",
-            "stack-144": "k",
-            "stack-148": "l",
-            "stack-172": "rng",
-            "stack-182": "targetRole",
-            "stack-184": "tmp"
-        },
-        "pub_183": {
-            "stack-134": "scrollDirX",
-            "stack-136": "scrollDirY",
-            "stack-138": "srcX",
-            "stack-142": "srcTileX1",
-            "stack-144": "srcTileX2",
-            "stack-146": "srcTileX1b",
-            "stack-148": "srcTileX2b",
-            "stack-150": "srcY",
-            "stack-152": "tmp",
-            "stack-154": "srcTileY1",
-            "stack-156": "srcTileY2",
-            "stack-158": "srcTileY1b",
-            "stack-160": "srcTileY2b",
-            "stack-162": "dstTileX",
-            "stack-164": "dstTileY",
-            "stack-184": "tmp2",
-            "stack-140": "tmp3"
-        },
-        "pub_184": {
-            "stack-134": "i",
-            "stack-136": "magicIdx",
-            "stack-138": "attackerDmg",
-            "stack-140": "targetFound",
-            "stack-142": "j",
-            "stack-144": "targetSelected",
-            "stack-146": "k",
-            "stack-148": "l",
-            "stack-150": "m",
-            "stack-152": "itemObj",
-            "stack-172": "rng"
-        },
-        "pub_185": {
-            "stack-134": "attackerRole",
-            "stack-136": "damage",
-            "stack-138": "hitCount",
-            "stack-140": "targetHP",
-            "stack-142": "targetX",
-            "stack-144": "targetY",
-            "stack-146": "j",
-            "stack-148": "frameDelay",
-            "stack-172": "rng"
-        },
-        "pub_186": {
-            "stack-134": "itemObj",
-            "stack-136": "j",
-            "stack-138": "itemType",
-            "stack-140": "i",
-            "stack-142": "roleID",
-            "stack-144": "rowY",
-            "stack-146": "colorNum",
-            "stack-148": "equipSlot",
-            "stack-150": "currEquip",
-            "stack-152": "k",
-            "stack-154": "maxHP",
-            "stack-156": "l",
-            "stack-158": "invResult",
-            "stack-168": "bufPtr",
-            "stack-176": "invIdx",
-            "stack-198": "m"
-        },
-        "pub_187": {
-            "stack-134": "roleID",
-            "stack-136": "rowY",
-            "stack-138": "i",
-            "stack-140": "j",
-            "stack-142": "attrVal",
-            "stack-144": "equipObjID",
-            "stack-146": "equipAttr",
-            "stack-148": "keyResult",
-            "stack-150": "tmp",
-            "stack-156": "bufPtr"
-        },
-        "pub_188": {
-            "stack-136": "maxMagic",
-            "stack-138": "i",
-            "stack-140": "j",
-            "stack-142": "magicObjID",
-            "stack-144": "menuX",
-            "stack-146": "menuY",
-            "stack-148": "colCount",
-            "stack-150": "rowCount",
-            "stack-152": "maxPage",
-            "stack-154": "k",
-            "stack-156": "tmp",
-            "stack-158": "maxScroll",
-            "stack-160": "colPos",
-            "stack-162": "rowPos",
-            "stack-164": "l",
-            "stack-166": "prevCol",
-            "stack-168": "prevRow",
-            "stack-170": "prevScroll",
-            "stack-172": "tmp2",
-            "stack-174": "m",
-            "stack-176": "tmp3",
-            "stack-178": "n",
-            "stack-180": "tmp4",
-            "stack-182": "highlightColor",
-            "stack-184": "inputResult",
-            "stack-186": "currMagicObj",
-            "stack-188": "tmp5",
-            "stack-190": "tmp6",
-            "stack-192": "savedScreen",
-            "stack-194": "tmp7",
-            "stack-196": "scrollPos",
-            "stack-198": "o",
-            "stack-200": "p"
-        },
-        "pub_189": {
-            "stack-138": "continueFlag",
-            "stack-140": "savedEntry",
-            "stack-142": "opcode",
-            "stack-144": "operand1",
-            "stack-146": "operand2",
-            "stack-148": "operand3",
-            "stack-150": "imgOffset",
-            "stack-152": "dialogTemp",
-            "stack-154": "tmp",
-            "stack-156": "battleResult",
-            "stack-158": "i",
-            "stack-160": "dialogY",
-            "stack-162": "dialogH",
-            "stack-168": "subfileIdx",
-            "stack-170": "tmp2",
-            "stack-192": "rng"
-        },
-        "priv_190": {
-            "stack-168": "tmp"
-        },
-        "pub_191": {
-            "stack-136": "i",
-            "stack-138": "invIdx",
-            "stack-140": "j",
-            "stack-142": "itemCount",
-            "stack-144": "pageIdx",
-            "stack-146": "lastRowIdx",
-            "stack-148": "colCount",
-            "stack-150": "rowCount",
-            "stack-152": "maxPage",
-            "stack-154": "k",
-            "stack-156": "tmp2",
-            "stack-158": "maxScroll",
-            "stack-160": "colPos",
-            "stack-162": "rowPos",
-            "stack-164": "l",
-            "stack-166": "prevCol",
-            "stack-168": "prevRow",
-            "stack-170": "prevScroll",
-            "stack-172": "tmp3",
-            "stack-174": "m",
-            "stack-176": "tmp4",
-            "stack-178": "n",
-            "stack-180": "inputResult",
-            "stack-182": "highlightColor",
-            "stack-184": "o",
-            "stack-186": "tmp5",
-            "stack-188": "tmp6",
-            "stack-190": "savedScreen",
-            "stack-192": "tmp7",
-            "stack-194": "tmp8",
-            "stack-196": "scrollPos",
-            "stack-198": "p",
-            "stack-200": "q",
-            "stack-208": "bufPtr"
-        },
-        "pub_192": {
-            "stack-134": "attackerRole",
-            "stack-136": "atkPower",
-            "stack-138": "rngVal",
-            "stack-140": "hitChance",
-            "stack-142": "i",
-            "stack-144": "idleAnimSpeed",
-            "stack-146": "j",
-            "stack-148": "damage",
-            "stack-150": "dmgRoll",
-            "stack-192": "rng",
-            "stack-212": "rng2"
-        },
-        "pub_193": {
-            "stack-134": "itemObj",
-            "stack-136": "actionType",
-            "stack-138": "i",
-            "stack-140": "targetIdx",
-            "stack-142": "j",
-            "stack-144": "attrIdx",
-            "stack-146": "baseDmg",
-            "stack-148": "resistVal",
-            "stack-150": "damage",
-            "stack-152": "k",
-            "stack-158": "effectIdx",
-            "stack-172": "l",
-            "stack-196": "rng"
-        },
-        "Sub_Main": {
-            "stack-140": "menuParam",
-            "stack-142": "tmp",
-            "stack-144": "tmp2",
-            "stack-146": "tmp3",
-            "stack-148": "tmp4",
-            "stack-150": "result",
-            "stack-152": "result2",
-            "stack-154": "i",
-            "stack-156": "j",
-            "stack-158": "scrollStepX",
-            "stack-160": "scrollDeltaX",
-            "stack-162": "scrollStepY",
-            "stack-164": "scrollDeltaY",
-            "stack-166": "keyPressed",
-            "stack-168": "scrollMode",
-            "stack-172": "comTmp",
-            "stack-176": "tmp5",
-            "stack-180": "initResult",
-            "stack-184": "rng",
-            "stack-186": "rng2",
-            "stack-196": "tmp6",
-            "stack-200": "tmp7",
-            "stack-204": "tmp8",
-            "stack-208": "tmp9",
-            "stack-212": "tmp10",
-            "stack-216": "tmp11",
-            "stack-220": "tmp12",
-            "stack-222": "tmp13",
-            "stack-224": "tmp14",
-            "stack-264": "tmp15",
-            "stack-268": "tmp16",
-            "stack-272": "tmp17",
-            "stack-278": "tmp18",
-            "stack-284": "rng3",
-            "stack-308": "dsResult",
-            "stack-316": "dsInitResult",
-            "stack-320": "diTmp",
-            "stack-322": "ddInitResult",
-            "stack-324": "rng4",
-            "stack-328": "tmp19",
-            "stack-136": "comTmp2",
-            "stack-138": "comTmp3",
-            "stack-276": "tmp20",
-            "stack-338": "tmp21"
-        },
-        "pub_195": {
-            "stack-134": "i",
-            "stack-136": "itemObj",
-            "stack-138": "targetStart",
-            "stack-140": "targetEnd",
-            "stack-142": "spriteIdx",
-            "stack-144": "j",
-            "stack-146": "rollPower",
-            "stack-148": "k",
-            "stack-150": "baseDamage",
-            "stack-152": "damageMult",
-            "stack-154": "frameDelay",
-            "stack-158": "theurgyIdx",
-            "stack-164": "effectIdx",
-            "stack-172": "l",
-            "stack-204": "rng",
-            "stack-206": "targetIdx"
-        },
-        "pub_196": {
-            "stack-136": "i",
-            "stack-138": "j",
-            "stack-140": "k",
-            "stack-142": "battleResult",
-            "stack-144": "enemyObjID",
-            "stack-146": "directionParam",
-            "stack-148": "actionParam",
-            "stack-150": "menuResult",
-            "stack-152": "dirResult",
-            "stack-154": "thyrgyResult",
-            "stack-156": "thyrgyResult2",
-            "stack-158": "prevRoleIdx",
-            "stack-160": "itemObjID",
-            "stack-162": "menuResult2",
-            "stack-164": "hasMagic",
-            "stack-166": "maxDmg",
-            "stack-168": "equipObjID",
-            "stack-170": "magicSubfile",
-            "stack-172": "floatVal",
-            "stack-174": "rng",
-            "stack-176": "actionType",
-            "stack-178": "l",
-            "stack-180": "roleID",
-            "stack-182": "targetIdx",
-            "stack-184": "thyrgyType",
-            "stack-186": "hpLost",
-            "stack-188": "thyrgyResult3",
-            "stack-190": "isTargeted",
-            "stack-192": "enemyTarget",
-            "stack-194": "thyrgyResult4",
-            "stack-196": "menuParam1",
-            "stack-198": "menuParam2",
-            "stack-200": "thyrgyResult5",
-            "stack-202": "thyrgyResult6",
-            "stack-204": "mpCost",
-            "stack-206": "hasEffect",
-            "stack-208": "actionParam2",
-            "stack-210": "tmp",
-            "stack-212": "targetStart",
-            "stack-214": "targetEnd",
-            "stack-216": "m",
-            "stack-218": "n",
-            "stack-220": "magicSubfile2",
-            "stack-222": "equipID",
-            "stack-224": "thyrgyResult7",
-            "stack-278": "tmp2",
-            "stack-286": "thyrgyResult8",
-            "stack-290": "tmp3",
-            "stack-324": "rng2",
-            "stack-328": "o",
-            "stack-336": "p",
-            "stack-354": "actionTypeSel"
-        },
-        "pub_197": {
-            "stack-136": "eventOffset",
-            "stack-138": "roleID",
-            "stack-140": "stepSize",
-            "stack-142": "tmp",
-            "stack-144": "targetX",
-            "stack-146": "targetY",
-            "stack-148": "tmp2",
-            "stack-150": "tmp3",
-            "stack-152": "eventObjIdx",
-            "stack-154": "j",
-            "stack-156": "i",
-            "stack-158": "loopStart",
-            "stack-160": "loopEnd",
-            "stack-162": "totalChange",
-            "stack-164": "oldVal",
-            "stack-166": "oldMP",
-            "stack-168": "loopRoleID",
-            "stack-170": "healAmount",
-            "stack-172": "poisonSlot",
-            "stack-174": "k",
-            "stack-176": "loopRoleID2",
-            "stack-178": "itemObjID",
-            "stack-180": "extfResult",
-            "stack-182": "stepCount",
-            "stack-184": "distX8",
-            "stack-186": "fleeRate",
-            "stack-188": "walkSpeed",
-            "stack-190": "destX",
-            "stack-192": "destY",
-            "stack-194": "eventIdx1",
-            "stack-196": "eventIdx2",
-            "stack-198": "savedDir",
-            "stack-200": "savedHP",
-            "stack-202": "savedUseScript",
-            "stack-204": "savedEndScript",
-            "stack-206": "screenX",
-            "stack-208": "screenY",
-            "stack-210": "tmp4",
-            "stack-212": "tmp5",
-            "stack-214": "oldTeamX",
-            "stack-216": "oldTeamY",
-            "stack-218": "palSrc",
-            "stack-220": "opcodeCopy",
-            "stack-228": "palDst",
-            "stack-284": "rng",
-            "stack-294": "defenseVal",
-            "stack-336": "filename"
-        }
-    },
-    "struct_fields": {
-        "npc_display_data": {
-            "0": "vanishTime",
-            "2": "x",
-            "4": "y",
-            "6": "layer",
-            "8": "triggerScript",
-            "10": "autoScript",
-            "12": "state",
-            "14": "triggerMode",
-            "16": "spriteNum",
-            "18": "spriteFrames",
-            "20": "direction",
-            "22": "currentFrame",
-            "24": "scriptIdleFrame",
-            "26": "spritePtrOffset",
-            "28": "spriteFramesAuto",
-            "30": "scriptIdleFrameAuto"
-        },
-        "enemy_runtime_data": {
-            "0": "idleFrames",
-            "2": "magicFrames",
-            "4": "attackFrames",
-            "6": "idleAnimSpeed",
-            "8": "actWaitFrames",
-            "10": "yPosOffset",
-            "12": "attackSound",
-            "14": "actionSound",
-            "16": "magicSound",
-            "18": "deathSound",
-            "20": "callSound",
-            "22": "health",
-            "24": "exp",
-            "26": "cash",
-            "28": "level",
-            "30": "magic",
-            "32": "magicRate",
-            "34": "attackEquivItem",
-            "36": "attackEquivItemRate",
-            "38": "stealItem",
-            "40": "stealItemCount",
-            "42": "attackStrength",
-            "44": "magicStrength",
-            "46": "defense",
-            "48": "dexterity",
-            "50": "fleeRate",
-            "52": "poisonResistance",
-            "54": "elemResistance0",
-            "56": "elemResistance1",
-            "58": "elemResistance2",
-            "60": "elemResistance3",
-            "62": "elemResistance4",
-            "64": "physicalResistance",
-            "66": "dualMove",
-            "68": "collectValue"
-        },
-        "theurgy_data": {
-            "0": "effect",
-            "2": "type",
-            "4": "xOffset",
-            "6": "yOffset",
-            "8": "layerOffset",
-            "10": "speed",
-            "12": "keepEffect",
-            "14": "fireDelay",
-            "16": "effectTimes",
-            "18": "shake",
-            "20": "wave",
-            "24": "costMP",
-            "26": "baseDamage",
-            "28": "elemental",
-            "30": "sound"
-        },
-        "party": {
-            "0": "role",
-            "2": "x",
-            "4": "y",
-            "6": "frame",
-            "8": "imageOffset"
-        },
-        "trail": {
-            "0": "x",
-            "2": "y",
-            "4": "direction"
-        },
-        "inventory": {
-            "0": "item",
-            "2": "amount",
-            "4": "amountInUse"
-        },
-        "scenes": {
-            "0": "mapNum",
-            "2": "scriptOnEnter",
-            "4": "scriptOnLeave",
-            "6": "eventObjectIndex"
-        },
-        "objects": {
-            "0": "data0",
-            "2": "data1",
-            "4": "data2",
-            "6": "data3",
-            "8": "data4",
-            "10": "data5",
-            "12": "data6"
-        },
-        "playerExp": {
-            "0": "exp",
-            "4": "level",
-            "6": "count"
-        },
-        "levelupMagic": {
-            "0": "level",
-            "2": "magic"
-        },
-        "enemyPos": {
-            "0": "x",
-            "2": "y"
-        },
-        "player_battle_sprite": {
-            "0": "spriteNum",
-            "2": "x",
-            "4": "y",
-            "6": "animOffset",
-            "8": "origX",
-            "10": "origY",
-            "12": "direction",
-            "14": "origDirection",
-            "16": "spriteBase",
-            "18": "actionState",
-            "20": "objectID",
-            "22": "equipID"
-        },
-        "enemy_battle_data": {
-            "0": "enemyID",
-            "2": "x",
-            "4": "y",
-            "6": "origX",
-            "8": "origY",
-            "10": "direction",
-            "12": "flag",
-            "14": "mapValue",
-            "16": "tileData",
-            "18": "hp",
-            "20": "objectID",
-            "22": "useScript",
-            "24": "battleStartScript",
-            "26": "battleEndScript"
-        },
-        "damage_numbers": {
-            "0": "x",
-            "2": "y",
-            "4": "number",
-            "6": "colorType",
-            "8": "timer"
-        },
-        "battle_effect_data": {
-            "0": "effect",
-            "2": "frames"
-        },
-        "poison_status_struct": {
-            "0": "poisonID",
-            "2": "poisonScript"
-        },
-        "battle_role_action": {
-            "0": "target",
-            "2": "actionType",
-            "4": "itemID",
-            "6": "invIndex",
-            "8": "flag"
-        },
-        "battle_role_data_ext": {
-            "0": "savedHP",
-            "2": "savedMP"
-        },
-        "enemy_pos_data": {
-            "0": "x",
-            "2": "y"
-        },
-        "word_array": {
-            "0": ""
-        }
-    },
-    "var_to_struct": {
-        "npc_display_data": "npc_display_data",
-        "events": "npc_display_data",
-        "enemy_runtime_data": "enemy_runtime_data",
-        "data_enemy": "enemy_runtime_data",
-        "theurgy_data": "theurgy_data",
-        "party": "party",
-        "trail": "trail",
-        "inventory": "inventory",
-        "scenes": "scenes",
-        "objects": "objects",
-        "playerExp": "playerExp",
-        "levelupMagic": "levelupMagic",
-        "data_levelup_magic": "levelupMagic",
-        "enemyPos": "enemyPos",
-        "enemy_pos_data": "enemy_pos_data",
-        "player_battle_sprite": "player_battle_sprite",
-        "battleSprite": "player_battle_sprite",
-        "enemy_battle_data": "enemy_battle_data",
-        "enemyBattleData": "enemy_battle_data",
-        "enemy_battle_data_ext": "enemy_battle_data_ext",
-        "damage_numbers": "damage_numbers",
-        "damageNumbers": "damage_numbers",
-        "battle_effect_data": "battle_effect_data",
-        "battleEffect": "battle_effect_data",
-        "battle_role_action": "battle_role_action",
-        "battle_role_data_ext": "battle_role_data_ext",
-        "playerRoles": "word_array",
-        "player_status": "word_array",
-        "enemy_status": "word_array",
-        "enemy_poison_status": "poison_status_struct",
-        "poison_status": "poison_status_struct",
-        "equipment_effect": "word_array",
-        "key_mapping_table": "word_array",
-        "data_store": "word_array"
-    }
+ "_meta": {
+  "description": "VB4 p-code (pal_pseudocode.txt) → readable name mapping",
+  "sections": "functions / globals / global_refs / pal_funcs / params / stack_vars / struct_fields / var_to_struct",
+  "source": "docs/vb40032.md",
+  "rules": "命名以 DOS 版为准，sdlpal 仅作结构参考"
+ },
+ "functions": {
+  "Sub_Main": "Sub_Main",
+  "pub_000": "entry_stub_show_text",
+  "pub_001": "entry_stub_show_text_and_dialog",
+  "pub_002": "DoEvents_check_exit",
+  "pub_004": "battle_set_action_code",
+  "pub_005": "swap_values",
+  "pub_006": "calc_sprite_y_offset",
+  "pub_007": "load_battle_effect_sprites",
+  "pub_008": "check_key_pressed",
+  "pub_009": "increment_script_ip",
+  "pub_010": "read_key",
+  "pub_011": "play_sound",
+  "pub_012": "battle_set_action_walk",
+  "pub_013": "copy_subfile_data",
+  "pub_014": "wait_frame",
+  "pub_015": "load_subfile_to_buf",
+  "pub_016": "draw_string",
+  "pub_017": "check_battle_action",
+  "pub_018": "push_screen_buffer",
+  "pub_019": "check_trigger_flag",
+  "pub_020": "draw_text_at",
+  "pub_021": "count_alive_enemies",
+  "pub_022": "random_enemy_id",
+  "pub_023": "clear_enemy_poison",
+  "pub_024": "load_event_objects",
+  "pub_025": "read_file_and_close",
+  "pub_026": "load_fbp_subfile",
+  "pub_027": "draw_npc_sprite",
+  "pub_028": "count_item_total",
+  "pub_029": "read_palette",
+  "pub_030": "restore_screen",
+  "pub_031": "menu_inventory",
+  "pub_032": "load_map_data",
+  "pub_033": "update_trail_data",
+  "pub_034": "check_party_alive",
+  "pub_035": "find_magic_index",
+  "pub_036": "find_inventory_item",
+  "pub_037": "load_fbp_two_scene",
+  "pub_038": "update_shake",
+  "pub_039": "set_auto_battle_targets",
+  "pub_040": "get_player_attribute_total",
+  "pub_041": "menu_loop",
+  "pub_042": "show_dialog_image_and_wait",
+  "pub_043": "get_party_role_id",
+  "pub_044": "check_in_battle",
+  "pub_045": "menu_Status",
+  "pub_046": "update_party_position",
+  "pub_047": "update_walk_frame",
+  "pub_048": "read_ball_mkf_index",
+  "pub_049": "calc_magic_damage",
+  "pub_050": "read_file_to_buf",
+  "pub_051": "random_alive_party_member",
+  "pub_052": "reset_battle_sprite_pos",
+  "pub_053": "read_mkf_subfile",
+  "pub_054": "load_battle_sprites",
+  "pub_055": "read_rng_subfile",
+  "pub_056": "open_file",
+  "pub_057": "load_sound_data",
+  "pub_058": "load_theurgy_image",
+  "pub_059": "count_equipped_items",
+  "pub_060": "calc_battle_damage",
+  "pub_061": "get_subfile_len",
+  "pub_062": "frame_menu",
+  "pub_063": "load_scene_events",
+  "pub_064": "draw_battle_status_bar",
+  "pub_065": "fade_out_palette",
+  "pub_066": "draw_menu_with_text_and_hp",
+  "pub_067": "release_resources_exit",
+  "pub_068": "trim_string",
+  "pub_069": "make_dialog_frame",
+  "pub_070": "unequip_item",
+  "pub_071": "fade_palette_to",
+  "pub_072": "show_face",
+  "pub_073": "process_menu",
+  "pub_074": "draw_battle_row_sprite",
+  "pub_075": "enemy_cast_anim",
+  "pub_076": "show_fbp_picture",
+  "pub_077": "show_number_to_tree",
+  "pub_078": "cd_stop",
+  "pub_079": "adjust_battle_sprite_pos",
+  "pub_080": "cross_fade_out",
+  "pub_081": "load_script_data",
+  "pub_082": "sell_item_menu",
+  "pub_083": "get_sprite_frame_data",
+  "pub_084": "fade_in",
+  "pub_085": "update_damage_numbers",
+  "pub_086": "play_battle_effect",
+  "pub_087": "show_enemy_damage",
+  "pub_088": "draw_menu_frame",
+  "pub_089": "add_damage_number",
+  "pub_090": "apply_enemy_poison_damage",
+  "pub_091": "check_trigger_events",
+  "pub_093": "check_player_alive",
+  "pub_094": "menu_select_party",
+  "pub_095": "select_magic",
+  "pub_096": "draw_object_icon",
+  "pub_097": "show_money",
+  "pub_098": "init_enemy_positions",
+  "pub_099": "display_number",
+  "pub_100": "show_small_number",
+  "pub_101": "select_battle_target",
+  "pub_102": "add_inventory_item",
+  "pub_103": "enemy_hit_reaction",
+  "pub_104": "play_rng_effect",
+  "pub_105": "draw_rng_frame",
+  "pub_106": "query_midi_status",
+  "pub_107": "animate_battle_sprites",
+  "pub_108": "query_cd_status",
+  "pub_109": "get_scene_map_source",
+  "pub_110": "player_attack_anim",
+  "pub_111": "draw_effect_sprites",
+  "pub_112": "player_attack_execute",
+  "pub_113": "cd_stopplay",
+  "pub_114": "midi_close",
+  "pub_115": "render_scene_and_fade",
+  "pub_116": "init_walk_frames",
+  "pub_117": "stop_all_and_exit",
+  "pub_118": "npc_walk_one_step",
+  "pub_119": "render_scene_with_rng",
+  "pub_120": "remove_inventory_item",
+  "pub_121": "scene_transition",
+  "pub_122": "sort_player_magic",
+  "pub_123": "walk_party_fastest",
+  "pub_124": "play_cd",
+  "pub_125": "compact_inventory",
+  "pub_126": "init_battle_state",
+  "pub_127": "yes_no_menu",
+  "pub_128": "select_enemy_target",
+  "pub_129": "get_sprites_curr_scene",
+  "pub_130": "menu_system",
+  "pub_131": "select_party_member",
+  "pub_132": "play_theurgy_anim",
+  "pub_133": "show_party_hp_mp_change",
+  "pub_134": "load_npc_sprites",
+  "pub_135": "stop_app_and_music",
+  "pub_136": "show_equip_detail",
+  "pub_137": "use_item_menu",
+  "pub_138": "load_team_mgo",
+  "pub_139": "load_enemy_sprites",
+  "pub_140": "scroll_scene_with_fbp",
+  "pub_141": "play_theurgy_rng_anim",
+  "pub_142": "add_magic_to_player",
+  "pub_143": "menu_select",
+  "pub_144": "draw_player_status",
+  "pub_145": "draw_menu_table",
+  "pub_146": "draw_role_battle_frame",
+  "pub_147": "load_enemy_data",
+  "pub_148": "fade_in_pic",
+  "pub_149": "update_player_battle_status",
+  "pub_150": "cast_theurgy_anim",
+  "pub_151": "show_role_attributes",
+  "pub_152": "redraw_tile",
+  "pub_153": "update_enemy_battle_anim",
+  "pub_154": "select_direction_menu",
+  "pub_155": "calc_player_attack_damage",
+  "pub_156": "select_battle_action",
+  "pub_157": "increase_player_attr",
+  "pub_158": "flee_from_battle",
+  "pub_159": "check_save_file",
+  "pub_160": "play_all_kinds_music",
+  "pub_161": "read_direction_input",
+  "pub_162": "play_opening_anim",
+  "pub_164": "draw_battle_scene",
+  "pub_165": "produce_screen_map",
+  "pub_166": "render_dialog_control",
+  "pub_167": "process_AutoScript",
+  "pub_168": "SaveRPG_internal",
+  "pub_169": "LoadRPG_internal",
+  "pub_170": "enemy_attack_enemy",
+  "pub_171": "add_sprite_to_tree",
+  "pub_172": "set_team_draw",
+  "pub_173": "calc_display_exp",
+  "pub_174": "show_status_icons",
+  "pub_175": "draw_enemy_battle_frame",
+  "pub_176": "buy_item_menu",
+  "pub_177": "level_up_player",
+  "pub_178": "player_attack_player",
+  "pub_179": "show_item_description",
+  "pub_180": "process_event_objects",
+  "pub_181": "Load_system_files",
+  "pub_182": "player_attack_all",
+  "pub_183": "update_viewport_scroll",
+  "pub_184": "enemy_attack_role",
+  "pub_185": "role_physical_attack",
+  "pub_186": "inventory_use_menu",
+  "pub_187": "show_role_status",
+  "pub_188": "select_thurgy",
+  "pub_189": "process_Script",
+  "pub_191": "select_item_with_filter",
+  "pub_192": "enemy_physical_attack",
+  "pub_193": "calc_display_theurgy",
+  "pub_195": "enemy_magical_attack",
+  "pub_196": "process_Battle",
+  "pub_197": "process_scripts",
+  "priv_003": "timer_entry_stub",
+  "priv_092": "fade_in_or_out_internal",
+  "priv_163": "timer_midi_cd_callback",
+  "priv_190": "init_key_definitions"
+ },
+ "globals": {
+  "Me.f0000": "tmp_file_size",
+  "Me.f0004": "fh_M_MSG",
+  "Me.f0008": "fh_MGO_MKF",
+  "Me.f000C": "fh_F_MKF",
+  "Me.f0010": "fh_ABC_MKF",
+  "Me.f0014": "fh_RNG_MKF",
+  "Me.f0018": "data_battlefield",
+  "Me.f0030": "data_levelup_exp",
+  "Me.f0048": "data_magic",
+  "Me.f0060": "data_enemy_team",
+  "Me.f0078": "data_enemy",
+  "Me.f0090": "menu_bg_data",
+  "Me.f00A8": "data_object_ext",
+  "Me.f00C0": "screen_buf",
+  "Me.f00D8": "bg_buf",
+  "Me.f00F0": "sss_script_data",
+  "Me.f0108": "sss_script_data_2",
+  "Me.f0120": "ball_mkf_data",
+  "Me.f0138": "events",
+  "Me.f0150": "palette_data",
+  "Me.f0168": "fire_mkf_data",
+  "Me.f0180": "map_data_buf",
+  "Me.f0198": "mgo_frame_offsets",
+  "Me.f01B0": "global_buf_1",
+  "Me.f01C8": "global_buf_2",
+  "Me.f01E0": "word_glyph_index",
+  "Me.f01F8": "rng_anim_data",
+  "Me.f0224": "dialog_width",
+  "Me.f0226": "dialog_height",
+  "Me.f0228": "dialog_type",
+  "Me.f022A": "dialog_x",
+  "Me.f022C": "dialog_y",
+  "Me.f022E": "dialog_color",
+  "Me.f0232": "music_mode_init",
+  "Me.f0234": "flag_trigger",
+  "Me.f0236": "flag_key_updown",
+  "Me.f0238": "has_sfx_raw",
+  "Me.f023A": "has_sfx",
+  "Me.f023C": "music_mode",
+  "Me.f023E": "use_cd_flag",
+  "Me.f0240": "midi_active",
+  "Me.f0242": "midi_playing",
+  "Me.f0244": "cd_active",
+  "Me.f0246": "cd_track_valid",
+  "Me.f0248": "cd_track_num",
+  "Me.f024E": "mutex_shaking",
+  "Me.f0250": "palette_fade_active",
+  "Me.f0254": "fh_temp",
+  "Me.f0258": "rpg_to_load",
+  "Me.f025A": "max_save_number",
+  "Me.f025C": "RPG_save_number",
+  "Me.f025E": "curr_scene_id_cache",
+  "Me.f0260": "RPG_other_peoples",
+  "Me.f0262": "RPG_viewport_x",
+  "Me.f0264": "RPG_viewport_y",
+  "Me.f0266": "RPG_team_number",
+  "Me.f0268": "RPG_curr_scene",
+  "Me.f026A": "scene_to_load",
+  "Me.f026C": "RPG_color_begin_ptr",
+  "Me.f026E": "RPG_team_direction",
+  "Me.f0274": "x_off",
+  "Me.f0276": "y_off",
+  "Me.f0278": "team_abstract_x",
+  "Me.f027A": "team_abstract_y",
+  "Me.f027C": "RPG_music_number",
+  "Me.f027E": "RPG_battle_music_number",
+  "Me.f0280": "RPG_battle_scene_number",
+  "Me.f0286": "party_abs_x",
+  "Me.f0288": "party_abs_y",
+  "Me.f028A": "RPG_role_locate_layer",
+  "Me.f028C": "scene_flags",
+  "Me.f0290": "sss_subfile_count",
+  "Me.f0294": "event_object_count",
+  "Me.f0296": "curr_scene_event_count",
+  "Me.f0298": "RPG_screen_wave_grade",
+  "Me.f029A": "wave_progression",
+  "Me.f029C": "shake_intensity",
+  "Me.f02A0": "shake_duration",
+  "Me.f02A4": "screen_buffer_ptr",
+  "Me.f02A8": "dialog_y_pos",
+  "Me.f02B0": "menu_bg_size",
+  "Me.f02B4": "RPG_money",
+  "Me.f02B8": "RPG_current_calabash_number",
+  "Me.f02BA": "multi_event_state",
+  "Me.f02C2": "battle_curr_role_idx",
+  "Me.f02C4": "battle_target_cursor",
+  "Me.f02C8": "mutex_can_change_palette",
+  "Me.f02CA": "flag_parallel_mutex",
+  "Me.f02CC": "effect_particle_count",
+  "Me.f02D0": "auto_battle_flag",
+  "Me.f02D4": "attack_done_flag",
+  "Me.f02DA": "enemy_pos_count",
+  "Me.f02DC": "enemy_max_id",
+  "Me.f02DE": "team_number",
+  "Me.f02E0": "battle_action_queue",
+  "Me.f02E8": "npc_anchor_x",
+  "Me.f02EA": "npc_anchor_y",
+  "Me.f02EC": "curr_npc_idx",
+  "Me.f02EE": "sprite_frame_count",
+  "Me.f02F0": "magic_select_tmp",
+  "Me.f02F4": "damage_target_hp",
+  "Me.f02FA": "battle_max_hp_sum",
+  "Me.f0300": "coop_magic_tmp",
+  "Me.f0302": "redraw_hp_mp_flag",
+  "Me.f0304": "flag_battling",
+  "Me.f0306": "redraw_flag",
+  "Me.f030A": "battle_viewport_x",
+  "Me.f030C": "battle_viewport_y",
+  "Me.f030E": "RPG_ememy_chase_rate",
+  "Me.f0310": "RPG_change_chaserate_times",
+  "Me.f0312": "battle_enemy_idx",
+  "Me.f0314": "effect_frame_count",
+  "Me.f0318": "data_mkf_handle",
+  "Me.f031C": "in_battle_action",
+  "Me.f031E": "battle_param",
+  "Me.f0324": "blow_away_flag",
+  "Me.f0326": "battle_y_offset",
+  "Me.f0328": "relative_viewport_x",
+  "Me.f032A": "relative_viewport_y",
+  "Me.f0330": "viewport_x_bak",
+  "Me.f0332": "viewport_y_bak",
+  "Me.f0334": "viewport_width",
+  "Me.f0336": "viewport_height",
+  "Me.f0338": "viewport_offset",
+  "Me.f033A": "frame_counter",
+  "Me.f033C": "key_pressed",
+  "Me.f0342": "battle_sub_flag",
+  "Me.f0344": "word_dat_data",
+  "Me.f035C": "data_mkf_chunk12",
+  "Me.f0374": "damage_numbers",
+  "Me.f038C": "scenes",
+  "Me.f03DC": "data_levelup_magic",
+  "Me.f03FC": "data_store",
+  "Me.f04AC": "party",
+  "Me.f04C4": "trail",
+  "Me.f04DC": "battle_order_array",
+  "Me.f04F4": "save_temp_buf",
+  "Me.f050C": "rng_anim_frames",
+  "Me.f0524": "battle_action_queue_ext",
+  "Me.f053C": "battle_sprite_ext",
+  "Me.f0584": "battle_role_data_copy",
+  "Me.f059C": "battle_role_action",
+  "Me.f05B4": "enemy_battle_data",
+  "Me.f05CC": "player_battle_sprite",
+  "Me.f05E4": "effect_x_coords",
+  "Me.f05FC": "effect_y_coords",
+  "Me.f0614": "effect_frames",
+  "Me.f062C": "player_hit_flags",
+  "Me.f068C": "enemy_runtime_data",
+  "Me.f06A4": "enemy_pos_data",
+  "Me.f06C4": "player_status",
+  "Me.f06E4": "enemy_status",
+  "Me.f0704": "poison_status",
+  "Me.f0724": "enemy_poison_status",
+  "Me.f0744": "objects",
+  "Me.f075C": "inventory",
+  "Me.f0774": "equipment_effect",
+  "Me.f079C": "playerRoles",
+  "Me.f07BC": "playerExp",
+  "Me.f07DC": "npc_display_data",
+  "Me.f07F4": "battle_effect_data",
+  "Me.f0824": "theurgy_data",
+  "Me.f083C": "key_direction_map",
+  "Me.f0854": "key_scan_codes",
+  "Me.f0870": "exit_flag",
+  "Me.f0872": "init_done_flag",
+  "Me.f01FC": "max_subfile_size",
+  "Me.f0200": "dialog_text_x",
+  "Me.f0202": "dialog_text_y",
+  "Me.f0204": "image_draw_x",
+  "Me.f0206": "image_draw_y",
+  "Me.f0208": "image_lookup_key",
+  "Me.f020A": "image_draw_flag",
+  "Me.f020C": "image_offset_table",
+  "Me.f0230": "menu_cursor_pos",
+  "Me.f024A": "music_track_arg",
+  "Me.f024C": "music_mode_arg",
+  "Me.f0270": "viewport_flags",
+  "Me.f0272": "viewport_flags_2",
+  "Me.f0282": "scene_enter_flag",
+  "Me.f0284": "scene_leave_flag",
+  "Me.f029E": "shake_active",
+  "Me.f02A2": "battle_enemy_hp",
+  "Me.f02AA": "theurgy_effect_count",
+  "Me.f02AC": "theurgy_effect_max",
+  "Me.f02BC": "multi_event_param",
+  "Me.f02BE": "multi_event_param_2",
+  "Me.f02C0": "multi_event_param_3",
+  "Me.f02C6": "battle_role_idx_2",
+  "Me.f02CE": "effect_sub_count",
+  "Me.f02D2": "battle_action_param",
+  "Me.f02D8": "battle_extra_param",
+  "Me.f02E2": "npc_frame_base",
+  "Me.f02E4": "npc_sprite_num",
+  "Me.f02E6": "npc_dir_frame",
+  "Me.f02F2": "magic_select_idx",
+  "Me.f02F6": "battle_select_idx",
+  "Me.f02F8": "battle_select_max",
+  "Me.f02FC": "battle_action_type",
+  "Me.f0308": "fade_step_count",
+  "Me.f0322": "battle_dest_x",
+  "Me.f032C": "viewport_scroll_x",
+  "Me.f032E": "viewport_scroll_y",
+  "Me.f0340": "battle_extra_flag",
+  "Me.f03A4": "key_state_array",
+  "Me.f041C": "fh_M_MSG_global",
+  "Me.f0434": "key_repeat_delay",
+  "Me.f044C": "key_pressed_flags",
+  "Me.f0464": "key_direction_flags",
+  "Me.f047C": "battle_role_data_ext",
+  "Me.f0494": "battle_enemy_data_ext",
+  "Me.f0554": "battle_sprite_data",
+  "Me.f056C": "battle_sprite_data_ext",
+  "Me.f0644": "enemy_battle_data_ext",
+  "Me.f065C": "key_scan_map",
+  "Me.f0674": "key_action_map",
+  "Me.f086C": "vb_form_ref",
+  "Me.f080C": "file_offset_table"
+ },
+ "global_refs": {
+  "global_00000240": "midi_active",
+  "global_00000242": "midi_playing",
+  "global_00000244": "cd_active",
+  "global_00000246": "cd_track_valid",
+  "global_00000248": "cd_track_num",
+  "global_000003BC": "key_mapping_table",
+  "global_0000041C": "fh_M_MSG_global",
+  "global_00000434": "key_repeat_delay",
+  "global_0000044C": "key_pressed_flags",
+  "global_00000464": "key_direction_flags",
+  "global_0000050C": "rng_anim_frames_global",
+  "global_0000065C": "key_scan_map",
+  "global_00000674": "key_action_map",
+  "global_0000083C": "key_dir_order",
+  "global_00000854": "key_scan_codes_global",
+  "global_00000870": "exit_flag",
+  "global_00000878": "vb_com_object_1",
+  "global_0000087C": "vb_com_object_2",
+  "global_000002A4": "screen_flag",
+  "global_00000334": "screen_y_offset",
+  "global_00000336": "screen_width",
+  "global_00000338": "screen_height",
+  "global_000001FC": "screen_flag_2"
+ },
+ "pal_funcs": {
+  "Pal.CKey": "PAL_CheckKey",
+  "Pal.ClrScr": "PAL_ClearScreen",
+  "Pal.DrawString": "PAL_DrawString",
+  "Pal.FlushDSound": "PAL_FlushDSound",
+  "Pal.GetActiveWindow": "PAL_GetActiveWindow",
+  "Pal.GetKeyDefine": "PAL_GetKeyDefine",
+  "Pal.InitCD": "PAL_InitCD",
+  "Pal.InitDSound": "PAL_InitDSound",
+  "Pal.InitInput": "PAL_InitInput",
+  "Pal.LoadDSound": "PAL_LoadDSound",
+  "Pal.PlayAvi": "PAL_PlayAvi",
+  "Pal.PlayDSound": "PAL_PlayDSound",
+  "Pal.ReadKey": "PAL_ReadKey",
+  "Pal.ResetMode": "PAL_ResetMode",
+  "Pal.ShutDownInput": "PAL_ShutDownInput",
+  "Pal.ShutdownDSound": "PAL_ShutdownDSound",
+  "Pal.addtre": "PAL_AddToTree",
+  "Pal.adpic": "PAL_AddPic",
+  "Pal.adpic0": "PAL_AddPic0",
+  "Pal.arrayptr": "PAL_ArrayPtr",
+  "Pal.cleartre": "PAL_ClearTree",
+  "Pal.clripna": "PAL_ClearClipNA",
+  "Pal.clsmen": "PAL_ClearMenu",
+  "Pal.copymen": "PAL_CopyMem",
+  "Pal.corpate": "PAL_CorPalate",
+  "Pal.cvlong": "PAL_CvLong",
+  "Pal.cvpate": "PAL_CvPalate",
+  "Pal.delay1": "PAL_Delay",
+  "Pal.exbb": "PAL_ExBB",
+  "Pal.exgm1": "PAL_ExGm1",
+  "Pal.exgm2": "PAL_ExGm2",
+  "Pal.exgop": "PAL_ExGop",
+  "Pal.exmap": "PAL_ExMap",
+  "Pal.exmyll": "PAL_ExMyll",
+  "Pal.expate": "PAL_ExPalate",
+  "Pal.exrij": "PAL_ExRij",
+  "Pal.extf": "PAL_ExTF",
+  "Pal.ffxy": "PAL_Ffxy",
+  "Pal.fupate": "PAL_FuPalate",
+  "Pal.getbin": "PAL_GetBin",
+  "Pal.intpate": "PAL_IntPalate",
+  "Pal.killtimer": "PAL_KillTimer",
+  "Pal.nipwa": "PAL_NipWA",
+  "Pal.nipwb": "PAL_NipWB",
+  "Pal.nipwseg": "PAL_NipWSeg",
+  "Pal.ntre": "PAL_NTree",
+  "Pal.paksize": "PAL_PakSize",
+  "Pal.popscr": "PAL_PopScreen",
+  "Pal.popscr6": "PAL_PopScreen6",
+  "Pal.popscr6a": "PAL_PopScreen6a",
+  "Pal.popscrb": "PAL_PopScreenB",
+  "Pal.pushscr": "PAL_PushScreen",
+  "Pal.putipna": "PAL_PutIpNA",
+  "Pal.putp": "PAL_PutP",
+  "Pal.rblk": "PAL_Rblk",
+  "Pal.rhrff": "PAL_Rhrff",
+  "Pal.rngput": "PAL_RngPut",
+  "Pal.rripa": "PAL_RripA",
+  "Pal.rripafreeze": "PAL_RripAFreeze",
+  "Pal.settimer": "PAL_SetTimer",
+  "Pal.unpak": "PAL_Unpak",
+  "Pal.vmap": "PAL_VMap",
+  "Pal.vwindow": "PAL_VWindow",
+  "Pal.wtime": "PAL_WaitTime"
+ },
+ "params": {
+  "pub_009": [
+   "ip"
+  ],
+  "pub_013": [
+   "magicIdx"
+  ],
+  "pub_014": [
+   "frames"
+  ],
+  "pub_015": [
+   "subfileNum"
+  ],
+  "pub_023": [
+   "enemyIdx"
+  ],
+  "pub_026": [
+   "subfileNum"
+  ],
+  "pub_028": [
+   "itemID"
+  ],
+  "pub_029": [
+   "subfileNum"
+  ],
+  "pub_037": [
+   "subfileNum"
+  ],
+  "pub_036": [
+   "itemID"
+  ],
+  "pub_063": [
+   "sceneID"
+  ],
+  "pub_065": [
+   "speed"
+  ],
+  "pub_068": [
+   "str"
+  ],
+  "pub_071": [
+   "speed"
+  ],
+  "pub_081": [
+   "subfileNum"
+  ],
+  "pub_084": [
+   "speed"
+  ],
+  "pub_086": [
+   "roleIdx"
+  ],
+  "pub_087": [
+   "thyrgyType"
+  ],
+  "pub_097": [
+   "amount"
+  ],
+  "pub_133": [
+   "thyrgyType"
+  ],
+  "pub_075": [
+   "enemyIdx"
+  ],
+  "pub_080": [
+   "speed"
+  ],
+  "pub_055": [
+   "subfileNum"
+  ],
+  "pub_058": [
+   "magicIdx"
+  ],
+  "pub_059": [
+   "itemID"
+  ],
+  "pub_044": [
+   "shakeMode"
+  ],
+  "pub_048": [
+   "subfileNum"
+  ],
+  "pub_115": [
+   "fadeSpeed"
+  ],
+  "pub_111": [
+   "useOverlay"
+  ],
+  "pub_150": [
+   "itemID"
+  ],
+  "pub_156": [
+   "menuType"
+  ],
+  "pub_093": [
+   "roleIdx"
+  ],
+  "pub_187": [
+   "roleIdx"
+  ],
+  "pub_164": [
+   "frameCount",
+   "speed"
+  ],
+  "pub_168": [
+   "saveSlot"
+  ],
+  "pub_169": [
+   "saveSlot"
+  ],
+  "pub_173": [
+   "exp"
+  ],
+  "pub_176": [
+   "storeID"
+  ],
+  "pub_180": [
+   "checkTrigger"
+  ],
+  "pub_122": [
+   "roleID"
+  ],
+  "pub_154": [
+   "direction"
+  ],
+  "pub_005": [
+   "v1",
+   "v2"
+  ],
+  "pub_006": [
+   "enemyIdx",
+   "multiplier"
+  ],
+  "pub_011": [
+   "soundNum",
+   "keepFlag"
+  ],
+  "pub_017": [
+   "actionParam",
+   "directionParam"
+  ],
+  "pub_020": [
+   "x",
+   "y",
+   "wordIdx",
+   "color"
+  ],
+  "pub_025": [
+   "filename",
+   "subfileNum"
+  ],
+  "pub_032": [
+   "x",
+   "y",
+   "layer"
+  ],
+  "pub_035": [
+   "partyIdx",
+   "magicID"
+  ],
+  "pub_040": [
+   "roleID",
+   "attrIdx"
+  ],
+  "pub_049": [
+   "baseDamage",
+   "elementIdx"
+  ],
+  "pub_050": [
+   "subfileNum",
+   "destIdx"
+  ],
+  "pub_052": [
+   "roleIdx"
+  ],
+  "pub_053": [
+   "subfileNum",
+   "destBuf"
+  ],
+  "pub_056": [
+   "filename",
+   "writeMode"
+  ],
+  "pub_060": [
+   "attack",
+   "defense"
+  ],
+  "pub_061": [
+   "fileHandle",
+   "subfileNum"
+  ],
+  "pub_069": [
+   "x",
+   "y"
+  ],
+  "pub_070": [
+   "itemID",
+   "count"
+  ],
+  "pub_076": [
+   "subfileNum",
+   "rngSubfile"
+  ],
+  "pub_083": [
+   "roleIdx",
+   "frame"
+  ],
+  "pub_136": [
+   "roleID",
+   "equipIdx"
+  ],
+  "pub_102": [
+   "itemID",
+   "amount"
+  ],
+  "pub_104": [
+   "rngSubfile",
+   "frameCount"
+  ],
+  "pub_107": [
+   "startIdx",
+   "endIdx"
+  ],
+  "pub_109": [
+   "sceneID"
+  ],
+  "pub_110": [
+   "roleIdx",
+   "hasEffect"
+  ],
+  "pub_112": [
+   "roleIdx",
+   "targetRole"
+  ],
+  "pub_118": [
+   "npcIdx",
+   "stepCount"
+  ],
+  "pub_120": [
+   "itemID",
+   "amount"
+  ],
+  "pub_124": [
+   "trackNum",
+   "musicNum",
+   "trackValid"
+  ],
+  "pub_127": [
+   "optionFlags",
+   "labelIdx"
+  ],
+  "pub_151": [
+   "x",
+   "y",
+   "roleID",
+   "showEquip"
+  ],
+  "pub_167": [
+   "npcIdx",
+   "scriptEntry"
+  ],
+  "pub_170": [
+   "attackerIdx",
+   "targetIdx"
+  ],
+  "pub_178": [
+   "attackerIdx",
+   "targetIdx"
+  ],
+  "pub_182": [
+   "roleIdx",
+   "animate"
+  ],
+  "pub_184": [
+   "enemyIdx",
+   "targetRole",
+   "itemID"
+  ],
+  "pub_158": [
+   "roleIdx",
+   "isFleeing"
+  ],
+  "pub_160": [
+   "musicNum",
+   "loopFlag"
+  ],
+  "pub_161": [
+   "dx",
+   "dy"
+  ],
+  "pub_196": [
+   "battleScene",
+   "surpriseFlag"
+  ],
+  "pub_189": [
+   "eventObjID",
+   "scriptEntry"
+  ],
+  "pub_147": [
+   "enemyIdx",
+   "objectID"
+  ],
+  "pub_072": [
+   "x",
+   "y",
+   "faceID"
+  ],
+  "pub_096": [
+   "x",
+   "y",
+   "invIdx"
+  ],
+  "pub_094": [
+   "x",
+   "y",
+   "spriteNum"
+  ],
+  "pub_077": [
+   "x",
+   "y",
+   "number",
+   "colorType"
+  ],
+  "pub_099": [
+   "x",
+   "y",
+   "number",
+   "colorType"
+  ],
+  "pub_100": [
+   "x",
+   "y",
+   "number",
+   "digitCount"
+  ],
+  "pub_105": [
+   "frameDelay",
+   "frameCount",
+   "yPos"
+  ],
+  "pub_123": [
+   "startFrame",
+   "endFrame",
+   "speed"
+  ],
+  "pub_132": [
+   "magicIdx",
+   "startFrame",
+   "minFrames"
+  ],
+  "pub_140": [
+   "fbpSubfile",
+   "rngSubfile",
+   "speed"
+  ],
+  "pub_142": [
+   "roleID",
+   "magicID",
+   "magicType"
+  ],
+  "pub_148": [
+   "fbpSubfile",
+   "rngSubfile",
+   "speed"
+  ],
+  "pub_155": [
+   "targetRole",
+   "attackerRole",
+   "isCritical"
+  ],
+  "pub_157": [
+   "roleID",
+   "attrType",
+   "amount"
+  ],
+  "pub_165": [
+   "x",
+   "y",
+   "viewportIdx"
+  ],
+  "pub_166": [
+   "x",
+   "y"
+  ],
+  "pub_188": [
+   "roleID",
+   "cursorIdx",
+   "filterMask"
+  ],
+  "pub_016": [
+   "x",
+   "y",
+   "wordData",
+   "shadow",
+   "color"
+  ],
+  "pub_062": [
+   "x",
+   "y",
+   "midBlocks",
+   "highlight"
+  ],
+  "pub_066": [
+   "wordIdx",
+   "x",
+   "y",
+   "hp",
+   "labelIdx"
+  ],
+  "pub_088": [
+   "x",
+   "y",
+   "lastBlockIdx",
+   "highlight"
+  ],
+  "pub_089": [
+   "x",
+   "y",
+   "number",
+   "colorType"
+  ],
+  "pub_179": [
+   "roleIdx",
+   "labelIdx",
+   "rowTop",
+   "invIdx"
+  ],
+  "pub_185": [
+   "attackerIdx",
+   "targetIdx",
+   "targetRole",
+   "isCritical"
+  ],
+  "pub_191": [
+   "cursorIdx",
+   "bgMode",
+   "filterMask"
+  ],
+  "pub_192": [
+   "enemyIdx",
+   "targetIdx",
+   "targetRole",
+   "useMagic"
+  ],
+  "pub_193": [
+   "enemyIdx",
+   "targetRole",
+   "itemID",
+   "power"
+  ],
+  "pub_195": [
+   "enemyIdx",
+   "targetRole",
+   "itemID",
+   "power"
+  ],
+  "pub_041": [
+   "cursorPos",
+   "x",
+   "y",
+   "labelIdx",
+   "midBlocks",
+   "rowCount"
+  ],
+  "pub_143": [
+   "cursorPos",
+   "x",
+   "y",
+   "midBlocks",
+   "rowCount"
+  ],
+  "pub_145": [
+   "x",
+   "y",
+   "wordIdx",
+   "midBlocks",
+   "rowCount",
+   "highlight"
+  ],
+  "pub_152": [
+   "x",
+   "y",
+   "right",
+   "bottom",
+   "tileX",
+   "tileY"
+  ],
+  "pub_171": [
+   "x",
+   "y",
+   "depth",
+   "roleIdx",
+   "frameIdx",
+   "useNPC"
+  ],
+  "pub_197": [
+   "eventObjID",
+   "scriptEntry",
+   "opcode",
+   "operand1",
+   "operand2",
+   "operand3"
+  ],
+  "pub_103": [
+   "shakeCount"
+  ],
+  "pub_144": [
+   "x",
+   "y",
+   "roleID",
+   "highlight"
+  ],
+  "pub_177": [
+   "roleID",
+   "levelCount",
+   "restoreHPMP"
+  ]
+ },
+ "stack_vars": {
+  "pub_005": {
+   "stack-134": "retval"
+  },
+  "pub_006": {},
+  "pub_008": {
+   "stack-136": "result"
+  },
+  "pub_009": {},
+  "pub_010": {},
+  "pub_012": {
+   "stack-134": "i"
+  },
+  "pub_014": {
+   "stack-134": "i",
+   "stack-136": "result"
+  },
+  "pub_016": {
+   "stack-136": "tmp2"
+  },
+  "pub_021": {
+   "stack-136": "i",
+   "stack-138": "j"
+  },
+  "pub_022": {
+   "stack-136": "rng"
+  },
+  "pub_023": {
+   "stack-134": "i"
+  },
+  "pub_025": {
+   "stack-136": "result"
+  },
+  "pub_026": {
+   "stack-136": "filename"
+  },
+  "pub_027": {
+   "stack-134": "retval",
+   "stack-136": "x"
+  },
+  "pub_028": {
+   "stack-136": "result",
+   "stack-138": "j"
+  },
+  "pub_029": {
+   "stack-136": "filename"
+  },
+  "pub_031": {
+   "stack-134": "retval",
+   "stack-136": "tmp",
+   "stack-148": "tmp2"
+  },
+  "pub_032": {
+   "stack-136": "tmp2"
+  },
+  "pub_034": {
+   "stack-138": "i",
+   "stack-136": "foundIdx"
+  },
+  "pub_035": {
+   "stack-138": "i",
+   "stack-136": "foundIdx"
+  },
+  "pub_036": {
+   "stack-138": "i",
+   "stack-136": "foundIdx"
+  },
+  "pub_037": {
+   "stack-136": "filename"
+  },
+  "pub_038": {
+   "stack-134": "retval"
+  },
+  "pub_039": {
+   "stack-136": "i",
+   "stack-138": "result"
+  },
+  "pub_040": {
+   "stack-138": "i",
+   "stack-136": "total"
+  },
+  "pub_041": {
+   "stack-136": "i"
+  },
+  "pub_042": {
+   "stack-134": "retval"
+  },
+  "pub_043": {
+   "stack-134": "i"
+  },
+  "pub_045": {
+   "stack-134": "retval"
+  },
+  "pub_049": {
+   "stack-136": "i"
+  },
+  "pub_050": {
+   "stack-134": "retval"
+  },
+  "pub_051": {
+   "stack-136": "rng"
+  },
+  "pub_053": {
+   "stack-136": "tmp",
+   "stack-140": "filePos",
+   "stack-144": "seekResult"
+  },
+  "pub_054": {
+   "stack-136": "i",
+   "stack-134": "retval"
+  },
+  "pub_055": {
+   "stack-136": "lockMem"
+  },
+  "pub_056": {
+   "stack-136": "fh",
+   "stack-140": "fhTemp",
+   "stack-144": "openedName",
+   "stack-148": "fhTmp"
+  },
+  "pub_058": {
+   "stack-134": "tmp",
+   "stack-140": "filename"
+  },
+  "pub_059": {
+   "stack-138": "i",
+   "stack-142": "j",
+   "stack-136": "count",
+   "stack-140": "k"
+  },
+  "pub_060": {
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "k"
+  },
+  "pub_061": {
+   "stack-136": "fileSize",
+   "stack-140": "tmp",
+   "stack-144": "seekResult"
+  },
+  "pub_062": {
+   "stack-134": "i"
+  },
+  "pub_064": {
+   "stack-134": "i"
+  },
+  "pub_065": {
+   "stack-134": "i"
+  },
+  "pub_068": {
+   "stack-136": "result",
+   "stack-138": "charCode",
+   "stack-140": "strLen",
+   "stack-208": "substr"
+  },
+  "pub_070": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-140": "k",
+   "stack-138": "l"
+  },
+  "pub_071": {
+   "stack-134": "i"
+  },
+  "pub_072": {
+   "stack-134": "frameIdx",
+   "stack-136": "px",
+   "stack-138": "py",
+   "stack-144": "filename"
+  },
+  "pub_073": {
+   "stack-134": "retval",
+   "stack-136": "tmp",
+   "stack-148": "tmp2"
+  },
+  "pub_074": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-138": "k"
+  },
+  "pub_075": {
+   "stack-136": "i",
+   "stack-134": "retval"
+  },
+  "pub_077": {
+   "stack-134": "colorBase",
+   "stack-136": "screenX",
+   "stack-138": "remaining",
+   "stack-140": "digit"
+  },
+  "pub_078": {
+   "stack-196": "tmp",
+   "stack-200": "tmp2",
+   "stack-204": "tmp3",
+   "stack-208": "tmp4",
+   "stack-212": "tmp5",
+   "stack-220": "mciResult"
+  },
+  "pub_079": {
+   "stack-134": "i",
+   "stack-136": "j"
+  },
+  "pub_080": {
+   "stack-138": "i",
+   "stack-134": "retval",
+   "stack-136": "j"
+  },
+  "pub_081": {
+   "stack-136": "fileSize",
+   "stack-140": "tmp",
+   "stack-144": "seekResult"
+  },
+  "pub_082": {
+   "stack-134": "retval",
+   "stack-136": "menuItemSelected",
+   "stack-138": "tmp",
+   "stack-140": "result"
+  },
+  "pub_083": {
+   "stack-134": "retval",
+   "stack-136": "baseIdx",
+   "stack-138": "y"
+  },
+  "pub_084": {
+   "stack-134": "i"
+  },
+  "pub_085": {
+   "stack-134": "i"
+  },
+  "pub_086": {
+   "stack-134": "i"
+  },
+  "pub_087": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-138": "k"
+  },
+  "pub_088": {
+   "stack-136": "i",
+   "stack-134": "cursorX",
+   "stack-138": "k"
+  },
+  "pub_089": {
+   "stack-134": "i"
+  },
+  "pub_090": {
+   "stack-134": "i"
+  },
+  "pub_091": {
+   "stack-136": "i",
+   "stack-134": "retval"
+  },
+  "priv_092": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-138": "k",
+   "stack-152": "tmp",
+   "stack-156": "tmp2"
+  },
+  "pub_093": {
+   "stack-136": "i"
+  },
+  "pub_094": {
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "k"
+  },
+  "pub_095": {
+   "stack-134": "retval",
+   "stack-136": "magicCount",
+   "stack-138": "i",
+   "stack-140": "j",
+   "stack-148": "maxMagic"
+  },
+  "pub_096": {
+   "stack-134": "retval"
+  },
+  "pub_098": {
+   "stack-134": "i"
+  },
+  "pub_099": {
+   "stack-134": "screenX",
+   "stack-136": "remaining",
+   "stack-138": "colorBase",
+   "stack-140": "digit"
+  },
+  "pub_100": {
+   "stack-134": "screenX",
+   "stack-136": "i",
+   "stack-138": "digit",
+   "stack-144": "num"
+  },
+  "pub_101": {
+   "stack-136": "i",
+   "stack-138": "result"
+  },
+  "pub_102": {
+   "stack-134": "i"
+  },
+  "pub_103": {
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "k",
+   "stack-134": "retval"
+  },
+  "pub_104": {
+   "stack-134": "retval",
+   "stack-136": "j",
+   "stack-140": "bufPtr"
+  },
+  "pub_105": {
+   "stack-134": "i",
+   "stack-136": "tmp"
+  },
+  "pub_106": {
+   "stack-198": "tmp",
+   "stack-204": "tmp2",
+   "stack-208": "tmp3",
+   "stack-212": "tmp4",
+   "stack-216": "tmp5",
+   "stack-224": "tmp6"
+  },
+  "pub_107": {
+   "stack-134": "fadeStep",
+   "stack-136": "spriteIdx",
+   "stack-138": "frameBase",
+   "stack-140": "drawX",
+   "stack-142": "drawY"
+  },
+  "pub_108": {
+   "stack-198": "tmp",
+   "stack-204": "tmp2",
+   "stack-208": "tmp3",
+   "stack-212": "tmp4",
+   "stack-216": "tmp5",
+   "stack-224": "tmp6"
+  },
+  "pub_109": {
+   "stack-136": "result",
+   "stack-140": "filename"
+  },
+  "pub_110": {
+   "stack-136": "i",
+   "stack-134": "retval"
+  },
+  "pub_111": {
+   "stack-134": "frameIdx",
+   "stack-136": "i",
+   "stack-138": "y",
+   "stack-140": "x",
+   "stack-148": "bufPtr"
+  },
+  "pub_112": {
+   "stack-136": "i",
+   "stack-134": "retval",
+   "stack-164": "rng"
+  },
+  "pub_113": {
+   "stack-196": "tmp",
+   "stack-200": "tmp2",
+   "stack-204": "tmp3",
+   "stack-208": "tmp4",
+   "stack-212": "tmp5",
+   "stack-216": "tmp6",
+   "stack-220": "tmp7"
+  },
+  "pub_114": {
+   "stack-196": "tmp",
+   "stack-200": "tmp2",
+   "stack-204": "tmp3",
+   "stack-208": "tmp4",
+   "stack-212": "tmp5",
+   "stack-216": "tmp6",
+   "stack-220": "tmp7"
+  },
+  "pub_115": {
+   "stack-136": "bufPtr"
+  },
+  "pub_116": {
+   "stack-136": "i",
+   "stack-134": "retval"
+  },
+  "pub_117": {
+   "stack-196": "tmp",
+   "stack-200": "tmp2",
+   "stack-204": "tmp3",
+   "stack-208": "tmp4",
+   "stack-212": "tmp5",
+   "stack-216": "tmp6",
+   "stack-220": "tmp7"
+  },
+  "pub_118": {
+   "stack-134": "retval"
+  },
+  "pub_119": {
+   "stack-134": "ratio",
+   "stack-136": "tmp",
+   "stack-138": "tmp2"
+  },
+  "pub_120": {
+   "stack-134": "found",
+   "stack-136": "i",
+   "stack-138": "j"
+  },
+  "pub_122": {
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-134": "retval"
+  },
+  "pub_123": {
+   "stack-136": "i",
+   "stack-134": "floatVal",
+   "stack-144": "lockMem"
+  },
+  "pub_124": {
+   "stack-196": "tmp",
+   "stack-200": "cmdStr",
+   "stack-204": "tmp2",
+   "stack-224": "trackStr",
+   "stack-228": "cmdStr2",
+   "stack-264": "tmp3",
+   "stack-268": "trackStr2",
+   "stack-272": "mciResult"
+  },
+  "pub_125": {
+   "stack-138": "i",
+   "stack-136": "foundIdx",
+   "stack-164": "k"
+  },
+  "pub_126": {
+   "stack-134": "i",
+   "stack-138": "j",
+   "stack-136": "k"
+  },
+  "pub_127": {
+   "stack-136": "menuX",
+   "stack-138": "menuY",
+   "stack-140": "selection",
+   "stack-142": "isYes",
+   "stack-144": "inputResult",
+   "stack-146": "tmpX",
+   "stack-148": "i",
+   "stack-150": "keyResult"
+  },
+  "pub_128": {
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "k"
+  },
+  "pub_129": {
+   "stack-134": "i",
+   "stack-136": "npcX",
+   "stack-138": "npcY",
+   "stack-140": "layerVal",
+   "stack-142": "spriteNum",
+   "stack-144": "frameCount"
+  },
+  "pub_130": {
+   "stack-134": "retval",
+   "stack-136": "tmp",
+   "stack-138": "result",
+   "stack-140": "result2",
+   "stack-152": "tmp2"
+  },
+  "pub_131": {
+   "stack-140": "inputResult",
+   "stack-142": "selection",
+   "stack-144": "y",
+   "stack-146": "x",
+   "stack-148": "highlight",
+   "stack-150": "selectedIndex",
+   "stack-152": "keyResult",
+   "stack-156": "bufPtr"
+  },
+  "pub_132": {
+   "stack-134": "i",
+   "stack-136": "j"
+  },
+  "pub_133": {
+   "stack-134": "i",
+   "stack-136": "roleID",
+   "stack-138": "hpDiff",
+   "stack-140": "j"
+  },
+  "pub_134": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-138": "overlap",
+   "stack-140": "dup",
+   "stack-142": "spriteNum",
+   "stack-144": "found",
+   "stack-146": "tmp",
+   "stack-156": "bufPtr"
+  },
+  "pub_135": {
+   "stack-196": "tmp",
+   "stack-200": "tmp2",
+   "stack-204": "tmp3",
+   "stack-208": "tmp4",
+   "stack-212": "tmp5",
+   "stack-216": "tmp6",
+   "stack-220": "tmp7",
+   "stack-224": "tmp8",
+   "stack-228": "tmp9",
+   "stack-264": "tmp10",
+   "stack-268": "tmp11",
+   "stack-272": "tmp12",
+   "stack-278": "tmp13"
+  },
+  "pub_136": {
+   "stack-136": "name",
+   "stack-152": "name1",
+   "stack-160": "name2",
+   "stack-168": "name3",
+   "stack-172": "tmp"
+  },
+  "pub_137": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-138": "itemID",
+   "stack-140": "cursorIdx",
+   "stack-142": "itemObjID",
+   "stack-144": "cursorPos",
+   "stack-146": "selection",
+   "stack-148": "keyResult",
+   "stack-152": "bufPtr",
+   "stack-150": "tmp"
+  },
+  "pub_138": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-138": "k",
+   "stack-140": "l",
+   "stack-142": "roleID",
+   "stack-144": "found",
+   "stack-154": "bufPtr"
+  },
+  "pub_139": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-138": "k",
+   "stack-140": "l",
+   "stack-142": "spriteIdx",
+   "stack-144": "found",
+   "stack-154": "bufPtr"
+  },
+  "pub_140": {
+   "stack-134": "stepDelay",
+   "stack-136": "frameIdx",
+   "stack-138": "frameCount",
+   "stack-140": "i",
+   "stack-142": "j",
+   "stack-148": "offset",
+   "stack-156": "bufPtr"
+  },
+  "pub_141": {
+   "stack-134": "i",
+   "stack-136": "tmp"
+  },
+  "pub_142": {
+   "stack-138": "i",
+   "stack-134": "retval",
+   "stack-136": "foundIdx"
+  },
+  "pub_143": {
+   "stack-136": "maxCol",
+   "stack-138": "inputResult",
+   "stack-140": "selection",
+   "stack-142": "textX",
+   "stack-144": "rowY",
+   "stack-146": "i",
+   "stack-148": "j"
+  },
+  "pub_144": {
+   "stack-134": "retval"
+  },
+  "pub_145": {
+   "stack-134": "lastRow",
+   "stack-136": "lastMid",
+   "stack-138": "rowY",
+   "stack-140": "blockIdx",
+   "stack-142": "k",
+   "stack-144": "l"
+  },
+  "pub_146": {
+   "stack-134": "i",
+   "stack-136": "frameIdx",
+   "stack-138": "y",
+   "stack-140": "x",
+   "stack-142": "rng"
+  },
+  "pub_148": {
+   "stack-140": "i",
+   "stack-134": "floatVal",
+   "stack-136": "frameIdx",
+   "stack-138": "frameCount",
+   "stack-144": "filename",
+   "stack-152": "bufPtr"
+  },
+  "pub_149": {
+   "stack-134": "count",
+   "stack-136": "i",
+   "stack-138": "roleID"
+  },
+  "pub_150": {
+   "stack-138": "i",
+   "stack-140": "j",
+   "stack-134": "retval",
+   "stack-136": "k"
+  },
+  "pub_151": {
+   "stack-136": "i",
+   "stack-134": "rowY",
+   "stack-156": "result"
+  },
+  "pub_152": {
+   "stack-134": "tileCol",
+   "stack-136": "endTileCol",
+   "stack-138": "xPixelOffset",
+   "stack-140": "yPixelOffset",
+   "stack-142": "tileRow",
+   "stack-144": "endTileRow",
+   "stack-146": "screenY",
+   "stack-148": "i",
+   "stack-150": "j",
+   "stack-152": "screenX",
+   "stack-154": "k",
+   "stack-160": "tileData",
+   "stack-164": "tileData2",
+   "stack-168": "tileFrame",
+   "stack-172": "tileFrame2",
+   "stack-188": "bufPtr"
+  },
+  "pub_153": {
+   "stack-134": "i",
+   "stack-136": "idleSpeed",
+   "stack-138": "j",
+   "stack-140": "k",
+   "stack-142": "tmp"
+  },
+  "pub_154": {
+   "stack-140": "i",
+   "stack-136": "result",
+   "stack-138": "keyResult"
+  },
+  "pub_155": {
+   "stack-134": "baseDamage",
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "k",
+   "stack-154": "atkPower",
+   "stack-156": "defPower",
+   "stack-176": "rng"
+  },
+  "pub_156": {
+   "stack-136": "menuItemSelected",
+   "stack-138": "menuStarted",
+   "stack-140": "result",
+   "stack-142": "tmp",
+   "stack-144": "tmp2",
+   "stack-146": "tmp3",
+   "stack-148": "tmp4",
+   "stack-152": "tmp5"
+  },
+  "pub_157": {
+   "stack-136": "tmp",
+   "stack-138": "attrName",
+   "stack-156": "str1",
+   "stack-164": "str2",
+   "stack-172": "str3",
+   "stack-176": "tmp2"
+  },
+  "pub_158": {
+   "stack-134": "roleID",
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "fleeChance",
+   "stack-142": "k",
+   "stack-144": "l",
+   "stack-172": "rng"
+  },
+  "pub_159": {
+   "stack-136": "i",
+   "stack-138": "retryCount",
+   "stack-140": "fileResult",
+   "stack-142": "year",
+   "stack-144": "month",
+   "stack-146": "day",
+   "stack-152": "openResult",
+   "stack-156": "filename",
+   "stack-164": "bstr"
+  },
+  "pub_160": {
+   "stack-136": "cmd",
+   "stack-140": "cmdStr",
+   "stack-204": "tmp",
+   "stack-208": "tmp2",
+   "stack-212": "tmp3",
+   "stack-216": "tmp4",
+   "stack-300": "tmp5",
+   "stack-304": "tmp6",
+   "stack-308": "mciResult"
+  },
+  "pub_161": {
+   "stack-136": "dirChanged",
+   "stack-134": "retval",
+   "stack-138": "dirX1",
+   "stack-140": "dirY1",
+   "stack-142": "dirX2",
+   "stack-144": "dirY2",
+   "stack-146": "tmp",
+   "stack-148": "keyResult",
+   "stack-152": "tmp2"
+  },
+  "pub_162": {
+   "stack-134": "x",
+   "stack-136": "y",
+   "stack-138": "color",
+   "stack-140": "i",
+   "stack-142": "j",
+   "stack-144": "k",
+   "stack-148": "offset",
+   "stack-160": "bufPtr"
+  },
+  "priv_163": {
+   "stack-196": "tmp",
+   "stack-200": "tmp2",
+   "stack-204": "tmp3",
+   "stack-208": "tmp4",
+   "stack-212": "tmp5",
+   "stack-216": "tmp6",
+   "stack-220": "tmp7",
+   "stack-224": "tmp8",
+   "stack-228": "tmp9",
+   "stack-264": "tmp10",
+   "stack-268": "tmp11",
+   "stack-272": "tmp12",
+   "stack-214": "tmp13",
+   "stack-380": "tmp14",
+   "stack-384": "tmp15",
+   "stack-388": "tmp16",
+   "stack-392": "tmp17"
+  },
+  "pub_164": {
+   "stack-134": "i",
+   "stack-136": "magicIdx",
+   "stack-138": "partyX",
+   "stack-140": "j",
+   "stack-142": "spriteIdx",
+   "stack-144": "yOffset",
+   "stack-146": "frameDelay",
+   "stack-168": "rng"
+  },
+  "pub_165": {
+   "stack-136": "viewportX",
+   "stack-138": "viewportY",
+   "stack-140": "i",
+   "stack-142": "baseIdx",
+   "stack-144": "dataIdx",
+   "stack-146": "dataIdx2",
+   "stack-148": "screenX",
+   "stack-150": "j",
+   "stack-152": "mapX",
+   "stack-154": "mapY",
+   "stack-156": "tileData"
+  },
+  "pub_166": {
+   "stack-156": "dialogBuf",
+   "stack-158": "i",
+   "stack-160": "j",
+   "stack-162": "tmp",
+   "stack-164": "tmp2",
+   "stack-170": "k"
+  },
+  "pub_167": {
+   "stack-136": "tmp",
+   "stack-138": "opcode",
+   "stack-140": "operand1",
+   "stack-142": "operand2",
+   "stack-144": "operand3",
+   "stack-146": "tmp2",
+   "stack-148": "tmp3",
+   "stack-168": "rng"
+  },
+  "pub_168": {
+   "stack-136": "filename",
+   "stack-140": "result",
+   "stack-144": "bstr"
+  },
+  "pub_169": {
+   "stack-136": "filename",
+   "stack-140": "result",
+   "stack-144": "bstr"
+  },
+  "pub_170": {
+   "stack-134": "i",
+   "stack-136": "stepSize",
+   "stack-138": "damage",
+   "stack-156": "result",
+   "stack-158": "result2"
+  },
+  "pub_171": {
+   "stack-134": "spriteBase",
+   "stack-136": "frameW",
+   "stack-138": "frameH",
+   "stack-140": "i",
+   "stack-142": "j",
+   "stack-144": "screenX",
+   "stack-146": "screenY",
+   "stack-148": "tmp",
+   "stack-150": "k",
+   "stack-152": "tileIdx",
+   "stack-154": "l"
+  },
+  "pub_172": {
+   "stack-134": "i",
+   "stack-136": "roleID",
+   "stack-138": "trailIdx",
+   "stack-140": "trailX",
+   "stack-142": "trailY",
+   "stack-144": "j",
+   "stack-146": "frameOffset"
+  },
+  "pub_173": {
+   "stack-134": "i",
+   "stack-140": "j",
+   "stack-136": "k",
+   "stack-138": "l",
+   "stack-184": "rng"
+  },
+  "pub_174": {
+   "stack-134": "iconX",
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "k",
+   "stack-142": "statusIcon",
+   "stack-144": "roleID",
+   "stack-148": "l"
+  },
+  "pub_175": {
+   "stack-134": "i",
+   "stack-136": "spriteIdx",
+   "stack-138": "y",
+   "stack-140": "x",
+   "stack-142": "j",
+   "stack-144": "k",
+   "stack-148": "tmp",
+   "stack-152": "bufPtr"
+  },
+  "pub_176": {
+   "stack-134": "retval",
+   "stack-136": "i",
+   "stack-138": "itemID",
+   "stack-140": "menuX",
+   "stack-142": "menuY",
+   "stack-144": "cursorPos",
+   "stack-146": "selection",
+   "stack-148": "maxItems",
+   "stack-150": "wordIdx",
+   "stack-152": "invIdx",
+   "stack-154": "keyResult",
+   "stack-156": "confirmResult"
+  },
+  "pub_177": {
+   "stack-134": "i",
+   "stack-136": "j",
+   "stack-160": "rng"
+  },
+  "pub_178": {
+   "stack-140": "i",
+   "stack-134": "retval",
+   "stack-136": "result",
+   "stack-138": "k",
+   "stack-142": "result2",
+   "stack-152": "result3"
+  },
+  "pub_179": {
+   "stack-134": "i",
+   "stack-136": "colX",
+   "stack-138": "rowY",
+   "stack-140": "j",
+   "stack-142": "colorNum",
+   "stack-144": "amount",
+   "stack-146": "itemID",
+   "stack-148": "descIdx",
+   "stack-152": "bufPtr",
+   "stack-164": "cursorPos"
+  },
+  "pub_180": {
+   "stack-134": "i",
+   "stack-136": "npcX",
+   "stack-138": "npcY",
+   "stack-140": "partyX",
+   "stack-142": "partyY",
+   "stack-144": "dx",
+   "stack-146": "triggerScript"
+  },
+  "pub_181": {
+   "stack-142": "i",
+   "stack-136": "tmp",
+   "stack-140": "tmp2",
+   "stack-148": "filename",
+   "stack-156": "filePos"
+  },
+  "pub_182": {
+   "stack-134": "roleID",
+   "stack-136": "hitCount",
+   "stack-138": "i",
+   "stack-140": "j",
+   "stack-142": "targetIdx",
+   "stack-144": "k",
+   "stack-148": "l",
+   "stack-172": "rng",
+   "stack-182": "targetRole",
+   "stack-184": "tmp"
+  },
+  "pub_183": {
+   "stack-134": "scrollDirX",
+   "stack-136": "scrollDirY",
+   "stack-138": "srcX",
+   "stack-142": "srcTileX1",
+   "stack-144": "srcTileX2",
+   "stack-146": "srcTileX1b",
+   "stack-148": "srcTileX2b",
+   "stack-150": "srcY",
+   "stack-152": "tmp",
+   "stack-154": "srcTileY1",
+   "stack-156": "srcTileY2",
+   "stack-158": "srcTileY1b",
+   "stack-160": "srcTileY2b",
+   "stack-162": "dstTileX",
+   "stack-164": "dstTileY",
+   "stack-184": "tmp2",
+   "stack-140": "tmp3"
+  },
+  "pub_184": {
+   "stack-134": "i",
+   "stack-136": "magicIdx",
+   "stack-138": "attackerDmg",
+   "stack-140": "targetFound",
+   "stack-142": "j",
+   "stack-144": "targetSelected",
+   "stack-146": "k",
+   "stack-148": "l",
+   "stack-150": "m",
+   "stack-152": "itemObj",
+   "stack-172": "rng"
+  },
+  "pub_185": {
+   "stack-134": "attackerRole",
+   "stack-136": "damage",
+   "stack-138": "hitCount",
+   "stack-140": "targetHP",
+   "stack-142": "targetX",
+   "stack-144": "targetY",
+   "stack-146": "j",
+   "stack-148": "frameDelay",
+   "stack-172": "rng"
+  },
+  "pub_186": {
+   "stack-134": "itemObj",
+   "stack-136": "j",
+   "stack-138": "itemType",
+   "stack-140": "i",
+   "stack-142": "roleID",
+   "stack-144": "rowY",
+   "stack-146": "colorNum",
+   "stack-148": "equipSlot",
+   "stack-150": "currEquip",
+   "stack-152": "k",
+   "stack-154": "maxHP",
+   "stack-156": "l",
+   "stack-158": "invResult",
+   "stack-168": "bufPtr",
+   "stack-176": "invIdx",
+   "stack-198": "m"
+  },
+  "pub_187": {
+   "stack-134": "roleID",
+   "stack-136": "rowY",
+   "stack-138": "i",
+   "stack-140": "j",
+   "stack-142": "attrVal",
+   "stack-144": "equipObjID",
+   "stack-146": "equipAttr",
+   "stack-148": "keyResult",
+   "stack-150": "tmp",
+   "stack-156": "bufPtr"
+  },
+  "pub_188": {
+   "stack-136": "maxMagic",
+   "stack-138": "i",
+   "stack-140": "j",
+   "stack-142": "magicObjID",
+   "stack-144": "menuX",
+   "stack-146": "menuY",
+   "stack-148": "colCount",
+   "stack-150": "rowCount",
+   "stack-152": "maxPage",
+   "stack-154": "k",
+   "stack-156": "tmp",
+   "stack-158": "maxScroll",
+   "stack-160": "colPos",
+   "stack-162": "rowPos",
+   "stack-164": "l",
+   "stack-166": "prevCol",
+   "stack-168": "prevRow",
+   "stack-170": "prevScroll",
+   "stack-172": "tmp2",
+   "stack-174": "m",
+   "stack-176": "tmp3",
+   "stack-178": "n",
+   "stack-180": "tmp4",
+   "stack-182": "highlightColor",
+   "stack-184": "inputResult",
+   "stack-186": "currMagicObj",
+   "stack-188": "tmp5",
+   "stack-190": "tmp6",
+   "stack-192": "savedScreen",
+   "stack-194": "tmp7",
+   "stack-196": "scrollPos",
+   "stack-198": "o",
+   "stack-200": "p"
+  },
+  "pub_189": {
+   "stack-138": "continueFlag",
+   "stack-140": "savedEntry",
+   "stack-142": "opcode",
+   "stack-144": "operand1",
+   "stack-146": "operand2",
+   "stack-148": "operand3",
+   "stack-150": "imgOffset",
+   "stack-152": "dialogTemp",
+   "stack-154": "tmp",
+   "stack-156": "battleResult",
+   "stack-158": "i",
+   "stack-160": "dialogY",
+   "stack-162": "dialogH",
+   "stack-168": "subfileIdx",
+   "stack-170": "tmp2",
+   "stack-192": "rng"
+  },
+  "priv_190": {
+   "stack-168": "tmp"
+  },
+  "pub_191": {
+   "stack-136": "i",
+   "stack-138": "invIdx",
+   "stack-140": "j",
+   "stack-142": "itemCount",
+   "stack-144": "pageIdx",
+   "stack-146": "lastRowIdx",
+   "stack-148": "colCount",
+   "stack-150": "rowCount",
+   "stack-152": "maxPage",
+   "stack-154": "k",
+   "stack-156": "tmp2",
+   "stack-158": "maxScroll",
+   "stack-160": "colPos",
+   "stack-162": "rowPos",
+   "stack-164": "l",
+   "stack-166": "prevCol",
+   "stack-168": "prevRow",
+   "stack-170": "prevScroll",
+   "stack-172": "tmp3",
+   "stack-174": "m",
+   "stack-176": "tmp4",
+   "stack-178": "n",
+   "stack-180": "inputResult",
+   "stack-182": "highlightColor",
+   "stack-184": "o",
+   "stack-186": "tmp5",
+   "stack-188": "tmp6",
+   "stack-190": "savedScreen",
+   "stack-192": "tmp7",
+   "stack-194": "tmp8",
+   "stack-196": "scrollPos",
+   "stack-198": "p",
+   "stack-200": "q",
+   "stack-208": "bufPtr"
+  },
+  "pub_192": {
+   "stack-134": "attackerRole",
+   "stack-136": "atkPower",
+   "stack-138": "rngVal",
+   "stack-140": "hitChance",
+   "stack-142": "i",
+   "stack-144": "idleAnimSpeed",
+   "stack-146": "j",
+   "stack-148": "damage",
+   "stack-150": "dmgRoll",
+   "stack-192": "rng",
+   "stack-212": "rng2"
+  },
+  "pub_193": {
+   "stack-134": "itemObj",
+   "stack-136": "actionType",
+   "stack-138": "i",
+   "stack-140": "targetIdx",
+   "stack-142": "j",
+   "stack-144": "attrIdx",
+   "stack-146": "baseDmg",
+   "stack-148": "resistVal",
+   "stack-150": "damage",
+   "stack-152": "k",
+   "stack-158": "effectIdx",
+   "stack-172": "l",
+   "stack-196": "rng"
+  },
+  "Sub_Main": {
+   "stack-140": "menuParam",
+   "stack-142": "tmp",
+   "stack-144": "tmp2",
+   "stack-146": "tmp3",
+   "stack-148": "tmp4",
+   "stack-150": "result",
+   "stack-152": "result2",
+   "stack-154": "i",
+   "stack-156": "j",
+   "stack-158": "scrollStepX",
+   "stack-160": "scrollDeltaX",
+   "stack-162": "scrollStepY",
+   "stack-164": "scrollDeltaY",
+   "stack-166": "keyPressed",
+   "stack-168": "scrollMode",
+   "stack-172": "comTmp",
+   "stack-176": "tmp5",
+   "stack-180": "initResult",
+   "stack-184": "rng",
+   "stack-186": "rng2",
+   "stack-196": "tmp6",
+   "stack-200": "tmp7",
+   "stack-204": "tmp8",
+   "stack-208": "tmp9",
+   "stack-212": "tmp10",
+   "stack-216": "tmp11",
+   "stack-220": "tmp12",
+   "stack-222": "tmp13",
+   "stack-224": "tmp14",
+   "stack-264": "tmp15",
+   "stack-268": "tmp16",
+   "stack-272": "tmp17",
+   "stack-278": "tmp18",
+   "stack-284": "rng3",
+   "stack-308": "dsResult",
+   "stack-316": "dsInitResult",
+   "stack-320": "diTmp",
+   "stack-322": "ddInitResult",
+   "stack-324": "rng4",
+   "stack-328": "tmp19",
+   "stack-136": "comTmp2",
+   "stack-138": "comTmp3",
+   "stack-276": "tmp20",
+   "stack-338": "tmp21"
+  },
+  "pub_195": {
+   "stack-134": "i",
+   "stack-136": "itemObj",
+   "stack-138": "targetStart",
+   "stack-140": "targetEnd",
+   "stack-142": "spriteIdx",
+   "stack-144": "j",
+   "stack-146": "rollPower",
+   "stack-148": "k",
+   "stack-150": "baseDamage",
+   "stack-152": "damageMult",
+   "stack-154": "frameDelay",
+   "stack-158": "theurgyIdx",
+   "stack-164": "effectIdx",
+   "stack-172": "l",
+   "stack-204": "rng",
+   "stack-206": "targetIdx"
+  },
+  "pub_196": {
+   "stack-136": "i",
+   "stack-138": "j",
+   "stack-140": "k",
+   "stack-142": "battleResult",
+   "stack-144": "enemyObjID",
+   "stack-146": "directionParam",
+   "stack-148": "actionParam",
+   "stack-150": "menuResult",
+   "stack-152": "dirResult",
+   "stack-154": "thyrgyResult",
+   "stack-156": "thyrgyResult2",
+   "stack-158": "prevRoleIdx",
+   "stack-160": "itemObjID",
+   "stack-162": "menuResult2",
+   "stack-164": "hasMagic",
+   "stack-166": "maxDmg",
+   "stack-168": "equipObjID",
+   "stack-170": "magicSubfile",
+   "stack-172": "floatVal",
+   "stack-174": "rng",
+   "stack-176": "actionType",
+   "stack-178": "l",
+   "stack-180": "roleID",
+   "stack-182": "targetIdx",
+   "stack-184": "thyrgyType",
+   "stack-186": "hpLost",
+   "stack-188": "thyrgyResult3",
+   "stack-190": "isTargeted",
+   "stack-192": "enemyTarget",
+   "stack-194": "thyrgyResult4",
+   "stack-196": "menuParam1",
+   "stack-198": "menuParam2",
+   "stack-200": "thyrgyResult5",
+   "stack-202": "thyrgyResult6",
+   "stack-204": "mpCost",
+   "stack-206": "hasEffect",
+   "stack-208": "actionParam2",
+   "stack-210": "tmp",
+   "stack-212": "targetStart",
+   "stack-214": "targetEnd",
+   "stack-216": "m",
+   "stack-218": "n",
+   "stack-220": "magicSubfile2",
+   "stack-222": "equipID",
+   "stack-224": "thyrgyResult7",
+   "stack-278": "tmp2",
+   "stack-286": "thyrgyResult8",
+   "stack-290": "tmp3",
+   "stack-324": "rng2",
+   "stack-328": "o",
+   "stack-336": "p",
+   "stack-354": "actionTypeSel"
+  },
+  "pub_197": {
+   "stack-136": "eventOffset",
+   "stack-138": "roleID",
+   "stack-140": "stepSize",
+   "stack-142": "tmp",
+   "stack-144": "targetX",
+   "stack-146": "targetY",
+   "stack-148": "tmp2",
+   "stack-150": "tmp3",
+   "stack-152": "eventObjIdx",
+   "stack-154": "j",
+   "stack-156": "i",
+   "stack-158": "loopStart",
+   "stack-160": "loopEnd",
+   "stack-162": "totalChange",
+   "stack-164": "oldVal",
+   "stack-166": "oldMP",
+   "stack-168": "loopRoleID",
+   "stack-170": "healAmount",
+   "stack-172": "poisonSlot",
+   "stack-174": "k",
+   "stack-176": "loopRoleID2",
+   "stack-178": "itemObjID",
+   "stack-180": "extfResult",
+   "stack-182": "stepCount",
+   "stack-184": "distX8",
+   "stack-186": "fleeRate",
+   "stack-188": "walkSpeed",
+   "stack-190": "destX",
+   "stack-192": "destY",
+   "stack-194": "eventIdx1",
+   "stack-196": "eventIdx2",
+   "stack-198": "savedDir",
+   "stack-200": "savedHP",
+   "stack-202": "savedUseScript",
+   "stack-204": "savedEndScript",
+   "stack-206": "screenX",
+   "stack-208": "screenY",
+   "stack-210": "tmp4",
+   "stack-212": "tmp5",
+   "stack-214": "oldTeamX",
+   "stack-216": "oldTeamY",
+   "stack-218": "palSrc",
+   "stack-220": "opcodeCopy",
+   "stack-228": "palDst",
+   "stack-284": "rng",
+   "stack-294": "defenseVal",
+   "stack-336": "filename"
+  }
+ },
+ "struct_fields": {
+  "npc_display_data": {
+   "0": "vanishTime",
+   "2": "x",
+   "4": "y",
+   "6": "layer",
+   "8": "triggerScript",
+   "10": "autoScript",
+   "12": "state",
+   "14": "triggerMode",
+   "16": "spriteNum",
+   "18": "spriteFrames",
+   "20": "direction",
+   "22": "currentFrame",
+   "24": "scriptIdleFrame",
+   "26": "spritePtrOffset",
+   "28": "spriteFramesAuto",
+   "30": "scriptIdleFrameAuto"
+  },
+  "enemy_runtime_data": {
+   "0": "idleFrames",
+   "2": "magicFrames",
+   "4": "attackFrames",
+   "6": "idleAnimSpeed",
+   "8": "actWaitFrames",
+   "10": "yPosOffset",
+   "12": "attackSound",
+   "14": "actionSound",
+   "16": "magicSound",
+   "18": "deathSound",
+   "20": "callSound",
+   "22": "health",
+   "24": "exp",
+   "26": "cash",
+   "28": "level",
+   "30": "magic",
+   "32": "magicRate",
+   "34": "attackEquivItem",
+   "36": "attackEquivItemRate",
+   "38": "stealItem",
+   "40": "stealItemCount",
+   "42": "attackStrength",
+   "44": "magicStrength",
+   "46": "defense",
+   "48": "dexterity",
+   "50": "fleeRate",
+   "52": "poisonResistance",
+   "54": "elemResistance0",
+   "56": "elemResistance1",
+   "58": "elemResistance2",
+   "60": "elemResistance3",
+   "62": "elemResistance4",
+   "64": "physicalResistance",
+   "66": "dualMove",
+   "68": "collectValue"
+  },
+  "theurgy_data": {
+   "0": "effect",
+   "2": "type",
+   "4": "xOffset",
+   "6": "yOffset",
+   "8": "layerOffset",
+   "10": "speed",
+   "12": "keepEffect",
+   "14": "fireDelay",
+   "16": "effectTimes",
+   "18": "shake",
+   "20": "wave",
+   "24": "costMP",
+   "26": "baseDamage",
+   "28": "elemental",
+   "30": "sound"
+  },
+  "party": {
+   "0": "role",
+   "2": "x",
+   "4": "y",
+   "6": "frame",
+   "8": "imageOffset"
+  },
+  "trail": {
+   "0": "x",
+   "2": "y",
+   "4": "direction"
+  },
+  "inventory": {
+   "0": "item",
+   "2": "amount",
+   "4": "amountInUse"
+  },
+  "scenes": {
+   "0": "mapNum",
+   "2": "scriptOnEnter",
+   "4": "scriptOnLeave",
+   "6": "eventObjectIndex"
+  },
+  "objects": {
+   "0": "data0",
+   "2": "data1",
+   "4": "data2",
+   "6": "data3",
+   "8": "data4",
+   "10": "data5",
+   "12": "data6"
+  },
+  "playerExp": {
+   "0": "exp",
+   "4": "level",
+   "6": "count"
+  },
+  "levelupMagic": {
+   "0": "level",
+   "2": "magic"
+  },
+  "enemyPos": {
+   "0": "x",
+   "2": "y"
+  },
+  "player_battle_sprite": {
+   "0": "spriteNum",
+   "2": "x",
+   "4": "y",
+   "6": "animOffset",
+   "8": "origX",
+   "10": "origY",
+   "12": "direction",
+   "14": "origDirection",
+   "16": "spriteBase",
+   "18": "actionState",
+   "20": "objectID",
+   "22": "equipID"
+  },
+  "enemy_battle_data": {
+   "0": "enemyID",
+   "2": "x",
+   "4": "y",
+   "6": "origX",
+   "8": "origY",
+   "10": "direction",
+   "12": "flag",
+   "14": "mapValue",
+   "16": "tileData",
+   "18": "hp",
+   "20": "objectID",
+   "22": "useScript",
+   "24": "battleStartScript",
+   "26": "battleEndScript"
+  },
+  "damage_numbers": {
+   "0": "x",
+   "2": "y",
+   "4": "number",
+   "6": "colorType",
+   "8": "timer"
+  },
+  "battle_effect_data": {
+   "0": "effect",
+   "2": "frames"
+  },
+  "poison_status_struct": {
+   "0": "poisonID",
+   "2": "poisonScript"
+  },
+  "battle_role_action": {
+   "0": "target",
+   "2": "actionType",
+   "4": "itemID",
+   "6": "invIndex",
+   "8": "flag"
+  },
+  "battle_role_data_ext": {
+   "0": "savedHP",
+   "2": "savedMP"
+  },
+  "enemy_pos_data": {
+   "0": "x",
+   "2": "y"
+  },
+  "word_array": {
+   "0": ""
+  }
+ },
+ "var_to_struct": {
+  "npc_display_data": "npc_display_data",
+  "events": "npc_display_data",
+  "enemy_runtime_data": "enemy_runtime_data",
+  "data_enemy": "enemy_runtime_data",
+  "theurgy_data": "theurgy_data",
+  "party": "party",
+  "trail": "trail",
+  "inventory": "inventory",
+  "scenes": "scenes",
+  "objects": "objects",
+  "playerExp": "playerExp",
+  "levelupMagic": "levelupMagic",
+  "data_levelup_magic": "levelupMagic",
+  "enemyPos": "enemyPos",
+  "enemy_pos_data": "enemy_pos_data",
+  "player_battle_sprite": "player_battle_sprite",
+  "battleSprite": "player_battle_sprite",
+  "enemy_battle_data": "enemy_battle_data",
+  "enemyBattleData": "enemy_battle_data",
+  "enemy_battle_data_ext": "enemy_battle_data_ext",
+  "damage_numbers": "damage_numbers",
+  "damageNumbers": "damage_numbers",
+  "battle_effect_data": "battle_effect_data",
+  "battleEffect": "battle_effect_data",
+  "battle_role_action": "battle_role_action",
+  "battle_role_data_ext": "battle_role_data_ext",
+  "playerRoles": "word_array",
+  "player_status": "word_array",
+  "enemy_status": "word_array",
+  "enemy_poison_status": "poison_status_struct",
+  "poison_status": "poison_status_struct",
+  "equipment_effect": "word_array",
+  "key_mapping_table": "word_array",
+  "data_store": "word_array"
+ }
 }

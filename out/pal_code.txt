@@ -200,8 +200,8 @@ End Sub
 
 Sub draw_npc_sprite()
     retval = mgo_frame_offsets(curr_npc_idx)
-    x = npc_curr_frame - (mgo_frame_offsets(retval) \ 2)
-    Call PAL_AddToTree(x, npc_direction, 0, mgo_frame_offsets(retval))
+    x = npc_anchor_x - (mgo_frame_offsets(retval) \ 2)
+    Call PAL_AddToTree(x, npc_anchor_y, 0, mgo_frame_offsets(retval))
     Exit Sub
 End Sub
 
@@ -1256,13 +1256,13 @@ Function query_midi_status() As Integer
 End Function
 
 Sub animate_battle_sprites(ByRef startIdx, ByRef endIdx)
-    For i = 1 To 15
+    For fadeStep = 1 To 15
         Call PAL_WaitTime(2)
-        For j = startIdx To endIdx
-            k = mgo_frame_offsets(player_battle_sprite(j).spriteBase + player_battle_sprite(j).direction) + player_battle_sprite(j).spriteBase
-            l = player_battle_sprite(j).x - (mgo_frame_offsets(k) \ 2)
-            frameData = player_battle_sprite(j).y - mgo_frame_offsets(k + 1)
-            Call PAL_PutP(l, frameData, mgo_frame_offsets(k), screen_buffer_ptr, i, 1)
+        For spriteIdx = startIdx To endIdx
+            frameBase = mgo_frame_offsets(player_battle_sprite(spriteIdx).spriteBase + player_battle_sprite(spriteIdx).direction) + player_battle_sprite(spriteIdx).spriteBase
+            drawX = player_battle_sprite(spriteIdx).x - (mgo_frame_offsets(frameBase) \ 2)
+            drawY = player_battle_sprite(spriteIdx).y - mgo_frame_offsets(frameBase + 1)
+            Call PAL_PutP(drawX, drawY, mgo_frame_offsets(frameBase), screen_buffer_ptr, fadeStep, 1)
         Next
     Next
     Exit Sub
@@ -2405,8 +2405,8 @@ Sub cast_theurgy_anim(ByRef itemID)
     Call read_file_to_buf(theurgy_data(0).layerOffset + 10, 0)
     Call PAL_WaitTime(5)
     curr_npc_idx = 0
-    npc_curr_frame = 240 + theurgy_data(0).xOffset
-    npc_direction = 165 + theurgy_data(0).yOffset
+    npc_anchor_x = 240 + theurgy_data(0).xOffset
+    npc_anchor_y = 165 + theurgy_data(0).yOffset
     Call play_theurgy_rng_anim()
     k = curr_npc_idx
     For i = 1 To 2
@@ -3502,8 +3502,8 @@ Sub draw_enemy_battle_frame()
     Next
     If npc_dir_frame Then
         spriteIdx = mgo_frame_offsets(curr_npc_idx)
-        y = npc_curr_frame - (mgo_frame_offsets(spriteIdx) \ 2)
-        x = npc_direction - mgo_frame_offsets(spriteIdx + 1)
+        y = npc_anchor_x - (mgo_frame_offsets(spriteIdx) \ 2)
+        x = npc_anchor_y - mgo_frame_offsets(spriteIdx + 1)
         Call PAL_PutP(y, x, mgo_frame_offsets(spriteIdx), tmp, 0, 0)
         Exit Sub
     End If
