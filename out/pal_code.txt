@@ -38,7 +38,7 @@ Sub swap_values(ByRef v1, ByRef v2)
     Exit Sub
 End Sub
 
-Function calc_sprite_y_offset(ByRef enemyIdx, ByRef multiplier) As Integer
+Function calc_level_bonus(ByRef enemyIdx, ByRef multiplier) As Integer
     Return (enemy_runtime_data(enemyIdx).level + 6) * multiplier
 End Function
 
@@ -482,7 +482,7 @@ End Sub
 Sub read_rng_subfile(subfileNum)
     tmp_file_size = get_subfile_len(fh_RNG_MKF, subfileNum)
     If tmp_file_size > max_subfile_size Then
-        Redim dims=1 desc=00000000 flags=0001,0000
+        Redim rng_anim_data(tmp_file_size)
         max_subfile_size = tmp_file_size
     End If
     AryLock mem=lockMem
@@ -903,7 +903,7 @@ Sub play_battle_effect(ByRef roleIdx)
     Exit Sub
 End Sub
 
-Sub show_enemy_damage(ByRef thyrgyType)
+Sub show_enemy_damage(ByRef theurgyType)
     For i = 0 To team_number
         If battle_enemy_data_ext(i) > 0 Then
             j = enemy_battle_data(i).hp - battle_enemy_data_ext(i)
@@ -914,7 +914,7 @@ Sub show_enemy_damage(ByRef thyrgyType)
                     k = 1
                 End If
                 Call add_damage_number(enemy_battle_data(i).x, enemy_battle_data(i).y - 110, Abs (j), k)
-                thyrgyType = -1
+                theurgyType = -1
                 player_hit_flags(i) = -1
             End If
         End If
@@ -1880,7 +1880,7 @@ Sub play_theurgy_anim(magicIdx, ByRef startFrame, ByRef minFrames)
     Exit Sub
 End Sub
 
-Sub show_party_hp_mp_change(ByRef thyrgyType)
+Sub show_party_hp_mp_change(ByRef theurgyType)
     For i = 0 To enemy_pos_count
         roleID = party(i).role
         hpDiff = playerRoles(roleID, 9) - battle_role_data_ext(i).savedHP
@@ -1891,12 +1891,12 @@ Sub show_party_hp_mp_change(ByRef thyrgyType)
                 j = 1
             End If
             Call add_damage_number(player_battle_sprite(i).x, player_battle_sprite(i).y - 70, Abs (hpDiff), j)
-            thyrgyType = -1
+            theurgyType = -1
         End If
         hpDiff = playerRoles(roleID, 10) - battle_role_data_ext(i).savedMP
         If hpDiff > 0 Then
             Call add_damage_number(player_battle_sprite(i).x, player_battle_sprite(i).y - 62, hpDiff, 2)
-            thyrgyType = -1
+            theurgyType = -1
         End If
         If playerRoles(roleID, 9) < 0 Then
             playerRoles(roleID, 9) = 0
@@ -1987,7 +1987,7 @@ Sub use_item_menu()
     If i >= 0 Then
 L_0040AF7C:
         j = party(i).role
-        itemID = select_thurgy(j, cursorIdx, 1)
+        itemID = select_theurgy(j, cursorIdx, 1)
         If itemID < 0 Then
             Exit Sub
         End If
@@ -2341,8 +2341,8 @@ Sub fade_in_pic(fbpSubfile, ByRef rngSubfile, ByRef speed)
     frameCount = 0
     For i = 1 To 100
         Call render_scene_with_rng()
-        Call PAL_ClearClipNA(0, 0, viewport_offset, viewport_height, viewport_offset, bufPtr, global_buf_2(0))
         bufPtr = PAL_ArrayPtr(global_buf_1(0))
+        Call PAL_ClearClipNA(0, 0, viewport_offset, viewport_height, viewport_offset, bufPtr, global_buf_2(0))
         If rngSubfile <> 0 Then
             Call PAL_PutIpNA(0, 0, 0, viewport_offset, fire_mkf_data(fire_mkf_data(frameIdx)), global_buf_2(0))
             frameIdx = frameIdx + 1
@@ -2578,7 +2578,7 @@ Sub calc_player_attack_damage(ByRef targetRole, ByRef attackerRole, ByRef isCrit
     j = 0
     For i = 0 To baseDamage
         atkPower = get_player_attribute_total(attackerRole, 17)
-        defPower = calc_sprite_y_offset(isCritical, 4)
+        defPower = calc_level_bonus(isCritical, 4)
         k = (calc_battle_damage(atkPower, enemy_runtime_data(isCritical).defense + defPower) * 2) \ enemy_runtime_data(isCritical).physicalResistance
         Call role_physical_attack(targetRole, isCritical, k, baseDamage)
         j = j + k
@@ -3281,8 +3281,8 @@ Sub enemy_attack_enemy(ByRef attackerIdx, ByRef targetIdx)
         Call draw_battle_scene(1, 0)
     Next
     effect_particle_count = 0
-    result = calc_sprite_y_offset(attackerIdx, 6)
-    result2 = calc_sprite_y_offset(targetIdx, 4)
+    result = calc_level_bonus(attackerIdx, 6)
+    result2 = calc_level_bonus(targetIdx, 4)
     damage = (calc_battle_damage(enemy_runtime_data(attackerIdx).attackStrength + result, enemy_runtime_data(targetIdx).defense + result2) * 2) \ enemy_runtime_data(targetIdx).physicalResistance
     Call add_damage_number(enemy_battle_data(targetIdx).x, enemy_battle_data(targetIdx).y - 110, damage, 1)
     player_hit_flags(targetIdx) = -1
@@ -3960,7 +3960,7 @@ Sub player_attack_all(ByRef roleIdx, ByRef animate)
         If enemy_battle_data(i).hp > 0 Then
             battle_order_array(i) = -1
             targetRole = get_player_attribute_total(roleID, 17)
-            tmp = calc_sprite_y_offset(i, 4)
+            tmp = calc_level_bonus(i, 4)
             targetIdx = (calc_battle_damage(targetRole, enemy_runtime_data(i).defense + tmp) * 2) \ enemy_runtime_data(i).physicalResistance
             targetIdx = CSng (targetIdx) * l
             battle_order_array(i + 20) = battle_order_array(i + 20) + targetIdx
@@ -4124,11 +4124,11 @@ Sub enemy_attack_role(ByRef enemyIdx, targetRole, itemID)
             Exit Sub
         End If
         If magicIdx = 0 Then
-            attackerDmg = enemy_runtime_data(enemyIdx).attackStrength + calc_sprite_y_offset(enemyIdx, 6)
+            attackerDmg = enemy_runtime_data(enemyIdx).attackStrength + calc_level_bonus(enemyIdx, 6)
             Call enemy_physical_attack(enemyIdx, targetRole, attackerDmg, itemID)
         Else
             itemObj = objects(magicIdx).data0
-            attackerDmg = enemy_runtime_data(enemyIdx).magicStrength + calc_sprite_y_offset(enemyIdx, 6)
+            attackerDmg = enemy_runtime_data(enemyIdx).magicStrength + calc_level_bonus(enemyIdx, 6)
             Call enemy_magical_attack(enemyIdx, targetRole, magicIdx, attackerDmg)
             Call process_Script(targetRole, objects(magicIdx).data2)
         End If
@@ -4342,9 +4342,9 @@ L_00415E00:
         End If
         If m = 2 Then
             If battle_order_array(j + 100) Then
-                maxHP = playerRoles(l, 65)
+                maxHP = playerRoles(roleID_uninit, 65)
                 Call process_Script(j, objects(itemObj).data3)
-                playerRoles(l, 65) = maxHP
+                playerRoles(roleID_uninit, 65) = maxHP
                 Call remove_inventory_item(itemObj, 1)
                 Call add_inventory_item(coop_magic_tmp, 1)
                 itemObj = coop_magic_tmp
@@ -4433,7 +4433,7 @@ Sub show_role_status(ByRef roleIdx)
     Exit Sub
 End Sub
 
-Function select_thurgy(ByRef roleID, ByRef cursorIdx, ByRef filterMask) As Integer
+Function select_theurgy(ByRef roleID, ByRef cursorIdx, ByRef filterMask) As Integer
     Call sort_player_magic(roleID)
     Call PAL_ClearMenu(battle_order_array(0), 32)
     maxMagic = -1
@@ -5329,9 +5329,8 @@ Sub calc_display_theurgy(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
         If enemyIdx < 9 Then
             Call play_sound(theurgy_data(0).sound, 0)
         End If
-        For l = 0 To (theurgy_data(0).fireDelay - 1)
+        For effect_frame_count = 0 To (theurgy_data(0).fireDelay - 1)
             Call draw_battle_scene(1, theurgy_data(0).speed)
-            effect_frame_count
         Next
         player_battle_sprite(enemyIdx).direction = 6
         targetIdx = 10
@@ -5345,7 +5344,7 @@ Sub calc_display_theurgy(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
             damage = power + ((CSng (power) * rng) \ 10)
             If battle_order_array(j) Then
                 attrIdx = theurgy_data(0).elemental
-                baseDmg = calc_sprite_y_offset(j, 4) + enemy_runtime_data(j).defense
+                baseDmg = calc_level_bonus(j, 4) + enemy_runtime_data(j).defense
                 If battle_order_array(j) Then
                     damage = (calc_battle_damage(damage, baseDmg) \ 2) + actionType
                     If (attrIdx > 0) And (attrIdx < 7) Then
@@ -5672,9 +5671,8 @@ Sub enemy_magical_attack(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
         Call play_sound(theurgy_data(0).sound, 0)
         i = 10
         enemy_battle_data(enemyIdx).direction = targetStart
-        For l = 0 To (theurgy_data(0).fireDelay - 1)
+        For effect_frame_count = 0 To (theurgy_data(0).fireDelay - 1)
             Call draw_battle_scene(1, theurgy_data(0).speed)
-            effect_frame_count
         Next
         For j = (targetStart + 1) To targetEnd
             enemy_battle_data(enemyIdx).direction = j
@@ -5982,16 +5980,16 @@ L_0041DD2A:
                     If tmp2 = 1 Then
 L_0041DFF8:
                         If player_status(battle_curr_role_idx, 3) Then
-                            thyrgyType = 0
+                            theurgyType = 0
                         Else
-                            thyrgyType = 2
+                            theurgyType = 2
                         End If
-                        thyrgyResult3 = select_thurgy(party(battle_curr_role_idx).role, actionParam, thyrgyType)
+                        theurgyResult3 = select_theurgy(party(battle_curr_role_idx).role, actionParam, theurgyType)
                         Call draw_battle_status_bar()
-                        If thyrgyResult3 >= 0 Then
-                            Call PAL_GetBin(prevRoleIdx, objects(thyrgyResult3).data6, 3)
-                            Call PAL_GetBin(isTargeted, objects(thyrgyResult3).data6, 4)
-                            battle_role_action(battle_curr_role_idx).itemID = thyrgyResult3
+                        If theurgyResult3 >= 0 Then
+                            Call PAL_GetBin(prevRoleIdx, objects(theurgyResult3).data6, 3)
+                            Call PAL_GetBin(isTargeted, objects(theurgyResult3).data6, 4)
+                            battle_role_action(battle_curr_role_idx).itemID = theurgyResult3
                             battle_role_action(battle_curr_role_idx).invIndex = actionParam
                             If prevRoleIdx Then
                                 If isTargeted Then
@@ -6011,9 +6009,9 @@ L_0041E134:
                                     battle_role_action(battle_curr_role_idx).target = battle_curr_role_idx
                                     GoTo L_0041E1AA
                                 End If
-                                thyrgyResult4 = select_battle_target()
-                                If thyrgyResult4 >= 0 Then
-                                    battle_role_action(battle_curr_role_idx).target = thyrgyResult4
+                                theurgyResult4 = select_battle_target()
+                                If theurgyResult4 >= 0 Then
+                                    battle_role_action(battle_curr_role_idx).target = theurgyResult4
                                     GoTo L_0041E1AA
                                 End If
                                 GoTo L_0041DFF8
@@ -6044,23 +6042,23 @@ L_0041E1AA:
                     End If
                     If tmp2 = 3 Then
                         Do
-                            thyrgyResult2 = menu_loop(menuParam1, 4, 16, 56, 3, 5)
-                            If thyrgyResult2 < 0 Then
+                            theurgyResult2 = menu_loop(menuParam1, 4, 16, 56, 3, 5)
+                            If theurgyResult2 < 0 Then
                                 Call draw_battle_status_bar()
                                 GoTo L_0041E404
                             End If
-                            tmp3 = thyrgyResult2
+                            tmp3 = theurgyResult2
                             If tmp3 = 0 Then
-                                thyrgyResult7 = set_auto_battle_targets()
+                                theurgyResult7 = set_auto_battle_targets()
                                 GoTo L_0041E3D2
                             End If
                             If tmp3 = 1 Then
-                                thyrgyResult = menu_loop(menuParam2, 24, 50, 23, 2, 2)
-                                If thyrgyResult < 0 Then
-                                    thyrgyResult2 = -2
+                                theurgyResult = menu_loop(menuParam2, 24, 50, 23, 2, 2)
+                                If theurgyResult < 0 Then
+                                    theurgyResult2 = -2
                                     GoTo L_0041E3D2
                                 End If
-                                thyrgyResult2 = select_battle_action(thyrgyResult)
+                                theurgyResult2 = select_battle_action(theurgyResult)
                                 GoTo L_0041E3D2
                             End If
                             If tmp3 = 2 Then
@@ -6075,8 +6073,8 @@ L_0041E1AA:
                                 Call entry_stub_show_text_and_dialog()
                             End If
 L_0041E3D2:
-                        Loop While thyrgyResult2 = -2
-                        If thyrgyResult2 <> 4 Then
+                        Loop While theurgyResult2 = -2
+                        If theurgyResult2 <> 4 Then
                             Call check_battle_action(directionParam, actionParam)
                             Call draw_battle_status_bar()
                         End If
@@ -6134,18 +6132,18 @@ L_0041E7AC:
                     Next
                     battle_curr_role_idx = enemy_pos_count
                 End If
-                thyrgyResult2 = 0
+                theurgyResult2 = 0
                 If dirResult = -10 Then
-                    thyrgyResult7 = set_auto_battle_targets()
+                    theurgyResult7 = set_auto_battle_targets()
                 End If
                 If dirResult = -11 Then
                     Call battle_set_action_code()
                 End If
                 If dirResult = -12 Then
-                    thyrgyResult2 = select_battle_action(0)
+                    theurgyResult2 = select_battle_action(0)
                 End If
                 If dirResult = -13 Then
-                    thyrgyResult2 = select_battle_action(1)
+                    theurgyResult2 = select_battle_action(1)
                 End If
                 If dirResult = -14 Then
                     Call battle_set_action_walk()
@@ -6184,7 +6182,7 @@ L_0041E7AC:
                     Next
                     battle_curr_role_idx = enemy_pos_count
                 End If
-            Loop While thyrgyResult2 = -2
+            Loop While theurgyResult2 = -2
             Call check_battle_action(directionParam, actionParam)
             Call draw_battle_status_bar()
 L_0041EAAA:
@@ -6196,19 +6194,18 @@ L_0041EAC0:
         dialog_y_pos = 200
         Call draw_battle_scene(1, 0)
         battle_action_queue = -1
-        For o = 0 To team_number
+        For battle_enemy_idx = 0 To team_number
             rng = Sgn (VB40032.rtcRandomNext() * CSng (enemy_runtime_data(battle_enemy_idx).dualMove))
             rng2 = VB40032.rtcRandomNext()
-            prevRoleIdx = CSng (calc_sprite_y_offset(battle_enemy_idx, 3) + enemy_runtime_data(battle_enemy_idx).dexterity) * (0.9 + (rng2 / CSng (5)))
+            prevRoleIdx = CSng (calc_level_bonus(battle_enemy_idx, 3) + enemy_runtime_data(battle_enemy_idx).dexterity) * (0.9 + (rng2 / CSng (5)))
             For i = 0 To rng
                 battle_action_queue = battle_action_queue + 1
                 battle_action_queue_ext(battle_action_queue) = 10 + battle_enemy_idx
                 save_temp_buf(battle_action_queue) = prevRoleIdx
                 battle_sprite_ext(battle_action_queue) = i
             Next
-            battle_enemy_idx
         Next
-        For p = 0 To enemy_pos_count
+        For battle_enemy_idx = 0 To enemy_pos_count
             If menuResult = 0 Then
                 CopyBytes battle_role_data_copy(battle_enemy_idx), battle_role_action(battle_enemy_idx), len=10
             End If
@@ -6239,7 +6236,6 @@ L_0041EAC0:
                 prevRoleIdx = 0
             End If
             save_temp_buf(battle_action_queue) = prevRoleIdx
-            battle_enemy_idx
         Next
         For i = 0 To (battle_action_queue - 1)
             For j = (i + 1) To battle_action_queue
@@ -6263,8 +6259,8 @@ L_0041EAC0:
                         battle_sub_flag = battle_action_queue_ext(l) = battle_action_queue_ext(l - 1)
                     End If
                     If enemy_battle_data(battle_enemy_idx).hp > 0 Then
-                        thyrgyResult8 = random_alive_party_member()
-                        Call enemy_attack_role(battle_enemy_idx, thyrgyResult8, battle_sprite_ext(l))
+                        theurgyResult8 = random_alive_party_member()
+                        Call enemy_attack_role(battle_enemy_idx, theurgyResult8, battle_sprite_ext(l))
                     End If
                 End If
                 GoTo L_00420322
@@ -6280,7 +6276,7 @@ L_0041EAC0:
                         GoTo L_00420322
                     End If
                     If auto_battle_flag >= 2 Then
-                        battle_role_action(battle_enemy_idx).target = thyrgyResult7
+                        battle_role_action(battle_enemy_idx).target = theurgyResult7
                         If auto_battle_flag = 2 Then
                             battle_role_action(battle_enemy_idx).actionType = 0
                         End If
@@ -6304,7 +6300,7 @@ L_0041EAC0:
                     magic_select_idx = 0
                     in_battle_action = 0
                     battle_enemy_hp = 0
-                    thyrgyResult5 = count_alive_enemies()
+                    theurgyResult5 = count_alive_enemies()
                     For i = 0 To 4
                         battle_enemy_data_ext(i) = enemy_battle_data(i).hp
                     Next
@@ -6316,7 +6312,7 @@ L_0041EAC0:
                             itemObjID = battle_role_action(battle_enemy_idx).itemID
                             k = objects(itemObjID).data0
                             Call copy_subfile_data(k)
-                            thyrgyResult6 = get_player_attribute_total(roleID, 18)
+                            theurgyResult6 = get_player_attribute_total(roleID, 18)
                             If theurgy_data(0).type = 8 Then
                                 hasEffect = 0
                             Else
@@ -6330,7 +6326,7 @@ L_0041EAC0:
                                     Call animate_battle_sprites(battle_enemy_idx, battle_enemy_idx)
                                 End If
                                 If theurgy_data(0).effect >= 0 Then
-                                    Call calc_display_theurgy(battle_enemy_idx, battle_role_action(battle_enemy_idx).target, itemObjID, thyrgyResult6)
+                                    Call calc_display_theurgy(battle_enemy_idx, battle_role_action(battle_enemy_idx).target, itemObjID, theurgyResult6)
                                 End If
                                 playerRoles(roleID, 10) = playerRoles(roleID, 10) - theurgy_data(0).costMP
                                 GoSub L_00420B20
@@ -6359,7 +6355,7 @@ L_0041EAC0:
                             If redraw_hp_mp_flag Then
                                 actionParam2 = battle_enemy_idx
                                 npc_dir_frame = 0
-                                thyrgyResult6 = get_player_attribute_total(roleID, 18)
+                                theurgyResult6 = get_player_attribute_total(roleID, 18)
                                 If theurgy_data(0).type = 9 Then
                                     tmp = k
                                     npc_dir_frame = -1
@@ -6367,11 +6363,11 @@ L_0041EAC0:
                                     Call reset_battle_sprite_pos(battle_enemy_idx)
                                     actionParam2 = 9
                                 End If
-                                Call calc_display_theurgy(actionParam2, targetIdx, itemObjID, thyrgyResult6)
+                                Call calc_display_theurgy(actionParam2, targetIdx, itemObjID, theurgyResult6)
                                 Call process_Script(targetIdx, objects(itemObjID).data2)
                                 Call apply_enemy_poison_damage()
-                                Call show_enemy_damage(thyrgyType)
-                                If thyrgyType Then
+                                Call show_enemy_damage(theurgyType)
+                                If theurgyType Then
                                     Call enemy_hit_reaction(5)
                                 End If
                                 playerRoles(roleID, 10) = playerRoles(roleID, 10) - mpCost
@@ -6423,10 +6419,10 @@ L_0041EAC0:
                                     Call remove_inventory_item(itemObjID, 1)
                                 End If
                             End If
-                            thyrgyType = 0
-                            Call show_party_hp_mp_change(thyrgyType)
-                            Call show_enemy_damage(thyrgyType)
-                            If thyrgyType Then
+                            theurgyType = 0
+                            Call show_party_hp_mp_change(theurgyType)
+                            Call show_enemy_damage(theurgyType)
+                            If theurgyType Then
                                 Call draw_battle_scene(3, 0)
                                 Call draw_battle_scene(5, 0)
                             End If
@@ -6448,12 +6444,12 @@ L_0041EAC0:
                             equipID = player_battle_sprite(battle_enemy_idx).equipID
                             magicSubfile2 = objects(equipID).data0
                             Call copy_subfile_data(magicSubfile2)
-                            thyrgyResult6 = 0
+                            theurgyResult6 = 0
                             For i = 0 To enemy_pos_count
                                 k = party(i).role
                                 If (check_player_alive(i) > 1) And (playerRoles(k, 9) >= theurgy_data(0).costMP) Then
                                     playerRoles(k, 9) = playerRoles(k, 9) - theurgy_data(0).costMP
-                                    thyrgyResult6 = (thyrgyResult6 + playerRoles(k, 17)) + playerRoles(k, 18)
+                                    theurgyResult6 = (theurgyResult6 + playerRoles(k, 17)) + playerRoles(k, 18)
                                 End If
                             Next
                             If theurgy_data(0).type < 9 Then
@@ -6514,11 +6510,11 @@ L_0041EAC0:
                                     Call cast_theurgy_anim(equipID)
                                     actionParam2 = 9
                                 End If
-                                thyrgyResult6 = thyrgyResult6 \ 4
-                                Call calc_display_theurgy(actionParam2, targetIdx, equipID, thyrgyResult6)
+                                theurgyResult6 = theurgyResult6 \ 4
+                                Call calc_display_theurgy(actionParam2, targetIdx, equipID, theurgyResult6)
                                 Call apply_enemy_poison_damage()
-                                Call show_enemy_damage(thyrgyType)
-                                If thyrgyType Then
+                                Call show_enemy_damage(theurgyType)
+                                If theurgyType Then
                                     Call enemy_hit_reaction(5)
                                 End If
                             Else
@@ -6539,7 +6535,7 @@ L_0041EAC0:
                         Case 8
                             prevRoleIdx = 0
                             For i = 0 To team_number
-                                hasEffect = calc_sprite_y_offset(i, 4) + enemy_runtime_data(i).dexterity
+                                hasEffect = calc_level_bonus(i, 4) + enemy_runtime_data(i).dexterity
                                 If enemy_battle_data(i).hp > 0 Then
                                     prevRoleIdx = prevRoleIdx + hasEffect
                                 End If
@@ -6558,7 +6554,7 @@ L_0041EAC0:
                         Case 10
                             Call player_attack_execute(battle_enemy_idx, roleID)
                     End Select
-                    If count_alive_enemies() < thyrgyResult5 Then
+                    If count_alive_enemies() < theurgyResult5 Then
                         npc_sprite_num = -1
                         Call play_sound(battle_enemy_hp, 0)
                     End If
@@ -6605,7 +6601,7 @@ L_00420322:
                 GoTo L_00420C0E
             End If
         Next
-        thyrgyType = 2
+        theurgyType = 2
         For i = 0 To team_number
             For j = 0 To 15
                 If enemy_status(i, j) > 0 Then
@@ -6622,7 +6618,7 @@ L_00420322:
                 hpLost = battle_enemy_data_ext(i) - enemy_battle_data(i).hp
                 If hpLost > 0 Then
                     Call add_damage_number(enemy_battle_data(i).x, enemy_battle_data(i).y - 110, hpLost, 1)
-                    thyrgyType = 10
+                    theurgyType = 10
                 End If
                 If enemy_battle_data(i).hp <= 0 Then
                     npc_sprite_num = -1
@@ -6648,12 +6644,12 @@ L_00420322:
                 hpLost = damage_target_hp - playerRoles(k, 9)
                 If hpLost > 0 Then
                     Call add_damage_number(player_battle_sprite(i).x, player_battle_sprite(i).y - 70, hpLost, 1)
-                    thyrgyType = 10
+                    theurgyType = 10
                 End If
                 hpLost = battle_select_idx - playerRoles(k, 10)
                 If hpLost > 0 Then
                     Call add_damage_number(player_battle_sprite(i).x, player_battle_sprite(i).y - 62, hpLost, 2)
-                    thyrgyType = 10
+                    theurgyType = 10
                 End If
             End If
             battle_role_data_ext(i).savedHP = playerRoles(k, 9)
@@ -6661,7 +6657,7 @@ L_00420322:
             playerRoles(k, 9) = damage_target_hp
             playerRoles(k, 10) = battle_select_idx
         Next
-        Call draw_battle_scene(thyrgyType, 0)
+        Call draw_battle_scene(theurgyType, 0)
         For i = 0 To 4
             battle_enemy_data_ext(i) = enemy_battle_data(i).hp
         Next
@@ -6694,9 +6690,9 @@ L_00420B20:
         battle_role_data_ext(i).savedMP = playerRoles(party(i).role, 10)
     Next
     Call process_Script(battle_role_action(battle_enemy_idx).target, objects(itemObjID).data2)
-    thyrgyType = 0
-    Call show_party_hp_mp_change(thyrgyType)
-    If thyrgyType Then
+    theurgyType = 0
+    Call show_party_hp_mp_change(theurgyType)
+    If theurgyType Then
         Call draw_battle_scene(7, 0)
         Call update_player_battle_status()
     End If

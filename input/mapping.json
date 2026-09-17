@@ -12,7 +12,7 @@
   "pub_002": "DoEvents_check_exit",
   "pub_004": "battle_set_action_code",
   "pub_005": "swap_values",
-  "pub_006": "calc_sprite_y_offset",
+  "pub_006": "calc_level_bonus",
   "pub_007": "load_battle_effect_sprites",
   "pub_008": "check_key_pressed",
   "pub_009": "increment_script_ip",
@@ -192,7 +192,7 @@
   "pub_185": "role_physical_attack",
   "pub_186": "inventory_use_menu",
   "pub_187": "show_role_status",
-  "pub_188": "select_thurgy",
+  "pub_188": "select_theurgy",
   "pub_189": "process_Script",
   "pub_191": "select_item_with_filter",
   "pub_192": "enemy_physical_attack",
@@ -569,13 +569,13 @@
    "roleIdx"
   ],
   "pub_087": [
-   "thyrgyType"
+   "theurgyType"
   ],
   "pub_097": [
    "amount"
   ],
   "pub_133": [
-   "thyrgyType"
+   "theurgyType"
   ],
   "pub_075": [
    "enemyIdx"
@@ -2005,7 +2005,7 @@
    "stack-150": "currEquip",
    "stack-152": "k",
    "stack-154": "maxHP",
-   "stack-156": "l",
+   "stack-156": "roleID_uninit",
    "stack-158": "invResult",
    "stack-168": "bufPtr",
    "stack-176": "invIdx",
@@ -2140,7 +2140,6 @@
    "stack-150": "damage",
    "stack-152": "k",
    "stack-158": "effectIdx",
-   "stack-172": "l",
    "stack-196": "rng"
   },
   "Sub_Main": {
@@ -2217,8 +2216,8 @@
    "stack-148": "actionParam",
    "stack-150": "menuResult",
    "stack-152": "dirResult",
-   "stack-154": "thyrgyResult",
-   "stack-156": "thyrgyResult2",
+   "stack-154": "theurgyResult",
+   "stack-156": "theurgyResult2",
    "stack-158": "prevRoleIdx",
    "stack-160": "itemObjID",
    "stack-162": "menuResult2",
@@ -2232,16 +2231,16 @@
    "stack-178": "l",
    "stack-180": "roleID",
    "stack-182": "targetIdx",
-   "stack-184": "thyrgyType",
+   "stack-184": "theurgyType",
    "stack-186": "hpLost",
-   "stack-188": "thyrgyResult3",
+   "stack-188": "theurgyResult3",
    "stack-190": "isTargeted",
    "stack-192": "enemyTarget",
-   "stack-194": "thyrgyResult4",
+   "stack-194": "theurgyResult4",
    "stack-196": "menuParam1",
    "stack-198": "menuParam2",
-   "stack-200": "thyrgyResult5",
-   "stack-202": "thyrgyResult6",
+   "stack-200": "theurgyResult5",
+   "stack-202": "theurgyResult6",
    "stack-204": "mpCost",
    "stack-206": "hasEffect",
    "stack-208": "actionParam2",
@@ -2252,13 +2251,11 @@
    "stack-218": "n",
    "stack-220": "magicSubfile2",
    "stack-222": "equipID",
-   "stack-224": "thyrgyResult7",
+   "stack-224": "theurgyResult7",
    "stack-278": "tmp2",
-   "stack-286": "thyrgyResult8",
+   "stack-286": "theurgyResult8",
    "stack-290": "tmp3",
    "stack-324": "rng2",
-   "stack-328": "o",
-   "stack-336": "p",
    "stack-354": "actionTypeSel"
   },
   "pub_197": {

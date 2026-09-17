@@ -482,7 +482,7 @@ End Sub
 Sub pub_055_00404D50(a0)
     Me.f0000 = pub_061_00405194(Me.f0014, a0)
     If Me.f0000 > Me.f01FC Then
-        Redim dims=1 desc=00000000 flags=0001,0000
+        Redim Me.f01F8(Me.f0000)
         Me.f01FC = Me.f0000
     End If
     AryLock mem=stack-136
@@ -2341,8 +2341,8 @@ Sub pub_148_0040C804(a0, ByRef a1, ByRef a2)
     stack-138 = 0
     For stack-140 = 1 To 100
         Call pub_119_00408F84()
-        Call Pal.clripna(0, 0, Me.f0338, Me.f0336, Me.f0338, stack-152, Me.f01C8(0))
         stack-152 = Pal.arrayptr(Me.f01B0(0))
+        Call Pal.clripna(0, 0, Me.f0338, Me.f0336, Me.f0338, stack-152, Me.f01C8(0))
         If a1 <> 0 Then
             Call Pal.putipna(0, 0, 0, Me.f0338, Me.f0168(Me.f0168(stack-136)), Me.f01C8(0))
             stack-136 = stack-136 + 1
@@ -5329,9 +5329,8 @@ Sub pub_193_00419DA0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         If a0 < 9 Then
             Call pub_011_00403510_hot(Me.f0824(0).f001E, 0)
         End If
-        For stack-172 = 0 To (Me.f0824(0).f000E - 1)
+        For Me.f0314 = 0 To (Me.f0824(0).f000E - 1)
             Call pub_164_0040F58C_hot(1, Me.f0824(0).f000A)
-            Me.f0314
         Next
         Me.f05CC(a0).f000C = 6
         stack-140 = 10
@@ -5672,9 +5671,8 @@ Sub pub_195_0041B530(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         Call pub_011_00403510_hot(Me.f0824(0).f001E, 0)
         stack-134 = 10
         Me.f05B4(a0).f000A = stack-138
-        For stack-172 = 0 To (Me.f0824(0).f000E - 1)
+        For Me.f0314 = 0 To (Me.f0824(0).f000E - 1)
             Call pub_164_0040F58C_hot(1, Me.f0824(0).f000A)
-            Me.f0314
         Next
         For stack-144 = (stack-138 + 1) To stack-140
             Me.f05B4(a0).f000A = stack-144
@@ -6196,7 +6194,7 @@ L_0041EAC0:
         Me.f02A8 = 200
         Call pub_164_0040F58C_hot(1, 0)
         Me.f02E0 = -1
-        For stack-328 = 0 To Me.f02DE
+        For Me.f0312 = 0 To Me.f02DE
             stack-174 = Sgn (VB40032.rtcRandomNext() * CSng (Me.f068C(Me.f0312).f0042))
             stack-324 = VB40032.rtcRandomNext()
             stack-158 = CSng (pub_006_00403368_hot(Me.f0312, 3) + Me.f068C(Me.f0312).f0030) * (0.9 + (stack-324 / CSng (5)))
@@ -6206,9 +6204,8 @@ L_0041EAC0:
                 Me.f04F4(Me.f02E0) = stack-158
                 Me.f053C(Me.f02E0) = stack-136
             Next
-            Me.f0312
         Next
-        For stack-336 = 0 To Me.f02DA
+        For Me.f0312 = 0 To Me.f02DA
             If stack-150 = 0 Then
                 CopyBytes Me.f0584(Me.f0312), Me.f059C(Me.f0312), len=10
             End If
@@ -6239,7 +6236,6 @@ L_0041EAC0:
                 stack-158 = 0
             End If
             Me.f04F4(Me.f02E0) = stack-158
-            Me.f0312
         Next
         For stack-136 = 0 To (Me.f02E0 - 1)
             For stack-138 = (stack-136 + 1) To Me.f02E0

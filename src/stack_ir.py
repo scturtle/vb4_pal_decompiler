@@ -511,44 +511,31 @@ class StackMachine(object):
         at their original source position (before statements that were
         emitted later but consumed the call result).
 
-        When multiple discarded calls share the same origin order (no emit
-        between them), they are inserted in processing order (FIFO) by
-        appending after any previously-inserted sibling.
+        Positioning is by instruction address (``va``): the deferred call
+        belongs at its own p-code location, i.e. after every statement
+        emitted from an instruction at or before ``va``.  Ordering by
+        ``order`` breaks when a later flush inserts a statement whose
+        newly-assigned order (e.g. 16) exceeds an earlier normally-emitted
+        statement's order (e.g. 15) — the caller of the first insert then
+        anchors on the wrong statement and lands after it (verified:
+        pub_148's ``bufPtr = Pal.arrayptr(...)`` leaked below the two
+        deferred calls that precede it in address order).
         """
         self._source_order += 1
         new_stmt = Stmt(va, indent_delta, text, order=self._source_order)
-        # Find insertion point: after the statement with order == after_order.
-        # If we've already inserted at this anchor, append after the last
-        # sibling to maintain FIFO order.
-        anchor_key = after_order
-        if anchor_key in self._insert_anchors:
-            insert_idx = self._insert_anchors[anchor_key] + 1
-        else:
-            # Find the statement with order == after_order and insert
-            # after it.  If no exact match (the call was processed before
-            # any emit), insert before the first statement with order >
-            # after_order, or at the beginning if none exists.
-            #
-            # IMPORTANT: previously-inserted statements may have order >
-            # after_order (their order was assigned at insertion time).
-            # We must NOT treat those as the "first statement with order >
-            # after_order" insertion point — we keep scanning for the exact
-            # match.  Only if no exact match is found do we use the
-            # "first order > after_order" fallback.
-            insert_idx = len(self.statements)  # default: append at end
-            first_greater = None
-            for i in range(len(self.statements)):
-                if self.statements[i].order == after_order:
-                    insert_idx = i + 1
-                    break
-                if first_greater is None and self.statements[i].order > after_order:
-                    first_greater = i
-            else:
-                # No exact match found — use fallback.
-                if first_greater is not None:
-                    insert_idx = first_greater
+        # Insert after the last statement whose instruction address is <= va.
+        # (Statements are emitted in address order apart from earlier
+        # inserts, and each p-code instruction emits at most once, so a
+        # linear scan from the end is both correct and cheap.)
+        insert_idx = len(self.statements)
+        for i in range(len(self.statements) - 1, -1, -1):
+            if self.statements[i].va <= va:
+                insert_idx = i + 1
+                break
+            if i == 0:
+                insert_idx = 0
         self.statements.insert(insert_idx, new_stmt)
-        self._insert_anchors[anchor_key] = insert_idx
+        self._insert_anchors[va] = insert_idx
 
     def flush_leftovers(self, va):
         """Emit stranded stack values as statements (discarded results).
@@ -1172,11 +1159,9 @@ class StackMachine(object):
     def _loop_start(self, label, operand, va):
         loop_var = "?"
         exit_tgt = parse_target(operand)
-        if " to=" in operand:
-            head = operand.split(" to=")[0]
-            if head.startswith("var="):
-                head = head[4:]
-            loop_var = parse_mem(head)
+        # ForI2/NextI2 操作数首字是逐循环隐藏控制槽（见 word_disasm 的 ctl= 注释），
+        # 不是循环变量，故不再从操作数回退取名；循环变量一律取自栈上
+        # start 与 end 之间的 FLdRfVar（下方 var_ref），它总是覆盖 "?"。
         # Flush any unconsumed call results BEFORE popping loop setup
         # values, so calls made before the loop appear before the loop,
         # not inside it. The step/end/var_ref/start values are on top and
@@ -1195,12 +1180,17 @@ class StackMachine(object):
         if "Step" in label:
             step = self.pop()
         end_val = self.pop()
-        # FLdRfVar pushed the loop-variable reference between start and end.
-        # Use the var_ref's frame offset as the loop variable name, since
-        # that's the variable actually referenced in the loop body.
+        # FLdRfVar/FMemLdRf pushed the loop-variable reference between start
+        # and end. VM contract: the var_ref IS the loop variable — the same
+        # expression the loop body reads and NextI2 writes back to. Accept it
+        # whatever its rendered form: local slots render as 'stack-134',
+        # members/globals as their mapped names (e.g. 'battle_enemy_idx').
+        # (Remap.py later renames 'stack-XXX' via the mapping, so both forms
+        # end up readable.) The ForI2 operand's ctl slot must NOT be used:
+        # it's a hidden per-loop control temp, unrelated to the user variable.
         var_ref = self.pop()
         ref_text = strip(var_ref.text).lstrip('&')
-        if ref_text.startswith('stack') or ref_text.startswith('mem_'):
+        if ref_text and ref_text != "<missing>" and not ref_text.lstrip('-').isdigit():
             loop_var = ref_text
         start_val = self.pop()
         # Now flush any unconsumed call results that were on the stack
@@ -1213,7 +1203,7 @@ class StackMachine(object):
         else:
             self.emit(va, +1, "For %s = %s To %s" % (
                 loop_var, start_val.text, end_val.text))
-        self.pending_loops.append(exit_tgt)
+        self.pending_loops.append((exit_tgt, var_ref.text))
         self.loop_starts.append(va)
 
     def _loop_end(self, label, operand, va):
@@ -1221,11 +1211,18 @@ class StackMachine(object):
         # Before emitting Next, close any If whose target falls at or before
         # the loop's exit point (the If's false-branch skips to Next/after).
         if self.pending_loops:
+            # VM write-back: right before NextI2 the code re-pushes the loop
+            # variable reference (same expression as at ForI2); NextI2 stores
+            # the incremented control value into it. Consume that push FIRST
+            # (before flush_leftovers drains the whole stack and would emit
+            # it as an orphan statement like a bare 'Me.f0312' line).
+            exit_tgt, var_text = self.pending_loops[-1]
+            if var_text is not None and self.stack and self.stack[-1].text == var_text:
+                self.pop()
             # Flush any unconsumed call results BEFORE closing Ifs and
             # emitting Next, so they appear inside the If body and inside
             # the loop body rather than after the loop.
             self.flush_leftovers(va)
-            exit_tgt = self.pending_loops[-1]
             if exit_tgt is not None:
                 self.close_ifs_before_loop_end(exit_tgt)
             self.pending_loops.pop()
@@ -1277,15 +1274,42 @@ class StackMachine(object):
             (lbound + ubound per dimension).
           - RedimVar variant: 4 pushes + ret 0x14 (20 bytes, callee cleanup)
             = same 1 extra eval stack value + add esp, edi*8.
-        For dims=1: pop 3 = array_ref + ubound + lbound.
+        For dims=1, pop order (TOS first): array_ref, ubound, lbound.
+        Empirical proof (pub_055 read_rng_subfile @00404D78):
+          LitI4 0; FMemLdStr f0000 (tmp_file_size); FMemLdRf f01F8
+          (rng_anim_data); Redim dims=1 — stack bottom→top = [0(lbound),
+          tmp_file_size(ubound), rng_anim_data(array_ref)].
+        Rendered in VB source style: 'Redim arr(ubound)' when lbound is
+        the literal 0, else 'Redim arr(lbound To ubound)'.  Multi-dim
+        (dims>=2) order is inferred (only dims=1 occurs in this binary):
+        pop sequence is array_ref, then per-dim bounds in reverse push
+        order, i.e. bounds pushed dim1 first, dim2 last (TOS side).
         """
         dims = 0
         if operand and operand.startswith("dims="):
             dims = int(operand[5:].split()[0])
         npop = 1 + dims * 2
-        for _ in range(npop):
-            self.pop()
-        self.emit(va, 0, "%s %s" % (label, operand if operand != "-" else ""))
+        pops = [self.pop() for _ in range(npop)]
+        # pops[0] = array_ref (TOS); remaining = bounds in reverse push order.
+        # Per-dim push order (dim1 first): after popping array_ref, the next
+        # pops are dimN bounds backwards, so reverse to get dim1..dimN pairs
+        # of (lbound, ubound).
+        bounds = list(reversed(pops[1:]))
+        if dims >= 1 and bounds:
+            ary = strip(pops[0].text)
+            parts = []
+            for d in range(dims):
+                lbound = bounds[d * 2]
+                ubound = bounds[d * 2 + 1]
+                if lbound.text == "0":
+                    parts.append(strip(ubound.text))
+                else:
+                    parts.append("%s To %s" % (strip(lbound.text),
+                                               strip(ubound.text)))
+            self.emit(va, 0, "Redim %s(%s)" % (ary, ", ".join(parts)))
+        else:
+            self.emit(va, 0, "%s %s" % (label,
+                                        operand if operand != "-" else ""))
 
     def _opaque(self, label, operand, va):
         self.emit(va, 0, "# %s %s" % (label, operand if operand != "-" else ""))

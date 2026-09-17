@@ -191,7 +191,12 @@ def format_operand(opcode, label, raw, branch_base, call_names, declares,
         return "to=%08X" % (branch_base + displacement)
     if label in ("ForI2", "NextI2", "ForStepI2", "NextStepI2") and len(operand) >= 4:
         displacement = _s16(operand[2:])
-        return "var=stack%+d to=%08X" % (
+        # operand[0:2] 是 For/Next 共享的逐循环隐藏控制槽（帧内临时），
+        # 不是用户循环变量——真正的循环变量是 For 指令前压栈的 FLdRfVar
+        # （start 与 end 之间），由 stack_ir._loop_start 从栈上取出使用。
+        # 实证：pub_176 两个循环同用变量 i(-136)，控制槽却分别为 -160/-178；
+        # 且每对 For/Next 操作数首字一致（pub_126: 72FF/72FF 等）。
+        return "ctl=stack%+d to=%08X" % (
             _s16(operand), branch_base + displacement)
     if label in ("LitVarI2",) and len(operand) >= 4:
         return "mem=stack%+d val=%d" % (_s16(operand), _s16(operand[2:]))
