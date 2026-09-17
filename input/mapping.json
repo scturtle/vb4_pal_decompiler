@@ -1150,7 +1150,7 @@
         },
         "pub_056": {
             "stack-136": "fh",
-            "stack-140": "fh",
+            "stack-140": "fhTemp",
             "stack-144": "openedName",
             "stack-148": "fhTmp"
         },
@@ -1322,9 +1322,9 @@
         },
         "pub_100": {
             "stack-134": "screenX",
-            "stack-136": "remaining",
+            "stack-136": "i",
             "stack-138": "digit",
-            "stack-144": "remaining"
+            "stack-144": "num"
         },
         "pub_101": {
             "stack-136": "i",
@@ -1738,14 +1738,15 @@
             "stack-308": "mciResult"
         },
         "pub_161": {
-            "stack-134": "retval",
             "stack-136": "dirChanged",
-            "stack-138": "dirX",
-            "stack-140": "dirY",
-            "stack-142": "dirX",
-            "stack-144": "dirY",
+            "stack-134": "retval",
+            "stack-138": "dirX1",
+            "stack-140": "dirY1",
+            "stack-142": "dirX2",
+            "stack-144": "dirY2",
             "stack-146": "tmp",
-            "stack-148": "keyResult"
+            "stack-148": "keyResult",
+            "stack-152": "tmp2"
         },
         "pub_162": {
             "stack-134": "x",

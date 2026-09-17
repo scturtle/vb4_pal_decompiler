@@ -494,12 +494,12 @@ End Sub
 Sub open_file(ByRef filename, ByRef writeMode)
     If writeMode Then
         fhTmp = kernel32._lcreat(filename, 0)
-        fh = fhTmp
+        fhTemp = fhTmp
     Else
         fhTmp = kernel32._lopen(filename, 0)
-        fh = fhTmp
+        fhTemp = fhTmp
     End If
-    fh = fh
+    fh = fhTemp
     Exit Sub
 End Sub
 
@@ -1113,13 +1113,13 @@ Sub show_small_number(ByRef x, ByRef y, ByRef number, ByRef digitCount)
         Exit Sub
     End If
     screenX = (x + (digitCount * 6)) - 6
-    remaining = number
-    For remaining = 1 To digitCount
-        digit = remaining Mod 10
-        remaining = Int (remaining / CSng (10))
+    num = number
+    For i = 1 To digitCount
+        digit = num Mod 10
+        num = Int (num / CSng (10))
         Call PAL_PutP(screenX, y, global_buf_2(global_buf_2(digit + 19)), screen_buffer_ptr, 0, 0)
         screenX = screenX - 6
-        If remaining <= 0 Then
+        If num <= 0 Then
             Exit Sub
         End If
     Next
@@ -2814,69 +2814,69 @@ End Sub
 
 Sub read_direction_input(ByRef dx, ByRef dy)
     key_pressed = check_key_pressed()
-    dirX = 0
-    dirY = 0
-    dirX = 0
-    dirY = 0
+    dirX1 = 0
+    dirY1 = 0
+    dirX2 = 0
+    dirY2 = 0
     For tmp = 2 To 3
         keyResult = 4 - tmp
         If (key_state_array(key_scan_codes(0)) = tmp) Or (key_state_array(key_scan_codes(4)) = tmp) Then
-            dirX = keyResult
+            dirX1 = keyResult
         End If
         If (key_state_array(key_scan_codes(1)) = tmp) Or (key_state_array(key_scan_codes(5)) = tmp) Then
-            dirY = keyResult
+            dirY1 = keyResult
         End If
         If (key_state_array(key_scan_codes(2)) = tmp) Or (key_state_array(key_scan_codes(6)) = tmp) Then
-            dirX = keyResult
+            dirX2 = keyResult
         End If
         If (key_state_array(key_scan_codes(3)) = tmp) Or (key_state_array(key_scan_codes(7)) = tmp) Then
-            dirY = keyResult
+            dirY2 = keyResult
         End If
     Next
-    If (dirX + dirY) = 0 Then
+    If (dirX1 + dirY1) = 0 Then
         dirChanged = 0
-        If dirX > dirY Then
+        If dirX2 > dirY2 Then
             retval = -1
         End If
-        If dirX < dirY Then
+        If dirX2 < dirY2 Then
             retval = 1
         End If
     End If
-    If (dirX + dirY) = 0 Then
+    If (dirX2 + dirY2) = 0 Then
         retval = 0
-        If dirX > dirY Then
+        If dirX1 > dirY1 Then
             dirChanged = -1
         End If
-        If dirX < dirY Then
+        If dirX1 < dirY1 Then
             dirChanged = 1
         End If
     End If
-    If dirX = 2 Then
+    If dirX1 = 2 Then
         dirChanged = -1
         retval = 0
     End If
-    If dirY = 2 Then
+    If dirY1 = 2 Then
         dirChanged = 1
         retval = 0
     End If
-    If dirX = 2 Then
+    If dirX2 = 2 Then
         retval = -1
         dirChanged = 0
     End If
-    If dirY = 2 Then
+    If dirY2 = 2 Then
         retval = 1
         dirChanged = 0
     End If
-    If (dirY = 0) And (retval = 1) Then
+    If (dirY2 = 0) And (retval = 1) Then
         retval = 0
     End If
-    If (dirX = 0) And (retval = -1) Then
+    If (dirX2 = 0) And (retval = -1) Then
         retval = 0
     End If
-    If (dirY = 0) And (dirChanged = 1) Then
+    If (dirY1 = 0) And (dirChanged = 1) Then
         dirChanged = 0
     End If
-    If (dirX = 0) And (dirChanged = -1) Then
+    If (dirX1 = 0) And (dirChanged = -1) Then
         dirChanged = 0
     End If
     dx = retval
