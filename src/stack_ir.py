@@ -462,6 +462,9 @@ class StackMachine(object):
         self.proc_end = 0
         self.arg_map = {}  # proc name -> arg count
         self.param_map = {}  # stack offset -> param name (e.g. {12: "a0"})
+        self.exit_keyword = "Exit Sub"  # Functions override to "Exit Function"
+        self.result_slot = None  # Function result-slot offset (e.g. -134)
+        self.result_name = None  # Function result slot renders as the proc name
         self._after_goto = False
         self._source_order = 0  # monotonic counter for statement ordering
         self._insert_anchors = {}  # after_order -> last insert index (FIFO)
@@ -469,14 +472,22 @@ class StackMachine(object):
         self._alias_effects = {}  # frame slot -> deferred effects for alias
 
     def _subst_param(self, text):
-        """Replace stack+N references with parameter names where applicable."""
-        if not self.param_map or not text:
+        """Replace stack+N references with parameter names where applicable,
+        and the Function result slot (stack-N) with the proc name."""
+        if not text:
             return text
         import re as _re
-        def repl(m):
-            off = int(m.group(1))
-            return self.param_map.get(off, m.group(0))
-        return _re.sub(r'stack\+(\d+)', repl, text)
+        if self.param_map:
+            def repl(m):
+                off = int(m.group(1))
+                return self.param_map.get(off, m.group(0))
+            text = _re.sub(r'stack\+(\d+)', repl, text)
+        if self.result_slot is not None and self.result_name:
+            rslot, rname = self.result_slot, self.result_name
+            def repl_neg(m):
+                return rname if -int(m.group(1)) == rslot else m.group(0)
+            text = _re.sub(r'stack-(\d+)', repl_neg, text)
+        return text
 
     # -- stack helpers ------------------------------------------------------
 
@@ -1153,7 +1164,7 @@ class StackMachine(object):
         # the End If, matching VB semantics (Exit Sub is an early return
         # guarded by the condition).
         if label.startswith("ExitProc"):
-            self.emit(va, 0, "Exit Sub")
+            self.emit(va, 0, self.exit_keyword)
         elif label == "End":
             self.emit(va, 0, "End")
         self.close_crossproc_ifs()

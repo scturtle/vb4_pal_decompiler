@@ -38,45 +38,40 @@ Sub swap_values(ByRef v1, ByRef v2)
     Exit Sub
 End Sub
 
-Sub calc_sprite_y_offset(ByRef enemyIdx, ByRef multiplier)
-    retval = (enemy_runtime_data(enemyIdx).level + 6) * multiplier
-    Exit Sub
-End Sub
+Function calc_sprite_y_offset(ByRef enemyIdx, ByRef multiplier) As Integer
+    Return (enemy_runtime_data(enemyIdx).level + 6) * multiplier
+End Function
 
 Sub load_battle_effect_sprites()
     Call PAL_CopyMem(fire_mkf_data(0), data_object_ext(0), data_mkf_handle)
     Exit Sub
 End Sub
 
-Sub check_key_pressed()
+Function check_key_pressed() As Integer
     Call DoEvents_check_exit()
     result = PAL_CheckKey(key_state_array(0))
-    retval = result
-    Exit Sub
-End Sub
+    Return result
+End Function
 
-Sub increment_script_ip(ByRef ip)
+Function increment_script_ip(ByRef ip) As Integer
     If ip = 32767 Then
-        retval = -32768
-        Exit Sub
+        Return -32768
     End If
-    retval = ip + 1
-    Exit Sub
-End Sub
+    Return ip + 1
+End Function
 
-Sub read_key()
+Function read_key() As Integer
     key_pressed = 0
     While key_pressed = 0
         key_pressed = check_key_pressed()
     Wend
-    retval = key_pressed
-    Exit Sub
-End Sub
+    Return key_pressed
+End Function
 
-Sub play_sound(ByRef soundNum, ByRef channel)
+Sub play_sound(ByRef soundNum, ByRef keepFlag)
     If has_sfx_raw <> 0 Then
         If has_sfx And (soundNum > 0) Then
-            Call PAL_PlayDSound(soundNum, channel)
+            Call PAL_PlayDSound(soundNum, keepFlag)
         End If
     End If
     Exit Sub
@@ -157,25 +152,23 @@ Sub draw_text_at(x, y, ByRef wordIdx, color)
     Exit Sub
 End Sub
 
-Sub count_alive_enemies()
+Function count_alive_enemies() As Integer
     j = 0
     For i = 0 To team_number
         If enemy_battle_data(i).hp > 0 Then
             j = j + 1
         End If
     Next
-    retval = j
-    Exit Sub
-End Sub
+    Return j
+End Function
 
-Sub random_enemy_id()
+Function random_enemy_id() As Integer
     rng = 0
     While enemy_battle_data(rng).hp <= 0
         rng = Int (VB40032.rtcRandomNext() * CSng (enemy_max_id))
     Wend
-    retval = rng
-    Exit Sub
-End Sub
+    Return rng
+End Function
 
 Sub clear_enemy_poison(ByRef enemyIdx)
     For i = 0 To 15
@@ -212,7 +205,7 @@ Sub draw_npc_sprite()
     Exit Sub
 End Sub
 
-Sub count_item_total(itemID)
+Function count_item_total(itemID) As Integer
     result = find_inventory_item(itemID)
     If result >= 0 Then
         j = inventory(result).amount
@@ -220,9 +213,8 @@ Sub count_item_total(itemID)
         j = 0
     End If
     j = j + count_equipped_items(itemID)
-    retval = j
-    Exit Sub
-End Sub
+    Return j
+End Function
 
 Sub read_palette(subfileNum)
     filename = 'PAT.MKF'
@@ -255,14 +247,13 @@ Sub menu_inventory()
     Exit Sub
 End Sub
 
-Sub load_map_data(ByRef x, ByRef y, ByRef layer)
+Function load_map_data(ByRef x, ByRef y, ByRef layer) As Integer
     Call PAL_ExGm1(x, y, map_data_buf(0), tmp2)
     If tmp2 Then
         Call PAL_ExGm2(curr_scene_event_count, layer, x, y, npc_display_data(1).vanishTime, tmp2)
     End If
-    tmp = tmp2
-    Exit Sub
-End Sub
+    Return tmp2
+End Function
 
 Sub update_trail_data()
     Call PAL_Rhrff(trail(0).x)
@@ -272,38 +263,35 @@ Sub update_trail_data()
     Exit Sub
 End Sub
 
-Sub check_party_alive()
+Function check_party_alive() As Integer
     foundIdx = 0
     For i = 0 To enemy_pos_count
         If playerRoles(party(i).role, 9) > 0 Then
             foundIdx = foundIdx + 1
         End If
     Next
-    retval = foundIdx
-    Exit Sub
-End Sub
+    Return foundIdx
+End Function
 
-Sub find_magic_index(ByRef partyIdx, ByRef magicID)
+Function find_magic_index(ByRef partyIdx, ByRef magicID) As Integer
     foundIdx = 0
     For i = 32 To 63
         If playerRoles(party(partyIdx).role, i) = magicID Then
             foundIdx = i
         End If
     Next
-    retval = foundIdx
-    Exit Sub
-End Sub
+    Return foundIdx
+End Function
 
-Sub find_inventory_item(ByRef itemID)
+Function find_inventory_item(ByRef itemID) As Integer
     foundIdx = -1
     For i = 0 To 255
         If (inventory(i).amount > 0) And (inventory(i).item = itemID) Then
             foundIdx = i
         End If
     Next
-    retval = foundIdx
-    Exit Sub
-End Sub
+    Return foundIdx
+End Function
 
 Sub load_fbp_two_scene(ByRef subfileNum)
     Call load_fbp_subfile(subfileNum)
@@ -327,7 +315,7 @@ Sub update_shake()
     Exit Sub
 End Sub
 
-Sub set_auto_battle_targets()
+Function set_auto_battle_targets() As Integer
     result = random_enemy_id()
     For i = battle_curr_role_idx To enemy_pos_count
         battle_role_action(i).actionType = 6
@@ -335,27 +323,24 @@ Sub set_auto_battle_targets()
     Next
     auto_battle_flag = 1
     battle_role_idx_2 = 0
-    retval = result
-    Exit Sub
-End Sub
+    Return result
+End Function
 
-Sub get_player_attribute_total(ByRef roleID, ByRef attrIdx)
+Function get_player_attribute_total(ByRef roleID, ByRef attrIdx) As Integer
     total = playerRoles(roleID, attrIdx)
     For i = 11 To 17
         total = total + equipment_effect(roleID, i, attrIdx)
     Next
-    retval = total
-    Exit Sub
-End Sub
+    Return total
+End Function
 
-Sub menu_loop(y, x, wordIdx, ByRef labelIdx, rowCount, ByRef colCount)
-    For i = 0 To (colCount - 1)
+Function menu_loop(cursorPos, x, y, ByRef labelIdx, midBlocks, ByRef rowCount) As Integer
+    For i = 0 To (rowCount - 1)
         battle_order_array(i) = labelIdx + i
         battle_order_array(i + 100) = -1
     Next
-    retval = menu_select(y, x, wordIdx, rowCount, colCount)
-    Exit Sub
-End Sub
+    Return menu_select(cursorPos, x, y, midBlocks, rowCount)
+End Function
 
 Sub show_dialog_image_and_wait()
     image_draw_flag = 0
@@ -438,15 +423,14 @@ Sub read_ball_mkf_index(ByRef subfileNum)
     Exit Sub
 End Sub
 
-Sub calc_magic_damage(ByRef baseDamage, ByRef elementIdx)
+Function calc_magic_damage(ByRef baseDamage, ByRef elementIdx) As Integer
     Call PAL_CopyMem(save_temp_buf(0), data_battlefield(12 * RPG_battle_scene_number), 12)
     i = baseDamage
     If (elementIdx > 0) And (elementIdx <= 5) Then
         i = CSng (baseDamage * (10 + save_temp_buf(elementIdx))) / CSng (10)
     End If
-    retval = i
-    Exit Sub
-End Sub
+    Return i
+End Function
 
 Sub read_file_to_buf(subfileNum, ByRef destIdx)
     tmp_file_size = get_subfile_len(fh_F_MKF, subfileNum)
@@ -457,14 +441,13 @@ Sub read_file_to_buf(subfileNum, ByRef destIdx)
     Exit Sub
 End Sub
 
-Sub random_alive_party_member()
+Function random_alive_party_member() As Integer
     rng = Int (VB40032.rtcRandomNext() * CSng (battle_extra_param))
     While playerRoles(party(rng).role, 9) <= 0
         rng = Int (VB40032.rtcRandomNext() * CSng (battle_extra_param))
     Wend
-    retval = rng
-    Exit Sub
-End Sub
+    Return rng
+End Function
 
 Sub reset_battle_sprite_pos(ByRef roleIdx)
     player_battle_sprite(roleIdx).x = player_battle_sprite(roleIdx).origX
@@ -510,13 +493,13 @@ End Sub
 
 Sub open_file(ByRef filename, ByRef writeMode)
     If writeMode Then
-        fh = kernel32._lcreat(filename, 0)
-        tmp2 = fh
+        fhTmp = kernel32._lcreat(filename, 0)
+        fh = fhTmp
     Else
-        fh = kernel32._lopen(filename, 0)
-        tmp2 = fh
+        fhTmp = kernel32._lopen(filename, 0)
+        fh = fhTmp
     End If
-    tmp = tmp2
+    fh = fh
     Exit Sub
 End Sub
 
@@ -541,7 +524,7 @@ Sub load_theurgy_image(ByRef magicIdx)
     Exit Sub
 End Sub
 
-Sub count_equipped_items(ByRef itemID)
+Function count_equipped_items(ByRef itemID) As Integer
     count = 0
     For i = 0 To RPG_team_number
         k = party(i).role
@@ -551,11 +534,10 @@ Sub count_equipped_items(ByRef itemID)
             End If
         Next
     Next
-    retval = count
-    Exit Sub
-End Sub
+    Return count
+End Function
 
-Sub calc_battle_damage(ByRef attack, ByRef defense)
+Function calc_battle_damage(ByRef attack, ByRef defense) As Integer
     i = 0
     If attack > 0 Then
         j = attack - defense
@@ -571,9 +553,8 @@ Sub calc_battle_damage(ByRef attack, ByRef defense)
             i = 0
         End If
     End If
-    damage = i
-    Exit Sub
-End Sub
+    Return i
+End Function
 
 Sub get_subfile_len(ByRef fileHandle, ByRef subfileNum)
     seekResult = kernel32._llseek(fileHandle, subfileNum * 4, 0)
@@ -585,14 +566,14 @@ Sub get_subfile_len(ByRef fileHandle, ByRef subfileNum)
     Exit Sub
 End Sub
 
-Sub frame_menu(x, y, ByRef rowCount, colCount)
+Sub frame_menu(x, y, ByRef midBlocks, highlight)
     Call PAL_CopyMem(global_buf_2(0), menu_bg_data(0), menu_bg_size)
     save_temp_buf(0) = 44
-    For i = 1 To rowCount
+    For i = 1 To midBlocks
         save_temp_buf(i) = 45
     Next
     save_temp_buf(i) = 46
-    Call draw_menu_frame(x, y, rowCount + 1, colCount)
+    Call draw_menu_frame(x, y, midBlocks + 1, highlight)
     Exit Sub
 End Sub
 
@@ -704,10 +685,10 @@ End Sub
 Sub show_face(ByRef x, ByRef y, faceID)
     filename = 'RGM.MKF'
     Call read_file_and_close(filename, faceID)
-    faceIdx = global_buf_2(0)
-    x = x - (global_buf_2(faceIdx) \ 2)
-    y = y - (global_buf_2(faceIdx + 1) \ 2)
-    Call PAL_PutP(x, y, global_buf_2(faceIdx), screen_buffer_ptr, 0, 0)
+    frameIdx = global_buf_2(0)
+    px = x - (global_buf_2(frameIdx) \ 2)
+    py = y - (global_buf_2(frameIdx + 1) \ 2)
+    Call PAL_PutP(px, py, global_buf_2(frameIdx), screen_buffer_ptr, 0, 0)
     Exit Sub
 End Sub
 
@@ -899,9 +880,9 @@ End Sub
 Sub update_damage_numbers()
     For i = 0 To 11
         If damage_numbers(i).timer > 0 Then
-            Call show_number_to_tree(damage_numbers(i).colorType, damage_numbers(i).number, damage_numbers(i).y, damage_numbers(i).x)
+            Call show_number_to_tree(damage_numbers(i).x, damage_numbers(i).y, damage_numbers(i).number, damage_numbers(i).colorType)
             damage_numbers(i).timer = damage_numbers(i).timer - 1
-            damage_numbers(i).number = damage_numbers(i).number - 1
+            damage_numbers(i).y = damage_numbers(i).y - 1
         End If
     Next
     Exit Sub
@@ -941,32 +922,32 @@ Sub show_enemy_damage(ByRef thyrgyType)
     Exit Sub
 End Sub
 
-Sub draw_menu_frame(ByRef x, ByRef y, ByRef rowCount, ByRef highlight)
-    retval = x
-    For i = 0 To rowCount
+Sub draw_menu_frame(ByRef x, ByRef y, ByRef lastBlockIdx, ByRef highlight)
+    cursorX = x
+    For i = 0 To lastBlockIdx
         k = global_buf_2(save_temp_buf(i))
-        If highlight Or ((i = rowCount) And highlight) Then
-            Call PAL_PutP(retval + 6, y + 6, global_buf_2(k), screen_buffer_ptr, 0, 3)
+        If highlight Or ((i = lastBlockIdx) And highlight) Then
+            Call PAL_PutP(cursorX + 6, y + 6, global_buf_2(k), screen_buffer_ptr, 0, 3)
         End If
-        Call PAL_PutP(retval, y, global_buf_2(k), screen_buffer_ptr, 0, 0)
-        retval = retval + global_buf_2(k)
+        Call PAL_PutP(cursorX, y, global_buf_2(k), screen_buffer_ptr, 0, 0)
+        cursorX = cursorX + global_buf_2(k)
     Next
     Exit Sub
 End Sub
 
-Sub add_damage_number(ByRef colorType, ByRef number, ByRef y, ByRef x)
-    If y <= 0 Then
+Sub add_damage_number(ByRef x, ByRef y, ByRef number, ByRef colorType)
+    If number <= 0 Then
         Exit Sub
     End If
     For i = 0 To 11
         If damage_numbers(i).timer <= 0 Then
             damage_numbers(i).timer = 10
-            damage_numbers(i).colorType = colorType
-            damage_numbers(i).number = number
-            damage_numbers(i).y = y
             damage_numbers(i).x = x
-            If damage_numbers(i).number < 15 Then
-                damage_numbers(i).number = 15
+            damage_numbers(i).y = y
+            damage_numbers(i).number = number
+            damage_numbers(i).colorType = colorType
+            If damage_numbers(i).y < 15 Then
+                damage_numbers(i).y = 15
             End If
             Exit Sub
         End If
@@ -1010,7 +991,7 @@ Sub fade_in_or_out_internal()  'MethCallEngine entry
     Exit Sub
 End Sub
 
-Sub check_player_alive(ByRef roleIdx)
+Function check_player_alive(ByRef roleIdx) As Integer
     i = -1
     i = i And (player_status(roleIdx, 0) <= 0)
     i = i And (player_status(roleIdx, 1) <= 0)
@@ -1023,11 +1004,10 @@ Sub check_player_alive(ByRef roleIdx)
             i = 2
         End If
     End If
-    retval = i
-    Exit Sub
-End Sub
+    Return i
+End Function
 
-Sub menu_select_party(x, y, ByRef spriteNum)
+Function menu_select_party(x, y, ByRef spriteNum) As Integer
     i = 0
     If RPG_team_number > 0 Then
         If j > RPG_team_number Then
@@ -1041,9 +1021,8 @@ Sub menu_select_party(x, y, ByRef spriteNum)
             i = menu_select(j, x, y, 3, RPG_team_number + 1)
         End If
     End If
-    retval = i
-    Exit Sub
-End Sub
+    Return i
+End Function
 
 Sub select_magic()
 L_00407140:
@@ -1134,20 +1113,20 @@ Sub show_small_number(ByRef x, ByRef y, ByRef number, ByRef digitCount)
         Exit Sub
     End If
     screenX = (x + (digitCount * 6)) - 6
-    number = number
+    remaining = number
     For remaining = 1 To digitCount
-        digit = number Mod 10
-        number = Int (number / CSng (10))
+        digit = remaining Mod 10
+        remaining = Int (remaining / CSng (10))
         Call PAL_PutP(screenX, y, global_buf_2(global_buf_2(digit + 19)), screen_buffer_ptr, 0, 0)
         screenX = screenX - 6
-        If number <= 0 Then
+        If remaining <= 0 Then
             Exit Sub
         End If
     Next
     Exit Sub
 End Sub
 
-Sub select_battle_target()
+Function select_battle_target() As Integer
     If enemy_pos_count <= 0 Then
         i = 0
     Else
@@ -1177,9 +1156,8 @@ Sub select_battle_target()
         Wend
         battle_target_cursor = -1
     End If
-    retval = i
-    Exit Sub
-End Sub
+    Return i
+End Function
 
 Sub add_inventory_item(ByRef itemID, ByRef amount)
     If itemID <= 0 Then
@@ -1267,17 +1245,15 @@ Sub draw_rng_frame(ByRef frameDelay, ByRef frameCount, ByRef yPos)
     Exit Sub
 End Sub
 
-Sub query_midi_status()
+Function query_midi_status() As Integer
     tmp4 = tmp
     tmp6 = kernel32.mciSendStringA('status midi mode', tmp, 30, 0)
     tmp2 = tmp6
     If Left(tmp, 7) = 'playing' Then
-        retval = 1
-        Exit Sub
+        Return 1
     End If
-    retval = 0
-    Exit Sub
-End Sub
+    Return 0
+End Function
 
 Sub animate_battle_sprites(ByRef startIdx, ByRef endIdx)
     For i = 1 To 15
@@ -1292,17 +1268,15 @@ Sub animate_battle_sprites(ByRef startIdx, ByRef endIdx)
     Exit Sub
 End Sub
 
-Sub query_cd_status()
+Function query_cd_status() As Integer
     tmp4 = tmp
     tmp6 = kernel32.mciSendStringA('status cdtrack mode', tmp, 30, 0)
     tmp2 = tmp6
     If Left(tmp, 7) = 'playing' Then
-        retval = 1
-        Exit Sub
+        Return 1
     End If
-    retval = 0
-    Exit Sub
-End Sub
+    Return 0
+End Function
 
 Sub get_scene_map_source(ByRef sceneID)
     If scenes(sceneID).mapNum <> curr_scene_id_cache Then
@@ -1642,7 +1616,7 @@ Sub play_cd(ByRef trackNum, musicNum, ByRef trackValid)
     Exit Sub
 End Sub
 
-Sub compact_inventory()
+Function compact_inventory() As Integer
     Call PAL_ClearMenu(battle_order_array(0), 256)
     foundIdx = -1
     For i = 0 To 255
@@ -1659,9 +1633,8 @@ Sub compact_inventory()
         Call PAL_CopyMem(inventory(i), inventory(battle_order_array(i)), 6)
         Call PAL_CopyMem(inventory(battle_order_array(i)), k(0), 6)
     Next
-    retval = foundIdx
-    Exit Sub
-End Sub
+    Return foundIdx
+End Function
 
 Sub init_battle_state()
     For i = 0 To 255
@@ -1683,7 +1656,7 @@ Sub init_battle_state()
     Exit Sub
 End Sub
 
-Sub yes_no_menu(ByRef optionFlags, ByRef labelIdx)
+Function yes_no_menu(ByRef optionFlags, ByRef labelIdx) As Integer
     menuX = 120
     menuY = 100
     selection = -1
@@ -1712,11 +1685,10 @@ Sub yes_no_menu(ByRef optionFlags, ByRef labelIdx)
             isYes = 1 - isYes
         End If
     Wend
-    retval = inputResult
-    Exit Sub
-End Sub
+    Return inputResult
+End Function
 
-Sub select_enemy_target()
+Function select_enemy_target() As Integer
     If count_alive_enemies() <= 1 Then
         i = 0
         For j = 0 To team_number
@@ -1759,9 +1731,8 @@ L_00409EEC:
         Wend
         multi_event_param_3 = -1
     End If
-    retval = i
-    Exit Sub
-End Sub
+    Return i
+End Function
 
 Sub get_sprites_curr_scene()
     For i = 1 To curr_scene_event_count
@@ -1840,7 +1811,7 @@ Sub menu_system()
     Exit Sub
 End Sub
 
-Sub select_party_member()
+Function select_party_member() As Integer
     Call push_screen_buffer()
     bufPtr = PAL_ArrayPtr(global_buf_1(0))
     inputResult = bufPtr
@@ -1876,9 +1847,8 @@ Sub select_party_member()
         End If
     Wend
     Call restore_screen()
-    retval = selectedIndex
-    Exit Sub
-End Sub
+    Return selectedIndex
+End Function
 
 Sub play_theurgy_anim(magicIdx, ByRef startFrame, ByRef minFrames)
     Call copy_subfile_data(magicIdx)
@@ -2017,11 +1987,11 @@ Sub use_item_menu()
     If i >= 0 Then
 L_0040AF7C:
         j = party(i).role
-        itemID = select_thurgy(j, menuX, 1)
+        itemID = select_thurgy(j, cursorIdx, 1)
         If itemID < 0 Then
             Exit Sub
         End If
-        menuY = objects(itemID).data0
+        itemObjID = objects(itemID).data0
         Call PAL_GetBin(cursorPos, objects(itemID).data6, 4)
         If cursorPos = 0 Then
             selection = select_party_member()
@@ -2035,7 +2005,7 @@ L_0040AF7C:
             tmp = tmp + playerRoles(keyResult, 9)
         Next
         Call process_Script(selection, objects(itemID).data2)
-        Call copy_subfile_data(menuY)
+        Call copy_subfile_data(itemObjID)
         If redraw_hp_mp_flag Then
             playerRoles(j, 10) = playerRoles(j, 10) - theurgy_data(0).costMP
         End If
@@ -2202,10 +2172,10 @@ Sub add_magic_to_player(ByRef roleID, ByRef magicID, ByRef magicType)
     Exit Sub
 End Sub
 
-Sub menu_select(ByRef cursorPos, ByRef y, ByRef x, ByRef rowCount, ByRef colCount)
-    maxCol = rowCount - 1
-    inputResult = colCount - 1
-    Call draw_menu_table(y, x, 0, rowCount, colCount, -1)
+Function menu_select(ByRef cursorPos, ByRef x, ByRef y, ByRef midBlocks, ByRef rowCount) As Integer
+    maxCol = midBlocks - 1
+    inputResult = rowCount - 1
+    Call draw_menu_table(x, y, 0, midBlocks, rowCount, -1)
     selection = -2
     While selection = -2
         If cursorPos < 0 Then
@@ -2214,8 +2184,8 @@ Sub menu_select(ByRef cursorPos, ByRef y, ByRef x, ByRef rowCount, ByRef colCoun
         If cursorPos > inputResult Then
             cursorPos = 0
         End If
-        cursorPos = x + 12
-        tmp = y + 13
+        rowY = y + 12
+        textX = x + 13
         For i = 0 To inputResult
             If battle_order_array(i + 100) Then
                 If (i = cursorPos) And (selection = -2) Then
@@ -2231,8 +2201,8 @@ Sub menu_select(ByRef cursorPos, ByRef y, ByRef x, ByRef rowCount, ByRef colCoun
             End If
             j = 24
 L_0040BD8E:
-            Call draw_text_at(tmp, cursorPos, battle_order_array(i), j)
-            cursorPos = cursorPos + 18
+            Call draw_text_at(textX, rowY, battle_order_array(i), j)
+            rowY = rowY + 18
         Next
         j = read_key()
         If j = 1 Then
@@ -2240,7 +2210,7 @@ L_0040BD8E:
         End If
         If (j = 2) And battle_order_array(cursorPos + 100) Then
             selection = cursorPos
-            Call draw_text_at(y + 13, (x + 12) + (selection * 18), battle_order_array(selection), 43)
+            Call draw_text_at(x + 13, (y + 12) + (selection * 18), battle_order_array(selection), 43)
         End If
         If j = 3 Then
             cursorPos = cursorPos - 1
@@ -2249,9 +2219,8 @@ L_0040BD8E:
             cursorPos = cursorPos + 1
         End If
     Wend
-    maxRow = selection
-    Exit Sub
-End Sub
+    Return selection
+End Function
 
 Sub draw_player_status(ByRef x, ByRef y, ByRef roleID, ByRef highlight)
     retval = global_buf_2(48 + roleID)
@@ -2269,42 +2238,42 @@ Sub draw_player_status(ByRef x, ByRef y, ByRef roleID, ByRef highlight)
     Exit Sub
 End Sub
 
-Sub draw_menu_table(x, ByRef y, ByRef wordIdx, ByRef rowCount, ByRef colCount, ByRef highlight)
-    If rowCount < 0 Then
+Sub draw_menu_table(x, ByRef y, ByRef wordIdx, ByRef midBlocks, ByRef rowCount, ByRef highlight)
+    If midBlocks < 0 Then
         Exit Sub
     End If
     Call PAL_CopyMem(global_buf_2(0), menu_bg_data(0), menu_bg_size)
-    i = colCount - 2
-    j = rowCount - 2
-    menuX = y
+    lastRow = rowCount - 2
+    lastMid = midBlocks - 2
+    rowY = y
     save_temp_buf(0) = wordIdx
-    menuY = 1
-    For k = 0 To j
-        save_temp_buf(menuY) = wordIdx + 1
-        menuY = menuY + 1
+    blockIdx = 1
+    For k = 0 To lastMid
+        save_temp_buf(blockIdx) = wordIdx + 1
+        blockIdx = blockIdx + 1
     Next
-    save_temp_buf(menuY) = wordIdx + 2
-    Call draw_menu_frame(x, menuX, menuY, highlight)
-    menuX = menuX + 20
-    For l = 0 To i
+    save_temp_buf(blockIdx) = wordIdx + 2
+    Call draw_menu_frame(x, rowY, blockIdx, highlight)
+    rowY = rowY + 20
+    For l = 0 To lastRow
         save_temp_buf(0) = wordIdx + 3
-        menuY = 1
-        For k = 0 To j
-            save_temp_buf(menuY) = wordIdx + 4
-            menuY = menuY + 1
+        blockIdx = 1
+        For k = 0 To lastMid
+            save_temp_buf(blockIdx) = wordIdx + 4
+            blockIdx = blockIdx + 1
         Next
-        save_temp_buf(menuY) = wordIdx + 5
-        Call draw_menu_frame(x, menuX, menuY, highlight)
-        menuX = menuX + 18
+        save_temp_buf(blockIdx) = wordIdx + 5
+        Call draw_menu_frame(x, rowY, blockIdx, highlight)
+        rowY = rowY + 18
     Next
     save_temp_buf(0) = wordIdx + 6
-    menuY = 1
-    For k = 0 To j
-        save_temp_buf(menuY) = wordIdx + 7
-        menuY = menuY + 1
+    blockIdx = 1
+    For k = 0 To lastMid
+        save_temp_buf(blockIdx) = wordIdx + 7
+        blockIdx = blockIdx + 1
     Next
-    save_temp_buf(menuY) = wordIdx + 8
-    Call draw_menu_frame(x, menuX, menuY, -1 And highlight)
+    save_temp_buf(blockIdx) = wordIdx + 8
+    Call draw_menu_frame(x, rowY, blockIdx, -1 And highlight)
     Exit Sub
 End Sub
 
@@ -2463,39 +2432,39 @@ End Sub
 
 Sub show_role_attributes(ByRef x, ByRef y, ByRef roleID, ByRef showEquip)
     Call display_number(x + 58, y + 4, playerRoles(roleID, 6), 0)
-    retval = y
+    rowY = y
     For i = 48 To 55
         If showEquip Then
-            Call draw_text_at(x, retval, i, 187)
+            Call draw_text_at(x, rowY, i, 187)
         Else
-            Call PAL_PutP(x + 16, retval + 6, global_buf_2(global_buf_2(47)), screen_buffer_ptr, 0, 0)
+            Call PAL_PutP(x + 16, rowY + 6, global_buf_2(global_buf_2(47)), screen_buffer_ptr, 0, 0)
         End If
-        retval = retval + 18
+        rowY = rowY + 18
     Next
-    retval = y + 20
+    rowY = y + 20
     For i = 7 To 8
-        Call display_number(x + 58, retval, playerRoles(roleID, i + 2), 0)
-        Call PAL_PutP(x + 62, retval + 3, global_buf_2(global_buf_2(39)), screen_buffer_ptr, 0, 0)
-        Call display_number(x + 78, retval + 6, playerRoles(roleID, i), 1)
-        retval = retval + 18
+        Call display_number(x + 58, rowY, playerRoles(roleID, i + 2), 0)
+        Call PAL_PutP(x + 62, rowY + 3, global_buf_2(global_buf_2(39)), screen_buffer_ptr, 0, 0)
+        Call display_number(x + 78, rowY + 6, playerRoles(roleID, i), 1)
+        rowY = rowY + 18
     Next
-    retval = y + 58
+    rowY = y + 58
     For i = 17 To 21
         result = get_player_attribute_total(roleID, i)
-        Call display_number(x + 58, retval, result, 0)
-        retval = retval + 18
+        Call display_number(x + 58, rowY, result, 0)
+        rowY = rowY + 18
     Next
     Exit Sub
 End Sub
 
-Sub redraw_tile(ByRef x, ByRef y, ByRef w, ByRef h, ByRef tileX, ByRef tileY)
-    Call PAL_VWindow(x, y, w, h)
+Sub redraw_tile(ByRef x, ByRef y, ByRef right, ByRef bottom, ByRef tileX, ByRef tileY)
+    Call PAL_VWindow(x, y, right, bottom)
     tileCol = tileX \ 32
     xPixelOffset = -tileX Mod 32 - 16
-    endTileCol = (((tileX + w) - x) + 16) \ 32
+    endTileCol = (((tileX + right) - x) + 16) \ 32
     tileRow = tileY \ 16
     yPixelOffset = -tileY Mod 16 - 8
-    endTileRow = (((tileY + h) - y) + 8) \ 16
+    endTileRow = (((tileY + bottom) - y) + 8) \ 16
     screenY = y + yPixelOffset
     For i = tileRow To endTileRow
         For j = 0 To 1
@@ -2549,7 +2518,7 @@ Sub update_enemy_battle_anim()
     Exit Sub
 End Sub
 
-Sub select_direction_menu(ByRef direction)
+Function select_direction_menu(ByRef direction) As Integer
     result = -2
     While result = -2
         keyResult = check_key_pressed()
@@ -2593,9 +2562,8 @@ L_0040DB3E:
         Next
         Call draw_battle_scene(1, 0)
     Wend
-    retval = result
-    Exit Sub
-End Sub
+    Return result
+End Function
 
 Sub calc_player_attack_damage(ByRef targetRole, ByRef attackerRole, ByRef isCritical)
     If playerRoles(attackerRole, 4) Then
@@ -2630,7 +2598,7 @@ Sub calc_player_attack_damage(ByRef targetRole, ByRef attackerRole, ByRef isCrit
     Exit Sub
 End Sub
 
-Sub select_battle_action(ByRef menuType)
+Function select_battle_action(ByRef menuType) As Integer
     menuItemSelected = 1
 L_0040DE2A:
     If menuType = 0 Then
@@ -2686,9 +2654,8 @@ L_0040E00C:
     Else
         menuItemSelected = -2
     End If
-    retval = menuItemSelected
-    Exit Sub
-End Sub
+    Return menuItemSelected
+End Function
 
 Sub increase_player_attr(ByRef roleID, ByRef attrType, ByRef amount)
     If attrType <= 2 Then
@@ -2756,7 +2723,7 @@ Sub flee_from_battle(ByRef roleIdx, ByRef isFleeing)
     Exit Sub
 End Sub
 
-Sub check_save_file()
+Function check_save_file() As Integer
     For i = 1 To 5
         bstr = VB40032.rtcBstrFromAnsi(48 + i)
         filename = VB40032.rtcBstrFromAnsi(48 + i) & '.RPG'
@@ -2807,9 +2774,8 @@ Sub check_save_file()
             month = day
         End If
     Wend
-    retval = month
-    Exit Sub
-End Sub
+    Return month
+End Function
 
 Sub play_all_kinds_music(ByRef musicNum, ByRef loopFlag)
     If music_mode Then
@@ -2848,73 +2814,73 @@ End Sub
 
 Sub read_direction_input(ByRef dx, ByRef dy)
     key_pressed = check_key_pressed()
-    dirChanged = 0
-    newDir = 0
-    dx = 0
-    dy = 0
+    dirX = 0
+    dirY = 0
+    dirX = 0
+    dirY = 0
     For tmp = 2 To 3
         keyResult = 4 - tmp
         If (key_state_array(key_scan_codes(0)) = tmp) Or (key_state_array(key_scan_codes(4)) = tmp) Then
-            dirChanged = keyResult
+            dirX = keyResult
         End If
         If (key_state_array(key_scan_codes(1)) = tmp) Or (key_state_array(key_scan_codes(5)) = tmp) Then
-            newDir = keyResult
+            dirY = keyResult
         End If
         If (key_state_array(key_scan_codes(2)) = tmp) Or (key_state_array(key_scan_codes(6)) = tmp) Then
-            dx = keyResult
+            dirX = keyResult
         End If
         If (key_state_array(key_scan_codes(3)) = tmp) Or (key_state_array(key_scan_codes(7)) = tmp) Then
-            dy = keyResult
+            dirY = keyResult
         End If
     Next
-    If (dirChanged + newDir) = 0 Then
-        keyPressed = 0
-        If dx > dy Then
+    If (dirX + dirY) = 0 Then
+        dirChanged = 0
+        If dirX > dirY Then
             retval = -1
         End If
-        If dx < dy Then
+        If dirX < dirY Then
             retval = 1
         End If
     End If
-    If (dx + dy) = 0 Then
+    If (dirX + dirY) = 0 Then
         retval = 0
-        If dirChanged > newDir Then
-            keyPressed = -1
+        If dirX > dirY Then
+            dirChanged = -1
         End If
-        If dirChanged < newDir Then
-            keyPressed = 1
+        If dirX < dirY Then
+            dirChanged = 1
         End If
     End If
-    If dirChanged = 2 Then
-        keyPressed = -1
+    If dirX = 2 Then
+        dirChanged = -1
         retval = 0
     End If
-    If newDir = 2 Then
-        keyPressed = 1
+    If dirY = 2 Then
+        dirChanged = 1
         retval = 0
     End If
-    If dx = 2 Then
+    If dirX = 2 Then
         retval = -1
-        keyPressed = 0
+        dirChanged = 0
     End If
-    If dy = 2 Then
+    If dirY = 2 Then
         retval = 1
-        keyPressed = 0
+        dirChanged = 0
     End If
-    If (dy = 0) And (retval = 1) Then
+    If (dirY = 0) And (retval = 1) Then
         retval = 0
     End If
-    If (dx = 0) And (retval = -1) Then
+    If (dirX = 0) And (retval = -1) Then
         retval = 0
     End If
-    If (newDir = 0) And (keyPressed = 1) Then
-        keyPressed = 0
+    If (dirY = 0) And (dirChanged = 1) Then
+        dirChanged = 0
     End If
-    If (dirChanged = 0) And (keyPressed = -1) Then
-        keyPressed = 0
+    If (dirX = 0) And (dirChanged = -1) Then
+        dirChanged = 0
     End If
     dx = retval
-    dy = keyPressed
+    dy = dirChanged
     Exit Sub
 End Sub
 
@@ -3039,7 +3005,7 @@ Sub draw_battle_scene(ByRef frameCount, ByRef speed)
     Exit Sub
 End Sub
 
-Sub produce_screen_map(ByRef x, ByRef y, ByRef viewportIdx)
+Function produce_screen_map(ByRef x, ByRef y, ByRef viewportIdx) As Integer
     viewportX = x
     viewportY = y
     battle_sprite_data(0) = viewportX
@@ -3078,9 +3044,8 @@ Sub produce_screen_map(ByRef x, ByRef y, ByRef viewportIdx)
         Next
     Next
 L_0040FBF8:
-    retval = screenX
-    Exit Sub
-End Sub
+    Return screenX
+End Function
 
 Sub render_dialog_control(ByRef x, ByRef y)
     image_draw_x = x
@@ -3735,51 +3700,51 @@ Sub player_attack_player(ByRef attackerIdx, ByRef targetIdx)
     Exit Sub
 End Sub
 
-Sub show_item_description(ByRef roleIdx, ByRef labelIdx, ByRef x, ByRef y)
+Sub show_item_description(ByRef roleIdx, ByRef labelIdx, ByRef rowTop, ByRef invIdx)
     Call PAL_CopyMem(global_buf_2(0), menu_bg_data(0), menu_bg_size)
     If (roleIdx < 0) Or (roleIdx > RPG_team_number) Then
         roleIdx = 0
     End If
-    itemID = inventory(y).item
+    itemID = inventory(invIdx).item
     bufPtr = PAL_ArrayPtr(global_buf_1(0))
     screen_buffer_ptr = bufPtr
     Call PAL_PushScreen(global_buf_1(0))
-    Call draw_menu_table(labelIdx, x, 0, 10, 8, i)
+    Call draw_menu_table(labelIdx, rowTop, 0, 10, 8, i)
     i = 0
-    Call PAL_PutP(labelIdx + 14, x + 84, global_buf_2(global_buf_2(70)), screen_buffer_ptr, 0, 3)
-    Call PAL_PutP(labelIdx + 8, x + 79, global_buf_2(global_buf_2(70)), screen_buffer_ptr, 0, 0)
+    Call PAL_PutP(labelIdx + 14, rowTop + 84, global_buf_2(global_buf_2(70)), screen_buffer_ptr, 0, 3)
+    Call PAL_PutP(labelIdx + 8, rowTop + 79, global_buf_2(global_buf_2(70)), screen_buffer_ptr, 0, 0)
     Call PAL_CopyMem(bg_buf(0), global_buf_1(0), 64000)
     i = -1
 L_004135B4:
     Call PAL_CopyMem(global_buf_1(0), bg_buf(0), 64000)
-    Call show_role_attributes(labelIdx + 84, x + 12, party(roleIdx).role, -1)
-    menuY = labelIdx + 14
-    menuX = x + 12
+    Call show_role_attributes(labelIdx + 84, rowTop + 12, party(roleIdx).role, -1)
+    colX = labelIdx + 14
+    rowY = rowTop + 12
     For j = 0 To RPG_team_number
         If roleIdx = j Then
-            itemX = 250
+            colorNum = 250
         Else
-            itemX = 78
+            colorNum = 78
         End If
-        Call draw_text_at(menuY, menuX, playerRoles(party(j).role, 3), itemX)
-        menuX = menuX + 22
+        Call draw_text_at(colX, rowY, playerRoles(party(j).role, 3), colorNum)
+        rowY = rowY + 22
     Next
-    amount = inventory(y).amount
+    amount = inventory(invIdx).amount
     If amount > 0 Then
         Call read_ball_mkf_index(objects(itemID).data0)
-        Call PAL_PutP(labelIdx + 16, x + 86, global_buf_2(global_buf_2(0)), screen_buffer_ptr, 0, 0)
-        Call draw_text_at(labelIdx + 4, x + 142, itemID, 13)
+        Call PAL_PutP(labelIdx + 16, rowTop + 86, global_buf_2(global_buf_2(0)), screen_buffer_ptr, 0, 0)
+        Call draw_text_at(labelIdx + 4, rowTop + 142, itemID, 13)
     End If
     If amount > 1 Then
-        Call display_number(labelIdx + 62, x + 132, amount, 2)
+        Call display_number(labelIdx + 62, rowTop + 132, amount, 2)
     End If
     Call PAL_PopScreen(global_buf_1(0))
     If amount <= 0 Then
         Call wait_frame(150)
         GoTo L_00413902
     End If
-    itemX = read_key()
-    cursorPos = itemX
+    colorNum = read_key()
+    cursorPos = colorNum
     If cursorPos = 3 Then
         roleIdx = roleIdx - 1
         If roleIdx < 0 Then
@@ -4323,39 +4288,39 @@ L_00415C46:
         Call display_number(72, 72, inventory(invIdx).amount, 2)
     End If
     roleID = party(j).role
-    menuX = 110
-    Call draw_menu_table(3, menuX - 12, 0, 3, RPG_team_number + 1, -1)
+    rowY = 110
+    Call draw_menu_table(3, rowY - 12, 0, 3, RPG_team_number + 1, -1)
     For i = 0 To RPG_team_number
         If battle_order_array(i + 100) Then
             If j = i Then
-                menuY = 250
+                colorNum = 250
                 GoTo L_00415E00
             End If
-            menuY = 78
+            colorNum = 78
             GoTo L_00415E00
         End If
         If j = i Then
-            menuY = 28
+            colorNum = 28
             GoTo L_00415E00
         End If
-        menuY = 24
+        colorNum = 24
 L_00415E00:
-        Call draw_text_at(16, menuX, playerRoles(party(i).role, 3), menuY)
-        menuX = menuX + 18
+        Call draw_text_at(16, rowY, playerRoles(party(i).role, 3), colorNum)
+        rowY = rowY + 18
     Next
-    menuX = 11
+    rowY = 11
     For equipSlot = 11 To 16
-        Call draw_text_at(132, menuX, playerRoles(roleID, equipSlot), 78)
-        menuX = menuX + 22
+        Call draw_text_at(132, rowY, playerRoles(roleID, equipSlot), 78)
+        rowY = rowY + 22
     Next
-    menuX = 16
+    rowY = 16
     For equipSlot = 17 To 21
         currEquip = playerRoles(roleID, equipSlot)
         For k = 11 To 16
             currEquip = currEquip + equipment_effect(roleID, k, equipSlot)
         Next
-        Call display_number(278, menuX, currEquip, 0)
-        menuX = menuX + 22
+        Call display_number(278, rowY, currEquip, 0)
+        rowY = rowY + 22
     Next
     Call PAL_PopScreen(global_buf_1(0))
     k = read_key()
@@ -4414,19 +4379,19 @@ Sub show_role_status(ByRef roleIdx)
     Call display_number(66, 18, battle_order_array(playerExp(roleID, 0).level), 1)
     Call draw_text_at(6, 34, 48, 78)
     Call display_number(64, 38, playerRoles(roleID, 6), 0)
-    menuX = 58
+    rowY = 58
     For j = 7 To 8
-        Call draw_text_at(6, menuX - 1, 42 + j, 78)
-        Call display_number(70, menuX, playerRoles(roleID, j + 2), 0)
-        Call PAL_PutP(74, menuX + 3, global_buf_2(global_buf_2(39)), screen_buffer_ptr, 0, 0)
-        Call display_number(90, menuX + 6, playerRoles(roleID, j), 1)
-        menuX = menuX + 22
+        Call draw_text_at(6, rowY - 1, 42 + j, 78)
+        Call display_number(70, rowY, playerRoles(roleID, j + 2), 0)
+        Call PAL_PutP(74, rowY + 3, global_buf_2(global_buf_2(39)), screen_buffer_ptr, 0, 0)
+        Call display_number(90, rowY + 6, playerRoles(roleID, j), 1)
+        rowY = rowY + 22
     Next
     For j = 17 To 21
-        Call draw_text_at(6, menuX - 4, j + 34, 78)
+        Call draw_text_at(6, rowY - 4, j + 34, 78)
         tmp = get_player_attribute_total(roleID, j)
-        Call display_number(70, menuX, tmp, 0)
-        menuX = menuX + 20
+        Call display_number(70, rowY, tmp, 0)
+        rowY = rowY + 20
     Next
     battle_sprite_data(0) = 190
     battle_sprite_data_ext(0) = 0
@@ -4468,7 +4433,7 @@ Sub show_role_status(ByRef roleIdx)
     Exit Sub
 End Sub
 
-Sub select_thurgy(ByRef roleID, ByRef x, ByRef y)
+Function select_thurgy(ByRef roleID, ByRef cursorIdx, ByRef filterMask) As Integer
     Call sort_player_magic(roleID)
     Call PAL_ClearMenu(battle_order_array(0), 32)
     maxMagic = -1
@@ -4478,7 +4443,7 @@ Sub select_thurgy(ByRef roleID, ByRef x, ByRef y)
         If magicObjID > 0 Then
             battle_order_array(j) = 1
             maxMagic = maxMagic + 1
-            If objects(magicObjID).data6 And y Then
+            If objects(magicObjID).data6 And filterMask Then
                 Call copy_subfile_data(objects(playerRoles(roleID, i)).data0)
                 If playerRoles(roleID, 10) >= theurgy_data(0).costMP Then
                     battle_order_array(j) = 2
@@ -4497,16 +4462,16 @@ Sub select_thurgy(ByRef roleID, ByRef x, ByRef y)
     If maxScroll < 0 Then
         maxScroll = 0
     End If
-    If x > maxMagic Then
-        x = maxMagic
+    If cursorIdx > maxMagic Then
+        cursorIdx = maxMagic
     End If
-    rowPos = x \ 3
-    colPos = x Mod 3
+    rowPos = cursorIdx \ 3
+    colPos = cursorIdx Mod 3
     If rowPos > maxPage Then
         l = rowPos - maxPage
         rowPos = maxPage
     End If
-    If y = 1 Then
+    If filterMask = 1 Then
         p = PAL_ArrayPtr(global_buf_1(0))
         screen_buffer_ptr = p
         Call PAL_PushScreen(global_buf_1(0))
@@ -4540,20 +4505,20 @@ Sub select_thurgy(ByRef roleID, ByRef x, ByRef y)
             End If
         End If
         Call PAL_Ffxy(colPos, rowPos, k, tmp)
-        x = ((l + rowPos) * colCount) + colPos
-        If battle_order_array(x) = 0 Then
+        cursorIdx = ((l + rowPos) * colCount) + colPos
+        If battle_order_array(cursorIdx) = 0 Then
             colPos = prevCol
             rowPos = prevRow
             l = prevScroll
-            x = ((l + rowPos) * colCount) + colPos
-            If x > maxMagic Then
+            cursorIdx = ((l + rowPos) * colCount) + colPos
+            If cursorIdx > maxMagic Then
                 colPos = 0
                 rowPos = 0
-                x = 0
+                cursorIdx = 0
                 l = 0
             End If
         End If
-        currMagicObj = playerRoles(roleID, 32 + x)
+        currMagicObj = playerRoles(roleID, 32 + cursorIdx)
         Call copy_subfile_data(objects(currMagicObj).data0)
         Call frame_menu(0, 0, 5, 0)
         Call display_number(20, 13, theurgy_data(0).costMP, 0)
@@ -4566,21 +4531,21 @@ Sub select_thurgy(ByRef roleID, ByRef x, ByRef y)
             For tmp4 = 0 To k
                 If battle_order_array(tmp3) > 0 Then
                     If battle_order_array(tmp3) = 2 Then
-                        If (tmp3 = x) And (inputResult = -2) Then
+                        If (tmp3 = cursorIdx) And (inputResult = -2) Then
                             highlightColor = 250
                             GoTo L_00416D32
                         End If
                         highlightColor = 78
                         GoTo L_00416D32
                     End If
-                    If (tmp3 = x) And (inputResult = -2) Then
+                    If (tmp3 = cursorIdx) And (inputResult = -2) Then
                         highlightColor = 28
                         GoTo L_00416D32
                     End If
                     highlightColor = 24
 L_00416D32:
                     Call draw_text_at(tmp2, m, playerRoles(roleID, tmp3 + 32), highlightColor)
-                    If tmp3 = x Then
+                    If tmp3 = cursorIdx Then
                         Call make_dialog_frame(tmp2 + 24, m + 11)
                     End If
                 End If
@@ -4589,7 +4554,7 @@ L_00416D32:
             Next
             m = m + 18
         Next
-        If y = 1 Then
+        If filterMask = 1 Then
             Call PAL_PopScreen(global_buf_1(0))
         Else
             Call PAL_PopScreen(fire_mkf_data(0))
@@ -4623,17 +4588,16 @@ L_00416D32:
         If j = 1 Then
             inputResult = -1
         End If
-        If (j = 2) And (battle_order_array(x) = 2) Then
-            inputResult = x
+        If (j = 2) And (battle_order_array(cursorIdx) = 2) Then
+            inputResult = cursorIdx
         End If
     Wend
     screen_buffer_ptr = 0
     If inputResult >= 0 Then
         inputResult = playerRoles(roleID, inputResult + 32)
     End If
-    magicCount = inputResult
-    Exit Sub
-End Sub
+    Return inputResult
+End Function
 
 Sub process_Script(ByRef eventObjID, ByRef scriptEntry)
     redraw_hp_mp_flag = -1
@@ -4952,23 +4916,23 @@ Sub init_key_definitions()  'MethCallEngine entry
     Exit Sub
 End Sub
 
-Sub select_item_with_filter(ByRef wordIdx, ByRef x, ByRef y)
+Function select_item_with_filter(ByRef cursorIdx, ByRef bgMode, ByRef filterMask) As Integer
     j = 0
     itemCount = 0
-    menuX = 0
+    pageIdx = 0
     rowCount = 3
     maxPage = 7
     k = 4
     tmp2 = 0
-    menuY = rowCount - 1
+    lastRowIdx = rowCount - 1
     colCount = maxPage - 1
     maxScroll = compact_inventory()
     Call PAL_ClearMenu(battle_order_array(0), 256)
     For rowPos = 0 To maxScroll
-        battle_order_array(rowPos) = objects(inventory(rowPos).item).data6 And y
+        battle_order_array(rowPos) = objects(inventory(rowPos).item).data6 And filterMask
     Next
     colPos = maxScroll + 1
-    If (x = 0) And (y = 1) Then
+    If (bgMode = 0) And (filterMask = 1) Then
         For rowPos = 0 To RPG_team_number
             For l = 11 To 16
                 prevCol = playerRoles(party(rowPos).role, l)
@@ -4984,21 +4948,21 @@ Sub select_item_with_filter(ByRef wordIdx, ByRef x, ByRef y)
             Next
         Next
     End If
-    prevRow = ((maxScroll + menuY) \ rowCount) - k
+    prevRow = ((maxScroll + lastRowIdx) \ rowCount) - k
     If prevRow < 0 Then
         prevRow = 0
     End If
-    If wordIdx > maxScroll Then
-        wordIdx = maxScroll
+    If cursorIdx > maxScroll Then
+        cursorIdx = maxScroll
     End If
-    tmp3 = wordIdx \ 3
-    prevScroll = wordIdx Mod 3
+    tmp3 = cursorIdx \ 3
+    prevScroll = cursorIdx Mod 3
     If tmp3 > k Then
         tmp2 = tmp3 - k
         tmp3 = k
     End If
     m = 0
-    If x = -1 Then
+    If bgMode = -1 Then
         bufPtr = PAL_ArrayPtr(fire_mkf_data(0))
         screen_buffer_ptr = bufPtr
         Call PAL_PushScreen(fire_mkf_data(0))
@@ -5041,24 +5005,24 @@ L_00418DBA:
         If prevScroll < 0 Then
             prevScroll = 0
         End If
-        If prevScroll > menuY Then
-            prevScroll = menuY
+        If prevScroll > lastRowIdx Then
+            prevScroll = lastRowIdx
         End If
-        wordIdx = ((tmp2 + tmp3) * rowCount) + prevScroll
-        If wordIdx > maxScroll Then
+        cursorIdx = ((tmp2 + tmp3) * rowCount) + prevScroll
+        If cursorIdx > maxScroll Then
             prevScroll = j
             tmp3 = itemCount
-            tmp2 = menuX
-            wordIdx = ((tmp2 + tmp3) * rowCount) + prevScroll
+            tmp2 = pageIdx
+            cursorIdx = ((tmp2 + tmp3) * rowCount) + prevScroll
         End If
         invIdx = m + 12
         o = tmp2 * rowCount
         For n = 0 To colCount
             i = 16
-            For tmp4 = 0 To menuY
+            For tmp4 = 0 To lastRowIdx
                 inputResult = inventory(o).amount - inventory(o).amountInUse
                 If battle_order_array(o) And (inputResult > 0) Then
-                    If (o = wordIdx) And (highlightColor = -2) Then
+                    If (o = cursorIdx) And (highlightColor = -2) Then
                         tmp5 = 250
                         GoTo L_00418F3C
                     End If
@@ -5068,7 +5032,7 @@ L_00418DBA:
                     End If
                     GoTo L_00418F3C
                 End If
-                If (o = wordIdx) And (highlightColor = -2) Then
+                If (o = cursorIdx) And (highlightColor = -2) Then
                     tmp5 = 28
                     GoTo L_00418F3C
                 End If
@@ -5080,7 +5044,7 @@ L_00418F3C:
                 If inputResult > 1 Then
                     Call display_number(i + 84, invIdx + 6, inputResult, 0)
                 End If
-                If o = wordIdx Then
+                If o = cursorIdx Then
                     Call make_dialog_frame(i + 24, invIdx + 11)
                 End If
                 i = i + 100
@@ -5088,35 +5052,35 @@ L_00418F3C:
             Next
             invIdx = invIdx + 18
         Next
-        If x = 1 Then
-            If battle_order_array(wordIdx) Then
-                Call draw_menu_with_text_and_hp(25, 224, 150, objects(inventory(wordIdx).item).data1 \ 2, 0)
+        If bgMode = 1 Then
+            If battle_order_array(cursorIdx) Then
+                Call draw_menu_with_text_and_hp(25, 224, 150, objects(inventory(cursorIdx).item).data1 \ 2, 0)
             Else
                 Call frame_menu(224, 150, 5, 0)
             End If
         End If
-        Call draw_object_icon(0, 140, inventory(wordIdx).item)
+        Call draw_object_icon(0, 140, inventory(cursorIdx).item)
         j = prevScroll
         itemCount = tmp3
-        menuX = tmp2
-        If x = -1 Then
+        pageIdx = tmp2
+        If bgMode = -1 Then
             Call PAL_PopScreen(fire_mkf_data(0))
         Else
             Call PAL_PopScreen(global_buf_1(0))
         End If
-        If x <= 0 Then
+        If bgMode <= 0 Then
             tmp7 = screen_buffer_ptr
             screen_buffer_ptr = 0
-            Call process_Script(151, objects(inventory(wordIdx).item).data5)
+            Call process_Script(151, objects(inventory(cursorIdx).item).data5)
             screen_buffer_ptr = tmp7
         End If
         tmp5 = read_key()
         If tmp5 = 1 Then
             highlightColor = -1
         End If
-        If battle_order_array(wordIdx) And (inventory(wordIdx).amount > inventory(wordIdx).amountInUse) Then
+        If battle_order_array(cursorIdx) And (inventory(cursorIdx).amount > inventory(cursorIdx).amountInUse) Then
             If tmp5 = 2 Then
-                highlightColor = wordIdx
+                highlightColor = cursorIdx
             End If
         End If
         If tmp5 = 3 Then
@@ -5146,9 +5110,8 @@ L_00418F3C:
         inventory(rowPos).amount = 0
         inventory(rowPos).item = 0
     Next
-    tmp = highlightColor
-    Exit Sub
-End Sub
+    Return highlightColor
+End Function
 
 Sub enemy_physical_attack(ByRef enemyIdx, ByRef targetIdx, ByRef targetRole, ByRef useMagic)
     Call PAL_ClearMenu(battle_order_array(0), 20)
@@ -5268,8 +5231,8 @@ Sub enemy_physical_attack(ByRef enemyIdx, ByRef targetIdx, ByRef targetRole, ByR
     Call draw_battle_scene(1, 0)
     attack_done_flag = -1
     rng2 = VB40032.rtcRandomNext()
-    targetIdx = get_player_attribute_total(party(targetIdx).role, 22)
-    If ((rngVal >= 0) And (CSng (enemy_runtime_data(enemyIdx).attackEquivItemRate) > (rng2 * CSng (10)))) And ((VB40032.rtcRandomNext() * CSng (100)) > CSng (targetIdx)) Then
+    dmgRoll = get_player_attribute_total(party(targetIdx).role, 22)
+    If ((rngVal >= 0) And (CSng (enemy_runtime_data(enemyIdx).attackEquivItemRate) > (rng2 * CSng (10)))) And ((VB40032.rtcRandomNext() * CSng (100)) > CSng (dmgRoll)) Then
         Call process_Script(targetIdx, objects(enemy_runtime_data(enemyIdx).attackEquivItem).data2)
     End If
     Exit Sub
@@ -5361,7 +5324,7 @@ Sub calc_display_theurgy(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
             battle_order_array(targetRole) = -1
     End Select
     effect_frame_count = 0
-    targetRole = enemyIdx
+    targetIdx = enemyIdx
     If theurgy_data(0).fireDelay > 0 Then
         If enemyIdx < 9 Then
             Call play_sound(theurgy_data(0).sound, 0)
@@ -5371,9 +5334,9 @@ Sub calc_display_theurgy(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
             effect_frame_count
         Next
         player_battle_sprite(enemyIdx).direction = 6
-        targetRole = 10
+        targetIdx = 10
     End If
-    Call play_theurgy_anim(itemObj, effect_frame_count, targetRole)
+    Call play_theurgy_anim(itemObj, effect_frame_count, targetIdx)
     effect_particle_count = 0
     blow_away_flag = 0
     If theurgy_data(0).type <= 3 Then
@@ -5721,10 +5684,10 @@ Sub enemy_magical_attack(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
     Call PAL_ClearMenu(battle_order_array(0), 20)
     If theurgy_data(0).type > 0 Then
         For j = 0 To enemy_pos_count
-            targetRole = party(j).role
+            rollPower = party(j).role
             battle_order_array(10 + j) = 1
             battle_order_array(j) = 0
-            If playerRoles(targetRole, 9) > 0 Then
+            If playerRoles(rollPower, 9) > 0 Then
                 If player_battle_sprite(j).direction = 3 Then
                     battle_order_array(10 + j) = 2
                 End If
@@ -5764,31 +5727,31 @@ L_0041BE8C:
     Call play_theurgy_anim(itemObj, effect_frame_count, i)
     effect_particle_count = 0
     For k = 0 To enemy_pos_count
-        targetRole = party(k).role
+        rollPower = party(k).role
         rng = VB40032.rtcRandomNext()
         baseDamage = CSng (power) + (rng * CSng (4))
         If battle_order_array(k) Then
             targetStart = theurgy_data(0).elemental
-            targetIdx = get_player_attribute_total(targetRole, 19)
+            targetIdx = get_player_attribute_total(rollPower, 19)
             baseDamage = (calc_battle_damage(baseDamage, targetIdx) \ 2) + theurgy_data(0).baseDamage
             baseDamage = baseDamage \ battle_order_array(10 + k)
             If (targetStart > 0) And (targetStart < 7) Then
                 If targetStart = 6 Then
                     targetStart = 0
                 End If
-                theurgyIdx = get_player_attribute_total(targetRole, 22 + targetStart)
+                theurgyIdx = get_player_attribute_total(rollPower, 22 + targetStart)
                 baseDamage = CSng (baseDamage) * (CSng (100 - theurgyIdx) / CSng (100))
             End If
             baseDamage = calc_magic_damage(baseDamage, theurgy_data(0).elemental)
-            If baseDamage > playerRoles(targetRole, 9) Then
-                baseDamage = playerRoles(targetRole, 9)
+            If baseDamage > playerRoles(rollPower, 9) Then
+                baseDamage = playerRoles(rollPower, 9)
             End If
             If baseDamage < 0 Then
                 baseDamage = 0
             End If
-            playerRoles(targetRole, 9) = playerRoles(targetRole, 9) - baseDamage
-            If playerRoles(targetRole, 9) <= 0 Then
-                Call play_sound(playerRoles(targetRole, 68), 1)
+            playerRoles(rollPower, 9) = playerRoles(rollPower, 9) - baseDamage
+            If playerRoles(rollPower, 9) <= 0 Then
+                Call play_sound(playerRoles(rollPower, 68), 1)
             End If
             Call add_damage_number(player_battle_sprite(k).x, player_battle_sprite(k).y - 70, baseDamage, 1)
         End If
@@ -5825,7 +5788,7 @@ L_0041BE8C:
     Exit Sub
 End Sub
 
-Sub process_Battle(ByRef battleScene, ByRef surpriseFlag)
+Function process_Battle(ByRef battleScene, ByRef surpriseFlag) As Integer
     battle_param = surpriseFlag
     For i = 0 To RPG_team_number
         k = party(i).role
@@ -6778,11 +6741,11 @@ L_00420C0E:
     Call PAL_ClearMenu(enemy_status(0, 0), 80)
     auto_battle_flag = 0
     redraw_flag = redraw_flag Or 3
-    retval = battleResult
+    process_Battle = battleResult
     Call PAL_ClearTree()
     Call PAL_FlushDSound()
-    Exit Sub
-End Sub
+    Exit Function
+End Function
 
 Sub process_scripts(ByRef eventObjID, ByRef scriptEntry, ByRef opcode, ByRef operand1, ByRef operand2, ByRef operand3)
     Call DoEvents_check_exit()

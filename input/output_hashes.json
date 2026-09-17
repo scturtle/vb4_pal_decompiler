@@ -2,7 +2,7 @@
   "algorithm": "sha256",
   "files": {
     "pal_disasm.txt": "7f0b783b0ce08e4698e740cf40b0a3382e7600815d292277d0392d814918bb12",
-    "pal_pseudocode.txt": "3d55928c98c6f719cd23ba2118dc0da11d3b7eff9d868774f55f6d6818cf5746",
-    "pal_code.txt": "55ec582fd855cd1ed24b1be0b23a4ab9b72712f1cb7c4b76e303798665aee987"
+    "pal_pseudocode.txt": "42a83d4fe9841bfd500dfe3fd4f4e6a935f07dc6434a0e84b0d0035da29f2691",
+    "pal_code.txt": "e76c79a93dc7235a4026d93ac14ff09b3099303729e2777272f965076ea848e3"
   }
 }

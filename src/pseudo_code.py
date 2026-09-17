@@ -822,6 +822,24 @@ def _convert_select_case(stmts, label_at_stmt, proc_start, proc_end):
     return new_stmts, new_label_at
 
 
+def proc_return_kind(labels):
+    """Return 'Integer' if any instruction label is ExitProcI2 (VB4
+    ``Function ... As Integer``), else None (Sub).
+
+    VB4 p-code exit opcodes encode the proc's declared return type:
+    ExitProcI2 for Integer functions; ExitProcStr is the plain Sub exit
+    (word_probe.py: handler 0x37C/0x386/0x38A are plain-exit variants,
+    the disassembler labels them all ExitProcStr); ExitProcHresult marks
+    MethCallEngine COM stubs.  Exit types are uniform within a proc
+    (verified on PAL.EXE: 0 mixed-type procs; 35 ExitProcI2 procs whose
+    call sites all consume the result, 159 ExitProcStr procs whose call
+    sites never do)."""
+    for lab in labels:
+        if lab == "ExitProcI2":
+            return "Integer"
+    return None
+
+
 def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
     """Decompile one procedure into VB pseudocode text."""
     start, end, instrs = build_instrs(pal, analysis, index)
@@ -845,18 +863,30 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
             params.append(pname)   # body refs stay plain a0/a1/...
         param_map[8 + 4 * (i + 1)] = pname
 
-    sig = "Sub %s(%s)" % (name, ", ".join(params))
+    ret_type = proc_return_kind([i.label for i in instrs])
+    keyword = "Function" if ret_type else "Sub"
+    sig = "%s %s(%s)" % (keyword, name, ", ".join(params))
+    if ret_type:
+        sig += " As %s" % ret_type
     if entry_stub:
         sig += "  ' MethCallEngine entry"
 
     if not instrs:
-        return "%s\n    ' (empty procedure)\nEnd Sub" % sig
+        return "%s\n    ' (empty procedure)\nEnd %s" % (sig, keyword)
 
     machine = stack_ir.StackMachine()
     machine.proc_start = start
     machine.proc_end = end
     machine.arg_map = arg_map or {}
     machine.param_map = param_map
+    machine.exit_keyword = "Exit %s" % keyword
+    if ret_type:
+        # VB4 reserves the first local slot (stack-134) for the Function
+        # result; render it as the proc name (VB "name = value" semantics).
+        # Verified on PAL.EXE: all 35 ExitProcI2 procs store there, none use
+        # it as a For-loop variable or pass it ByRef.
+        machine.result_slot = -134
+        machine.result_name = name
     for instr in instrs:
         machine.process(instr)
     # Close any remaining open Ifs at end of proc.
@@ -916,7 +946,7 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
         tgt = int(m.group(1), 16)
         if exit_addrs and tgt in exit_addrs:
             # Branch to an ExitProc instruction = early exit from the proc.
-            stmt.text = "Exit Sub"
+            stmt.text = "Exit %s" % keyword
         elif start <= tgt < end:
             # Intra-proc target — will need a label at the target stmt.
             label_targets.add(tgt)
@@ -1038,6 +1068,56 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
         stmts = new_stmts
         label_at_stmt = new_label_at
 
+    # Return-statement rendering: fold "name = <expr>" + "Exit Function"
+    # pairs into "Return <expr>" — clearer for modern readers than VB's
+    # "name = value" idiom, and semantically identical (store to the
+    # result slot + exit).  Applied when the terminator IMMEDIATELY follows
+    # the assignment, anywhere in the body (covers both the tail return and
+    # early exits inside If blocks).  The terminator is dropped only when
+    # adjacent; otherwise the VB form stays (e.g. process_Battle stores the
+    # result then cleans up — a Return there would change control flow).
+    if ret_type and stmts:
+        term_idx = len(stmts) - 1
+        term = stmts[term_idx]
+        if term.text == machine.exit_keyword and term.indent_delta == 0:
+            for j in range(term_idx - 1, -1, -1):
+                stmt = stmts[j]
+                if stmt.indent_delta != 0:
+                    break   # structural statement — not a plain assignment
+                m2 = _re.match(r'%s\s*=\s*(.+)$' % _re.escape(name), stmt.text)
+                if m2:
+                    stmt.text = 'Return %s' % m2.group(1)
+                    if term_idx == j + 1:
+                        # adjacent pair — drop the redundant terminator
+                        stmts.pop(term_idx)
+                    break
+                if stmt.text.startswith(('Call ', 'GoTo ', 'Exit ', 'Return ')):
+                    break   # non-assignment statement before the store
+                if stmt.text.endswith(':') or 'L_' in stmt.text:
+                    break
+                # plain assignment to something else — keep scanning upward
+                # (e.g. temp stores feeding the result); result store is the
+                # LAST name= assignment.
+                if _re.match(r'[A-Za-z_]\w*\s*=', stmt.text):
+                    continue
+                break
+        # Early-exit pattern inside the body: "name = <expr>" followed
+        # directly by the terminator at ANY depth (e.g. inside If blocks).
+        k = 0
+        while k < len(stmts) - 1:
+            s0, s1 = stmts[k], stmts[k + 1]
+            if (s0.indent_delta == 0 and s1.text == machine.exit_keyword
+                    and s1.indent_delta == 0
+                    and not label_at_stmt.get(k + 1)):
+                m2 = _re.match(r'%s\s*=\s*(.+)$' % _re.escape(name), s0.text)
+                if m2:
+                    # adjacency check via VA: consecutive emitted stmts
+                    s0.text = 'Return %s' % m2.group(1)
+                    del stmts[k + 1]
+                    # do not advance k; next pair may follow
+                    continue
+            k += 1
+
     lines = [sig]
     indent = 1
     for i, stmt in enumerate(stmts):
@@ -1091,7 +1171,7 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
                 indent = 1
         for tgt in labels_after:
             lines.append("L_%08X:" % tgt)
-    lines.append("End Sub")
+    lines.append("End %s" % keyword)
     return "\n".join(lines)
 
 

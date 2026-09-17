@@ -296,14 +296,21 @@ def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> s
                         rendered.append(name)
                 new_params = "(" + ", ".join(rendered) + ")"
 
+        # 保留 pseudocode 签名尾部的返回类型（"As Integer"，来自
+        # ExitProcI2 判定）— Function 签名重写时不能丢弃。
+        as_clause = ""
+        m_as = re.search(r"\bAs\s+\w+", rest if "'" not in rest else rest[:rest.index("'")])
+        if m_as:
+            as_clause = " " + m_as.group(0)
+
         if readable != full_name:
-            new_line = f"{indent}{keyword} {readable}{new_params}"
+            new_line = f"{indent}{keyword} {readable}{new_params}{as_clause}"
             if "'" in rest:
                 existing_comment = rest[rest.index("'") + 1:].strip()
                 if existing_comment:
                     new_line += f"  '{existing_comment}"
         else:
-            new_line = f"{indent}{keyword} {full_name}{new_params}"
+            new_line = f"{indent}{keyword} {full_name}{new_params}{as_clause}"
             if "'" in rest:
                 existing_comment = rest[rest.index("'") + 1:].strip()
                 if existing_comment:
