@@ -3056,12 +3056,14 @@ Sub render_dialog_control(ByRef x, ByRef y)
         Select Case k
             Case 34
                 Call swap_values(dialog_x, dialog_y)
+                GoTo L_0040FF2C
             Case 36
                 music_mode_init = image_offset_table(j + 1) - 48
                 music_mode_init = music_mode_init * 10
                 music_mode_init = music_mode_init + (image_offset_table(j + 2) - 48)
                 music_mode_init = CSng (music_mode_init * 10) / CSng (7)
                 j = j + 2
+                GoTo L_0040FF2C
             Case 126
                 tmp = image_offset_table(j + 1) - 48
                 tmp = tmp * 10
@@ -3071,10 +3073,13 @@ Sub render_dialog_control(ByRef x, ByRef y)
                 image_draw_flag = 0
                 Call PAL_Delay(tmp)
                 j = j + 2
+                GoTo L_0040FF2C
             Case 41
                 image_lookup_key = 1
+                GoTo L_0040FF2C
             Case 40
                 image_lookup_key = 2
+                GoTo L_0040FF2C
         End Select
         If image_offset_table(j) > 128 Then
             dialogBuf(0) = image_offset_table(j)
@@ -3096,6 +3101,7 @@ Sub render_dialog_control(ByRef x, ByRef y)
         If tmp2 = 2 Then
             image_draw_flag = -1
         End If
+L_0040FF2C:
     Next
     Exit Sub
 End Sub
@@ -4362,7 +4368,6 @@ L_00415E00:
             GoTo L_00415B1C
         End If
     End If
-L_004160F6:
     invResult = compact_inventory()
     screen_buffer_ptr = 0
     Exit Sub

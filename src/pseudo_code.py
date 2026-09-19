@@ -735,6 +735,16 @@ def _convert_select_case(stmts, label_at_stmt, proc_start, proc_end):
         else:
             chain_end = last_endif_idx
 
+        # Is the merge label immediately after the chain end?  Only then is
+        # a case-end GoTo equivalent to falling out of End Select.  When the
+        # label sits further down — beyond code a matched case must skip
+        # (e.g. the shared tail of a For body, or the loop's Next) — every
+        # case body's GoTo is a real jump and must be preserved in the VB
+        # output together with the label itself.
+        label_idx = label_to_idx.get(tgt_va)
+        merge_adjacent = (label_idx is not None
+                          and label_idx <= chain_end + 1)
+
         # Build the new statements
         new_stmts_list = []
         # Select Case var
@@ -757,13 +767,24 @@ def _convert_select_case(stmts, label_at_stmt, proc_start, proc_end):
                 # Regular case: body is between If and GoTo
                 for j in range(if_idx + 1, gl):
                     new_stmts_list.append(stmts[j])
-                # GoTo is removed (not copied)
+                if merge_adjacent:
+                    # Merge GoTo is redundant: End Select falls through to
+                    # the label right after the chain — drop it.
+                    pass
+                else:
+                    # Case-end Branch targets a point beyond the chain
+                    # (e.g. the Next of the enclosing For loop).  Keep the
+                    # jump: dropping it would make matched cases fall into
+                    # the shared tail code instead of skipping it.
+                    new_stmts_list.append(stmts[gl])
                 # End If is removed (not copied)
             else:
                 # Last case: body is between If and End If (excluding label)
                 for j in range(if_idx + 1, last_case_endif_idx):
-                    # Skip the GoTo if present (shouldn't be, but just in case)
-                    if 'GoTo' in stmts[j].text:
+                    # Skip only a merge GoTo if present (shouldn't be, but
+                    # just in case); GoTos to other labels are real jumps.
+                    if merge_adjacent and _re.search(
+                            r'GoTo L_%08X' % tgt_va, stmts[j].text):
                         continue
                     new_stmts_list.append(stmts[j])
                 # End If is replaced by End Select
@@ -778,7 +799,10 @@ def _convert_select_case(stmts, label_at_stmt, proc_start, proc_end):
             'new_stmts': new_stmts_list,
             'tgt_va': tgt_va,
         })
-        remove_label(new_label_at_stmt, tgt_va)
+        if merge_adjacent:
+            # The label is absorbed by End Select's fall-through position.
+            remove_label(new_label_at_stmt, tgt_va)
+        # else: the label stays — preserved case-end GoTos still target it.
 
     if not patterns:
         return stmts, label_at_stmt
@@ -1067,6 +1091,23 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
                         break
         stmts = new_stmts
         label_at_stmt = new_label_at
+
+    # Prune labels no longer referenced: dead-code elimination above can
+    # remove every GoTo that targeted a label (unreachable jump chains,
+    # e.g. case bodies that already end in an explicit GoTo, followed by
+    # the compiler-emitted end-of-select branch).  A label nothing jumps
+    # to is unreachable noise in the output — drop it.
+    live_refs = set()
+    for stmt in stmts:
+        for m in _re.finditer(r'Go(?:To|Sub) L_([0-9A-F]+)', stmt.text):
+            live_refs.add(int(m.group(1), 16))
+    if label_at_stmt:
+        pruned = {}
+        for idx, labels in label_at_stmt.items():
+            keep = [t for t in labels if t in live_refs]
+            if keep:
+                pruned[idx] = keep
+        label_at_stmt = pruned
 
     # Return-statement rendering: fold "name = <expr>" + "Exit Function"
     # pairs into "Return <expr>" — clearer for modern readers than VB's

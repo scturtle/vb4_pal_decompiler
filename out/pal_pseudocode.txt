@@ -3056,12 +3056,14 @@ Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
         Select Case stack-170
             Case 34
                 Call pub_005_00403324_hot(Me.f022A, Me.f022C)
+                GoTo L_0040FF2C
             Case 36
                 Me.f0232 = Me.f020C(stack-160 + 1) - 48
                 Me.f0232 = Me.f0232 * 10
                 Me.f0232 = Me.f0232 + (Me.f020C(stack-160 + 2) - 48)
                 Me.f0232 = CSng (Me.f0232 * 10) / CSng (7)
                 stack-160 = stack-160 + 2
+                GoTo L_0040FF2C
             Case 126
                 stack-162 = Me.f020C(stack-160 + 1) - 48
                 stack-162 = stack-162 * 10
@@ -3071,10 +3073,13 @@ Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
                 Me.f020A = 0
                 Call Pal.delay1(stack-162)
                 stack-160 = stack-160 + 2
+                GoTo L_0040FF2C
             Case 41
                 Me.f0208 = 1
+                GoTo L_0040FF2C
             Case 40
                 Me.f0208 = 2
+                GoTo L_0040FF2C
         End Select
         If Me.f020C(stack-160) > 128 Then
             stack-156(0) = Me.f020C(stack-160)
@@ -3096,6 +3101,7 @@ Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
         If stack-164 = 2 Then
             Me.f020A = -1
         End If
+L_0040FF2C:
     Next
     Exit Sub
 End Sub
@@ -4362,7 +4368,6 @@ L_00415E00:
             GoTo L_00415B1C
         End If
     End If
-L_004160F6:
     stack-158 = pub_125_004098C4()
     Me.f02A4 = 0
     Exit Sub
