@@ -20,7 +20,7 @@ Sub pub_002_00403264()
 End Sub
 
 Sub priv_003_004032A4()  ' MethCallEngine entry
-    If global_00000870 = 1 Then
+    If Me.f0870 = 1 Then
         Call pub_135_0040AB1C()
     End If
     Exit Sub
@@ -632,7 +632,7 @@ Sub pub_067_0040563C()
     Call Pal.killtimer()
     Call Pal.ShutDownInput()
     Call Pal.ResetMode()
-    Call Me.method_002C(global_00000878.f0000, global_0000087C.f0000)
+    Call Me.method_002C(Me.f0878.f0000, Me.f087C.f0000)
     End
     Exit Sub
 End Sub
@@ -987,7 +987,7 @@ Sub pub_091_00406CDC()
 End Sub
 
 Sub priv_092_00406DF0()  ' MethCallEngine entry
-    Call Me.method_0064(Me.method_0010(Me.method_006C(Me.method_0010(Me.method_0054(Me.method_005C(CSng (0), global_00000878.f0000), CSng (0), global_00000878.f0000), stack-136, global_0000087C.f0000), stack-136, stack-152, global_00000878.f0000), stack-156, global_0000087C.f0000), stack-156, stack-152, global_00000878.f0000)
+    Call Me.method_0064(Me.method_0010(Me.method_006C(Me.method_0010(Me.method_0054(Me.method_005C(CSng (0), Me.f0878.f0000), CSng (0), Me.f0878.f0000), stack-136, Me.f087C.f0000), stack-136, stack-152, Me.f0878.f0000), stack-156, Me.f087C.f0000), stack-156, stack-152, Me.f0878.f0000)
     Exit Sub
 End Sub
 
@@ -2929,18 +2929,18 @@ End Sub
 Sub priv_163_0040F264()  ' MethCallEngine entry
     stack-208 = Pal.GetActiveWindow()
     If Me.method_0078(Me.method_0038(stack-208, stack-212, -) = stack-212, stack-214, -) And (stack-214 = 0) Then
-        If global_00000870 = 1 Then
+        If Me.f0870 = 1 Then
             Call pub_135_0040AB1C()
         End If
-        If (global_00000244 = 1) And (global_00000246 <> 0) Then
+        If (Me.f0244 = 1) And (Me.f0246 <> 0) Then
             If pub_108_0040807C() = 0 Then
-                stack-200 = (('play cdtrack from' + CStr(global_00000248)) + ' to') + CStr(global_00000248 + 1)
+                stack-200 = (('play cdtrack from' + CStr(Me.f0248)) + ' to') + CStr(Me.f0248 + 1)
                 stack-384 = stack-196
                 stack-212 = kernel32.mciSendStringA(stack-200, stack-196, 30, 0)
                 stack-204 = stack-212
             End If
         End If
-        If (global_00000240 = 1) And (global_00000242 = 1) Then
+        If (Me.f0240 = 1) And (Me.f0242 = 1) Then
             If pub_106_00407E04() = 0 Then
                 stack-388 = stack-196
                 stack-212 = kernel32.mciSendStringA('seek midi to start', stack-196, 30, 0)
@@ -2952,7 +2952,7 @@ Sub priv_163_0040F264()  ' MethCallEngine entry
         End If
         Exit Sub
     End If
-    If global_00000870 = 0 Then
+    If Me.f0870 = 0 Then
         Call pub_117_00408C90()
     End If
     Exit Sub
@@ -4817,107 +4817,107 @@ End Sub
 Sub priv_190_004180D0()  ' MethCallEngine entry
     stack-168 = VB40032.rtcGetTimer()
     Call VB40032.rtcRandomize(stack-168)
-    Call Pal.GetKeyDefine(global_00000854(0))
-    If global_00000854(0) = 72 Then
-        global_00000854(4) = 200
+    Call Pal.GetKeyDefine(Me.f0854(0))
+    If Me.f0854(0) = 72 Then
+        Me.f0854(4) = 200
     Else
-        global_00000854(4) = 0
+        Me.f0854(4) = 0
     End If
-    If global_00000854(1) = 80 Then
-        global_00000854(5) = 208
+    If Me.f0854(1) = 80 Then
+        Me.f0854(5) = 208
     Else
-        global_00000854(5) = 0
+        Me.f0854(5) = 0
     End If
-    If global_00000854(2) = 75 Then
-        global_00000854(6) = 203
+    If Me.f0854(2) = 75 Then
+        Me.f0854(6) = 203
     Else
-        global_00000854(6) = 0
+        Me.f0854(6) = 0
     End If
-    If global_00000854(3) = 77 Then
-        global_00000854(7) = 205
+    If Me.f0854(3) = 77 Then
+        Me.f0854(7) = 205
     Else
-        global_00000854(7) = 0
+        Me.f0854(7) = 0
     End If
-    global_0000083C(0) = 2
-    global_0000083C(1) = 1
-    global_0000083C(2) = 0
-    global_0000083C(3) = 4
-    global_0000083C(4) = 3
-    global_0000065C(0) = 28
-    global_00000674(0) = 140
-    global_0000065C(1) = 0
-    global_00000674(1) = 155
-    global_0000065C(2) = 55
-    global_00000674(2) = 155
-    global_0000065C(3) = 27
-    global_00000674(3) = 170
-    global_0000050C(0) = 0
-    global_0000050C(1) = 3
-    global_0000050C(2) = 1
-    global_0000050C(3) = 5
-    global_0000050C(4) = 2
-    global_0000050C(5) = 4
-    global_0000041C(0) = -16
-    global_00000434(0) = 8
-    global_0000044C(0) = -1
-    global_00000464(0) = 1
-    global_0000041C(1) = -16
-    global_00000434(1) = -8
-    global_0000044C(1) = -1
-    global_00000464(1) = -1
-    global_0000041C(2) = 16
-    global_00000434(2) = -8
-    global_0000044C(2) = 1
-    global_00000464(2) = -1
-    global_0000041C(3) = 16
-    global_00000434(3) = 8
-    global_0000044C(3) = 1
-    global_00000464(3) = 1
-    global_000003BC(0, 0).f0000 = 27
-    global_000003BC(0, 1).f0000 = 1
-    global_000003BC(1, 0).f0000 = 45
-    global_000003BC(1, 1).f0000 = 1
-    global_000003BC(2, 0).f0000 = 18
-    global_000003BC(2, 1).f0000 = 1
-    global_000003BC(3, 0).f0000 = 13
-    global_000003BC(3, 1).f0000 = 2
-    global_000003BC(4, 0).f0000 = 32
-    global_000003BC(4, 1).f0000 = 2
-    global_000003BC(5, 0).f0000 = 17
-    global_000003BC(5, 1).f0000 = 2
-    global_000003BC(6, 0).f0000 = 38
-    global_000003BC(6, 1).f0000 = 3
-    global_000003BC(7, 0).f0000 = 40
-    global_000003BC(7, 1).f0000 = 4
-    global_000003BC(8, 0).f0000 = 37
-    global_000003BC(8, 1).f0000 = 5
-    global_000003BC(9, 0).f0000 = 39
-    global_000003BC(9, 1).f0000 = 6
-    global_000003BC(10, 0).f0000 = 33
-    global_000003BC(10, 1).f0000 = 7
-    global_000003BC(11, 0).f0000 = 34
-    global_000003BC(11, 1).f0000 = 8
-    global_000003BC(12, 0).f0000 = 82
-    global_000003BC(12, 1).f0000 = 9
-    global_000003BC(13, 0).f0000 = 65
-    global_000003BC(13, 1).f0000 = 10
-    global_000003BC(14, 0).f0000 = 68
-    global_000003BC(14, 1).f0000 = 11
-    global_000003BC(15, 0).f0000 = 69
-    global_000003BC(15, 1).f0000 = 12
-    global_000003BC(16, 0).f0000 = 87
-    global_000003BC(16, 1).f0000 = 13
-    global_000003BC(17, 0).f0000 = 81
-    global_000003BC(17, 1).f0000 = 14
-    global_000003BC(18, 0).f0000 = 83
-    global_000003BC(18, 1).f0000 = 15
-    global_000003BC(19, 0).f0000 = 70
-    global_000003BC(19, 1).f0000 = 16
-    global=000002A4 = 0
-    global=00000334 = 200
-    global=00000336 = 320
-    global=00000338 = 200
-    global=000001FC = 0
+    Me.f083C(0) = 2
+    Me.f083C(1) = 1
+    Me.f083C(2) = 0
+    Me.f083C(3) = 4
+    Me.f083C(4) = 3
+    Me.f065C(0) = 28
+    Me.f0674(0) = 140
+    Me.f065C(1) = 0
+    Me.f0674(1) = 155
+    Me.f065C(2) = 55
+    Me.f0674(2) = 155
+    Me.f065C(3) = 27
+    Me.f0674(3) = 170
+    Me.f050C(0) = 0
+    Me.f050C(1) = 3
+    Me.f050C(2) = 1
+    Me.f050C(3) = 5
+    Me.f050C(4) = 2
+    Me.f050C(5) = 4
+    Me.f041C(0) = -16
+    Me.f0434(0) = 8
+    Me.f044C(0) = -1
+    Me.f0464(0) = 1
+    Me.f041C(1) = -16
+    Me.f0434(1) = -8
+    Me.f044C(1) = -1
+    Me.f0464(1) = -1
+    Me.f041C(2) = 16
+    Me.f0434(2) = -8
+    Me.f044C(2) = 1
+    Me.f0464(2) = -1
+    Me.f041C(3) = 16
+    Me.f0434(3) = 8
+    Me.f044C(3) = 1
+    Me.f0464(3) = 1
+    Me.f03BC(0, 0).f0000 = 27
+    Me.f03BC(0, 1).f0000 = 1
+    Me.f03BC(1, 0).f0000 = 45
+    Me.f03BC(1, 1).f0000 = 1
+    Me.f03BC(2, 0).f0000 = 18
+    Me.f03BC(2, 1).f0000 = 1
+    Me.f03BC(3, 0).f0000 = 13
+    Me.f03BC(3, 1).f0000 = 2
+    Me.f03BC(4, 0).f0000 = 32
+    Me.f03BC(4, 1).f0000 = 2
+    Me.f03BC(5, 0).f0000 = 17
+    Me.f03BC(5, 1).f0000 = 2
+    Me.f03BC(6, 0).f0000 = 38
+    Me.f03BC(6, 1).f0000 = 3
+    Me.f03BC(7, 0).f0000 = 40
+    Me.f03BC(7, 1).f0000 = 4
+    Me.f03BC(8, 0).f0000 = 37
+    Me.f03BC(8, 1).f0000 = 5
+    Me.f03BC(9, 0).f0000 = 39
+    Me.f03BC(9, 1).f0000 = 6
+    Me.f03BC(10, 0).f0000 = 33
+    Me.f03BC(10, 1).f0000 = 7
+    Me.f03BC(11, 0).f0000 = 34
+    Me.f03BC(11, 1).f0000 = 8
+    Me.f03BC(12, 0).f0000 = 82
+    Me.f03BC(12, 1).f0000 = 9
+    Me.f03BC(13, 0).f0000 = 65
+    Me.f03BC(13, 1).f0000 = 10
+    Me.f03BC(14, 0).f0000 = 68
+    Me.f03BC(14, 1).f0000 = 11
+    Me.f03BC(15, 0).f0000 = 69
+    Me.f03BC(15, 1).f0000 = 12
+    Me.f03BC(16, 0).f0000 = 87
+    Me.f03BC(16, 1).f0000 = 13
+    Me.f03BC(17, 0).f0000 = 81
+    Me.f03BC(17, 1).f0000 = 14
+    Me.f03BC(18, 0).f0000 = 83
+    Me.f03BC(18, 1).f0000 = 15
+    Me.f03BC(19, 0).f0000 = 70
+    Me.f03BC(19, 1).f0000 = 16
+    Me.f02A4 = 0
+    Me.f0334 = 200
+    Me.f0336 = 320
+    Me.f0338 = 200
+    Me.f01FC = 0
     Exit Sub
 End Sub
 
@@ -5415,10 +5415,10 @@ L_0041A8CE:
             End
         End If
     End If
-    Call Me.method_0268(Me.method_0028(global_00000878.f0000, global_0000087C.f0000), 0, global_00000878.f0000)
+    Call Me.method_0268(Me.method_0028(Me.f0878.f0000, Me.f087C.f0000), 0, Me.f0878.f0000)
     Call pub_002_00403264()
     Call Pal.settimer()
-    Call Me.method_0038(stack-180, global_00000878.f0000)
+    Call Me.method_0038(stack-180, Me.f0878.f0000)
     stack-316 = Pal.InitDSound(stack-180)
     If stack-316 <> 0 Then
         Me.f023C = 0
@@ -5429,11 +5429,11 @@ L_0041A8CE:
     End If
     Me.f023E = Me.f023C <> 0
     Me.f023A = Me.f0238 <> 0
-    Call Me.method_0038(Me.method_000C(pub_057_00404EAC(), stack-320, global_0000087C.f0000), stack-320, stack-316, global_00000878.f0000)
+    Call Me.method_0038(Me.method_000C(pub_057_00404EAC(), stack-320, Me.f087C.f0000), stack-320, stack-316, Me.f0878.f0000)
     stack-180 = Pal.InitInput(stack-308, stack-316)
     stack-136 = stack-180
     If stack-136 Then
-        Call Me.method_002C(global_00000878.f0000, global_0000087C.f0000)
+        Call Me.method_002C(Me.f0878.f0000, Me.f087C.f0000)
         Call Pal.killtimer()
         stack-276 = 'Error'
         stack-308 = 'DirectInput Initialize Error!'
@@ -5450,11 +5450,11 @@ L_0041A8CE:
     Me.f000C = pub_056_00404DFC_hot(stack-176, 0)
     stack-176 = 'ABC.MKF'
     Me.f0010 = pub_056_00404DFC_hot(stack-176, 0)
-    Call Me.method_0038(pub_181_00413E4C(), stack-316, global_00000878.f0000)
+    Call Me.method_0038(pub_181_00413E4C(), stack-316, Me.f0878.f0000)
     stack-322 = user32.SetMode(stack-316)
     stack-136 = stack-322
     If stack-136 Then
-        Call Me.method_002C(global_00000878.f0000, global_0000087C.f0000)
+        Call Me.method_002C(Me.f0878.f0000, Me.f087C.f0000)
         stack-276 = 'Error'
         stack-308 = 'DirectDraw Initialize Error!'
         stack-136 = VB40032.rtcMsgBox(stack-308, 0, stack-276)
@@ -5464,13 +5464,13 @@ L_0041A8CE:
         End
     End If
     Call winmm.ShowCursor(0)
-    Call Me.method_0044(0, global_00000878.f0000)
+    Call Me.method_0044(0, Me.f0878.f0000)
     Call pub_002_00403264()
     Call Pal.ClrScr()
     Me.f0872 = 1
-    Call Me.method_0038(stack-316, global_00000878.f0000)
+    Call Me.method_0038(stack-316, Me.f0878.f0000)
     Call Pal.PlayAvi(stack-316, 1, 0)
-    Call Me.method_0038(stack-316, global_00000878.f0000)
+    Call Me.method_0038(stack-316, Me.f0878.f0000)
     Call Pal.PlayAvi(stack-316, 2, 0)
     Me.f0250 = 0
     Call pub_084_004065B0(2)
@@ -5500,7 +5500,7 @@ L_0041AED4:
             Me.f0306 = Me.f0306 Or 2
         End If
     Else
-        Call Me.method_0038(pub_114_00408850(), pub_084_004065B0(1), stack-316, global_00000878.f0000)
+        Call Me.method_0038(pub_114_00408850(), pub_084_004065B0(1), stack-316, Me.f0878.f0000)
         Call Pal.PlayAvi(stack-316, 3, 0)
         Me.f026A = 1
         Me.f0306 = Me.f0306 Or 13
@@ -8689,11 +8689,11 @@ L_00426BDE:
         Exit Sub
     End If
     If stack-220 = 160 Then
-        Call Me.method_0038(stack-284, global_00000878.f0000)
+        Call Me.method_0038(stack-284, Me.f0878.f0000)
         Call Pal.PlayAvi(stack-284, 4, 1)
-        Call Me.method_0038(stack-284, global_00000878.f0000)
+        Call Me.method_0038(stack-284, Me.f0878.f0000)
         Call Pal.PlayAvi(stack-284, 5, 1)
-        Call Me.method_0038(stack-284, global_00000878.f0000)
+        Call Me.method_0038(stack-284, Me.f0878.f0000)
         Call Pal.PlayAvi(stack-284, 6, 1)
         Call pub_067_0040563C()
         Exit Sub

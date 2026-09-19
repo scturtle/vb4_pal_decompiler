@@ -711,7 +711,7 @@ Sub process_menu()
 End Sub
 
 Sub draw_battle_row_sprite()
-    Call PAL_ExMyll(viewport_width)
+    Call PAL_ExMyll(viewport_row_count)
     Call PAL_VWindow(0, 0, 319, 199)
     relative_viewport_x = 0
     relative_viewport_y = 0
@@ -1374,19 +1374,19 @@ End Sub
 
 Sub render_scene_and_fade(fadeSpeed)
     bufPtr = PAL_ArrayPtr(global_buf_1(0))
-    Call PAL_ClearClipNA(relative_viewport_x, relative_viewport_y, viewport_offset, viewport_height, viewport_width, bufPtr, global_buf_2(0))
+    Call PAL_ClearClipNA(relative_viewport_x, relative_viewport_y, viewport_row_limit, viewport_row_stride, viewport_row_count, bufPtr, global_buf_2(0))
     RPG_screen_wave_grade = RPG_screen_wave_grade + wave_progression
     If (RPG_screen_wave_grade > 0) And (RPG_screen_wave_grade < 256) Then
-        Call PAL_RripA(viewport_offset, RPG_screen_wave_grade, global_buf_2(0))
+        Call PAL_RripA(viewport_row_limit, RPG_screen_wave_grade, global_buf_2(0))
     Else
         RPG_screen_wave_grade = 0
         wave_progression = 0
     End If
     Call PAL_NTree(relative_viewport_x, global_buf_2(0))
     If sprite_frame_count Then
-        Call PAL_NipWB(sprite_frame_count, viewport_width, global_buf_2(0))
+        Call PAL_NipWB(sprite_frame_count, viewport_row_count, global_buf_2(0))
     Else
-        Call PAL_NipWA(frame_counter, viewport_width, global_buf_2(0))
+        Call PAL_NipWA(frame_counter, viewport_row_count, global_buf_2(0))
     End If
     Call PAL_WaitTime(10)
     Call fade_out_palette(fadeSpeed)
@@ -2103,9 +2103,9 @@ Sub scroll_scene_with_fbp(fbpSubfile, ByRef rngSubfile, ByRef speed)
             bufPtr = PAL_ArrayPtr(global_buf_1(0))
             offset = bufPtr + (frameCount * 320)
         End If
-        Call PAL_ClearClipNA(0, 0, viewport_offset, viewport_height, viewport_offset, offset, global_buf_2(0))
+        Call PAL_ClearClipNA(0, 0, viewport_row_limit, viewport_row_stride, viewport_row_limit, offset, global_buf_2(0))
         If rngSubfile <> 0 Then
-            Call PAL_PutIpNA(0, 0, 0, viewport_offset, fire_mkf_data(fire_mkf_data(frameIdx)), global_buf_2(0))
+            Call PAL_PutIpNA(0, 0, 0, viewport_row_limit, fire_mkf_data(fire_mkf_data(frameIdx)), global_buf_2(0))
             frameIdx = frameIdx + 1
             If fire_mkf_data(frameIdx) = 0 Then
                 frameIdx = 0
@@ -2116,7 +2116,7 @@ Sub scroll_scene_with_fbp(fbpSubfile, ByRef rngSubfile, ByRef speed)
             Call PAL_ExPalate(palette_data(768), palette_data(0), 768, i)
             Call PAL_IntPalate(palette_data(768))
         End If
-        Call PAL_NipWA(0, viewport_offset, global_buf_2(0))
+        Call PAL_NipWA(0, viewport_row_limit, global_buf_2(0))
         Call PAL_WaitTime(stepDelay)
     Next
     palette_fade_active = 0
@@ -2342,9 +2342,9 @@ Sub fade_in_pic(fbpSubfile, ByRef rngSubfile, ByRef speed)
     For i = 1 To 100
         Call render_scene_with_rng()
         bufPtr = PAL_ArrayPtr(global_buf_1(0))
-        Call PAL_ClearClipNA(0, 0, viewport_offset, viewport_height, viewport_offset, bufPtr, global_buf_2(0))
+        Call PAL_ClearClipNA(0, 0, viewport_row_limit, viewport_row_stride, viewport_row_limit, bufPtr, global_buf_2(0))
         If rngSubfile <> 0 Then
-            Call PAL_PutIpNA(0, 0, 0, viewport_offset, fire_mkf_data(fire_mkf_data(frameIdx)), global_buf_2(0))
+            Call PAL_PutIpNA(0, 0, 0, viewport_row_limit, fire_mkf_data(fire_mkf_data(frameIdx)), global_buf_2(0))
             frameIdx = frameIdx + 1
             If fire_mkf_data(frameIdx) = 0 Then
                 frameIdx = 0
@@ -2355,7 +2355,7 @@ Sub fade_in_pic(fbpSubfile, ByRef rngSubfile, ByRef speed)
             Call PAL_ExPalate(palette_data(768), palette_data(0), 768, frameCount)
             Call PAL_IntPalate(palette_data(768))
         End If
-        Call PAL_NipWA(0, viewport_offset, global_buf_2(0))
+        Call PAL_NipWA(0, viewport_row_limit, global_buf_2(0))
         Call PAL_WaitTime(floatVal)
     Next
     palette_fade_active = 0
@@ -2901,10 +2901,10 @@ Sub play_opening_anim()
             bufPtr = PAL_ArrayPtr(global_buf_1(0))
             offset = bufPtr + (i * 320)
         End If
-        Call PAL_ClearClipNA(0, 0, viewport_offset, viewport_height, viewport_offset, offset, global_buf_2(0))
-        Call PAL_RripA(viewport_offset, 2, global_buf_2(0))
-        Call PAL_PutIpNA(0, y, 0, viewport_offset, fire_mkf_data(fire_mkf_data(0)), global_buf_2(0))
-        Call PAL_PutIpNA(0, y + 200, 0, viewport_offset, fire_mkf_data(fire_mkf_data(1) And 32767), global_buf_2(0))
+        Call PAL_ClearClipNA(0, 0, viewport_row_limit, viewport_row_stride, viewport_row_limit, offset, global_buf_2(0))
+        Call PAL_RripA(viewport_row_limit, 2, global_buf_2(0))
+        Call PAL_PutIpNA(0, y, 0, viewport_row_limit, fire_mkf_data(fire_mkf_data(0)), global_buf_2(0))
+        Call PAL_PutIpNA(0, y + 200, 0, viewport_row_limit, fire_mkf_data(fire_mkf_data(1) And 32767), global_buf_2(0))
         If y < 10 Then
             y = y + 1
         End If
@@ -2913,13 +2913,13 @@ Sub play_opening_anim()
         If x < 80 Then
             x = 80
         End If
-        Call PAL_PutIpNA(230, x, 0, viewport_offset, mgo_frame_offsets(mgo_frame_offsets(k)), global_buf_2(0))
+        Call PAL_PutIpNA(230, x, 0, viewport_row_limit, mgo_frame_offsets(mgo_frame_offsets(k)), global_buf_2(0))
         If color <= 64 Then
             color = color + 1
             Call PAL_ExPalate(palette_data(768), palette_data(0), 720, color)
             Call PAL_IntPalate(palette_data(768))
         End If
-        Call PAL_NipWA(0, viewport_offset, global_buf_2(0))
+        Call PAL_NipWA(0, viewport_row_limit, global_buf_2(0))
         Call PAL_WaitTime(5)
     Next
     palette_fade_active = 0
@@ -2967,7 +2967,7 @@ Sub draw_battle_scene(ByRef frameCount, ByRef speed)
     End If
     For magicIdx = 1 To frameCount
         rng = PAL_ArrayPtr(global_buf_1(0))
-        Call PAL_ClearClipNA(0, battle_y_offset, dialog_y_pos, viewport_height, dialog_y_pos, rng, global_buf_2(0))
+        Call PAL_ClearClipNA(0, battle_y_offset, dialog_y_pos, viewport_row_stride, dialog_y_pos, rng, global_buf_2(0))
         Call PAL_ExMyll(dialog_y_pos)
         partyX = theurgy_effect_count + theurgy_effect_max
         If partyX > 0 Then
@@ -3962,7 +3962,7 @@ Sub player_attack_all(ByRef roleIdx, ByRef animate)
     Call draw_battle_scene(1, 0)
     effect_frame_count = effect_frame_count + 1
     For j = 0 To 4
-        i = key_direction_map(j)
+        i = enemy_attack_order(j)
         If enemy_battle_data(i).hp > 0 Then
             battle_order_array(i) = -1
             targetRole = get_player_attribute_total(roleID, 17)
@@ -4817,32 +4817,32 @@ End Sub
 Sub init_key_definitions()  'MethCallEngine entry
     tmp = VB40032.rtcGetTimer()
     Call VB40032.rtcRandomize(tmp)
-    Call PAL_GetKeyDefine(key_scan_codes_global(0))
-    If key_scan_codes_global(0) = 72 Then
-        key_scan_codes_global(4) = 200
+    Call PAL_GetKeyDefine(key_scan_codes(0))
+    If key_scan_codes(0) = 72 Then
+        key_scan_codes(4) = 200
     Else
-        key_scan_codes_global(4) = 0
+        key_scan_codes(4) = 0
     End If
-    If key_scan_codes_global(1) = 80 Then
-        key_scan_codes_global(5) = 208
+    If key_scan_codes(1) = 80 Then
+        key_scan_codes(5) = 208
     Else
-        key_scan_codes_global(5) = 0
+        key_scan_codes(5) = 0
     End If
-    If key_scan_codes_global(2) = 75 Then
-        key_scan_codes_global(6) = 203
+    If key_scan_codes(2) = 75 Then
+        key_scan_codes(6) = 203
     Else
-        key_scan_codes_global(6) = 0
+        key_scan_codes(6) = 0
     End If
-    If key_scan_codes_global(3) = 77 Then
-        key_scan_codes_global(7) = 205
+    If key_scan_codes(3) = 77 Then
+        key_scan_codes(7) = 205
     Else
-        key_scan_codes_global(7) = 0
+        key_scan_codes(7) = 0
     End If
-    key_dir_order(0) = 2
-    key_dir_order(1) = 1
-    key_dir_order(2) = 0
-    key_dir_order(3) = 4
-    key_dir_order(4) = 3
+    enemy_attack_order(0) = 2
+    enemy_attack_order(1) = 1
+    enemy_attack_order(2) = 0
+    enemy_attack_order(3) = 4
+    enemy_attack_order(4) = 3
     key_scan_map(0) = 28
     key_action_map(0) = 140
     key_scan_map(1) = 0
@@ -4851,12 +4851,12 @@ Sub init_key_definitions()  'MethCallEngine entry
     key_action_map(2) = 155
     key_scan_map(3) = 27
     key_action_map(3) = 170
-    rng_anim_frames_global(0) = 0
-    rng_anim_frames_global(1) = 3
-    rng_anim_frames_global(2) = 1
-    rng_anim_frames_global(3) = 5
-    rng_anim_frames_global(4) = 2
-    rng_anim_frames_global(5) = 4
+    rng_anim_frames(0) = 0
+    rng_anim_frames(1) = 3
+    rng_anim_frames(2) = 1
+    rng_anim_frames(3) = 5
+    rng_anim_frames(4) = 2
+    rng_anim_frames(5) = 4
     fh_M_MSG_global(0) = -16
     key_repeat_delay(0) = 8
     key_pressed_flags(0) = -1
@@ -4913,11 +4913,11 @@ Sub init_key_definitions()  'MethCallEngine entry
     key_mapping_table(18, 1) = 15
     key_mapping_table(19, 0) = 70
     key_mapping_table(19, 1) = 16
-    screen_flag = 0
-    screen_y_offset = 200
-    screen_width = 320
-    screen_height = 200
-    screen_flag_2 = 0
+    screen_buffer_ptr = 0
+    viewport_row_count = 200
+    viewport_row_stride = 320
+    viewport_row_limit = 200
+    max_subfile_size = 0
     Exit Sub
 End Sub
 

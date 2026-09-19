@@ -4,7 +4,7 @@ remap.py — 将 VB4 p-code 伪代码中的匿名标识符替换为可读名称
 
 用法：python3 remap.py [mapping.json] [pal_pseudocode.txt] [pal_code.txt]
 
-读取 mapping.json 中的 functions/globals/global_refs/pal_funcs/params/
+读取 mapping.json 中的 functions/globals/pal_funcs/params/
 stack_vars/struct_fields/var_to_struct 映射，将 pal_pseudocode.txt 转换为可读的
 pal_code.txt。
 """
@@ -170,21 +170,7 @@ def build_replace_map(mapping: dict) -> list[tuple[re.Pattern, callable]]:
             pattern = re.compile(r"\b" + re.escape(orig) + r"\b")
             rules.append((pattern, lambda m, _n=new: _n))
 
-    # 2. global_ref 替换 (global_0000XXXX → name)
-    global_refs = mapping.get("global_refs", {})
-    if global_refs:
-        for orig, new in global_refs.items():
-            pattern = re.compile(r"\b" + re.escape(orig) + r"\b")
-            rules.append((pattern, lambda m, _n=new: _n))
-
-        # 对 ImpAdSt 的部分输出会保留为 `global=0000XXXX`，而不是
-        # `global_0000XXXX`；这仍然是同一个绝对地址，需一并重映射。
-        for orig, new in global_refs.items():
-            offset = orig.removeprefix("global_")
-            pattern = re.compile(r"\bglobal=" + re.escape(offset) + r"\b")
-            rules.append((pattern, lambda m, _n=new: _n))
-
-    # 3. 函数名替换 (pub_NNN / priv_NNN → readable name)
+    # 2. 函数名替换 (pub_NNN / priv_NNN → readable name)
     #    需要处理带后缀的形式，如 pub_168_0041030C_hot
     func_map = mapping.get("functions", {})
     if func_map:
@@ -194,6 +180,8 @@ def build_replace_map(mapping: dict) -> list[tuple[re.Pattern, callable]]:
             rules.append((pattern, lambda m, _n=new: _n))
 
     # 4. 全局变量替换 (Me.fXXXX → name)
+    #    伪代码层已把 ImpAd 的 global=XXXX 规范化为同一槽位的 Me.fXXXX，
+    #    因此 globals 是槽位命名的唯一来源（原 global_refs 节已并入）。
     globals_map = mapping.get("globals", {})
     if globals_map:
         for orig, new in globals_map.items():
@@ -368,7 +356,6 @@ def main():
     stats = {
         "functions": len(mapping.get("functions", {})),
         "globals (Me.f)": len({k: v for k, v in mapping.get("globals", {}).items() if k.startswith("Me.")}),
-        "global_refs": len(mapping.get("global_refs", {})),
         "pal_funcs": len(mapping.get("pal_funcs", {})),
         "params": len(mapping.get("params", {})),
         "stack_vars": len(mapping.get("stack_vars", {})),

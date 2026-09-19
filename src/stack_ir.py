@@ -41,6 +41,14 @@ def strip(expr_text):
 
 def parse_mem(operand):
     """Parse a word-disassembler mem= operand into a readable variable reference."""
+    if operand and operand.startswith("global="):
+        # ImpAdLd/ImpAdSt operand: an inline dword added to the p-code global
+        # base.  That base is the form-module data block — the same block
+        # FMem* instructions address via the stack+8 base — so normalize it
+        # to the Me.fXXXX member form used everywhere else (e.g. Form_Load's
+        # ImpAdStI2 global=00000334 writes the same slot that consumers read
+        # as FMemLdI2 mem=stack+8.f0334).  See docs/vb40032.md.
+        return "Me.f%04X" % int(operand[7:], 16)
     if not operand or not operand.startswith("mem="):
         return operand
     ref = operand[4:]
@@ -122,8 +130,8 @@ def _is_plumbing_temp(text):
     # Pure stack offsets: stack+8, stack-216
     if text.startswith("stack+") or text.startswith("stack-"):
         return "." not in text and "(" not in text
-    # Pure mem_ / global_ refs
-    if text.startswith("mem_") or text.startswith("global_"):
+    # Pure mem_ refs
+    if text.startswith("mem_"):
         return "(" not in text
     # LdFixedStr/StFixedStr length markers
     if text.startswith("len="):
@@ -815,9 +823,10 @@ class StackMachine(object):
         elif label == "FLdZeroAd":
             self.push("0")
         elif label.startswith("ImpAdLd"):
-            # ImpAdLd* push a global module-level reference.
+            # ImpAdLd* push a form-module slot reference; parse_mem rewrites
+            # the global=XXXXX operand to the same Me.fXXXX form as FMemLd*.
             if operand.startswith("global="):
-                self.push("global_" + operand[7:])
+                self.push(parse_mem(operand))
             else:
                 self.push(self._subst_param(parse_mem(operand)))
         elif label == "FLdRfVar":
