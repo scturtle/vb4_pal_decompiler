@@ -22,6 +22,7 @@ from proc_dsc import PAL_END, PAL_START, STUB_END, STUB_START
 import naming
 import word_disasm
 import pseudo_code
+import decl_stream
 
 
 # Paths are relative to the standalone project, not the caller's cwd.
@@ -101,12 +102,27 @@ def main(argv=None):
             stub_names[stub] = proc_name
     analysis = word_disasm.analyze(
         word_vb, img, stub_names=stub_names, declares=dec)
+
+    # VB4 声明流：模块级数组的真实边界（内嵌 SAFEARRAY 描述符模板）。
+    decls = decl_stream.load(img)
+    if decls is not None:
+        decls.resolve_types(decl_stream.scan_element_usage(img, analysis))
+        analysis["decls"] = decls
+        print("Declaration stream @0x%08X: %d records, instance data 0x%X" % (
+            decls.va, len(decls.records), decls.data_size))
+    else:
+        print("Declaration stream: not found; module declarations omitted")
+
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("VB4 word-pcode disassembly (VB40032 threaded dispatch)\n")
         f.write("Procedures: %d\n" % len(procs))
         f.write("Dispatch table: 0x%08X\n" % analysis["table"])
         f.write("CodeView engine labels: %d\n" % len(analysis["labels"]))
-        f.write("Word opcode entries: %d\n\n" % len(analysis["entries"]))
+        f.write("Word opcode entries: %d\n" % len(analysis["entries"]))
+        if decls is not None:
+            f.write("\n")
+            f.write("\n".join(decls.table_lines()))
+        f.write("\n\n")
         for idx, (_start, _end, _path) in enumerate(analysis["paths"]):
             f.write(word_disasm.format_proc(
                 img, analysis, idx, procs[idx][2]))
@@ -118,6 +134,9 @@ def main(argv=None):
     # Convert the structured word analysis to VB-style pseudocode.
     pseudo_path = os.path.join(outdir, "pal_pseudocode.txt")
     with open(pseudo_path, "w", encoding="utf-8") as f:
+        if decls is not None:
+            f.write("\n".join(decls.decl_block_lines()))
+            f.write("\n")
         f.write(pseudo_code.decompile_all(img, analysis, procs))
     print("Wrote %s" % pseudo_path)
 

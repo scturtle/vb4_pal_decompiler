@@ -235,6 +235,12 @@ SUB_DEF_RE = re.compile(
 # 匹配 End Sub / End Function
 END_SUB_RE = re.compile(r"^\s*(End\s+Sub|End\s+Function)\b")
 
+# 匹配声明块 Dim 行（名称已被 apply_rules_to_line 重映射）：
+#   Dim party(0 To 4) As UDT(10 B)
+DIM_UDT_RE = re.compile(
+    r"^(?P<indent>\s*)Dim\s+(?P<var>[A-Za-z_]\w*)\((?P<bounds>[^)]*)\)\s+"
+    r"As\s+UDT\(\d+\s*B\)(?P<rest>.*)$")
+
 
 def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> str:
     """
@@ -312,6 +318,17 @@ def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> s
 
     # 非 Sub/Function 行：应用全部替换规则
     result = apply_rules_to_line(line, rules)
+
+    # 声明块 Dim 行：`As UDT(N B)` 是声明流给出的匿名元素形态，
+    # 若变量在 var_to_struct 里有对应结构体，则替换为结构体名。
+    m = DIM_UDT_RE.match(result)
+    if m:
+        struct_type = VAR_TO_STRUCT.get(m.group("var"))
+        if struct_type and struct_type != "word_array":
+            newline = "\n" if result.endswith("\n") else ""
+            result = "%sDim %s(%s) As %s%s%s" % (
+                m.group("indent"), m.group("var"), m.group("bounds"),
+                struct_type, m.group("rest"), newline)
 
     # 替换当前函数的参数名 a0/a1/... → 有意义的名称
     param_names = current_func.get("param_names")

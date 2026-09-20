@@ -1,3 +1,85 @@
+' --------------------------------------------------------------------------
+' 模块级声明（VB4 声明流 @ 0x00401A7C，74 条记录，实例数据区 0x878 字节）
+' 数组边界来自 EXE 内嵌 SAFEARRAY 描述符模板（src/decl_stream.py）；
+' kind=0x0005 固定数组 / 0x0105 动态数组（运行期 ReDim）/ 0x0004 对象引用。
+' 描述符 bounds[0] 对应源码最后一个下标（ExDerefAry 列主序），此处已按源码顺序还原。
+' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）。
+' --------------------------------------------------------------------------
+Dim data_battlefield(0 To 1023) As Byte
+Dim data_levelup_exp(0 To 1023) As Byte
+Dim data_magic(0 To 4095) As Byte
+Dim data_enemy_team(0 To 4095) As Byte
+Dim data_enemy(0 To 12287) As Byte
+Dim menu_bg_data(0 To 26623) As Byte
+Dim data_object_ext(0 To 18431) As Byte
+Dim screen_buf(0 To 65535) As Byte
+Dim bg_buf(0 To 65535) As Byte
+Dim sss_script_data(0 To 65535) As Byte
+Dim sss_script_data_2(0 To 389119) As Byte
+Dim ball_mkf_data(0 To 147455) As Byte
+Dim events(0 To 171008) As Byte
+Dim palette_data(0 To 1535) As Integer
+Dim fire_mkf_data(0 To 32767) As Integer
+Dim map_data_buf(0 To 32767) As Integer
+Dim mgo_frame_offsets(0 To 65535) As Integer
+Dim global_buf_1(0 To 128000) As Byte
+Dim global_buf_2(0 To 31999) As Integer
+Dim word_glyph_index(0 To 14599) As Integer
+Dim rng_anim_data() ' 动态数组（kind=0x0105，payload=010000000000，运行期 ReDim 定界）
+Dim image_offset_table(0 To 255) As Byte
+Dim word_dat_data(0 To 599) As String * 10
+Dim data_mkf_chunk12(0 To 149) As Integer
+Dim damage_numbers(0 To 11) As damage_numbers
+Dim scenes(1 To 300) As scenes
+Dim key_state_array(0 To 255) As Byte
+Dim key_mapping_table(0 To 19, 0 To 1) As Byte
+Dim data_levelup_magic(0 To 4, 0 To 19) As levelupMagic
+Dim data_store(0 To 8, 0 To 20) As Integer
+Dim fh_M_MSG_global(0 To 4) As Integer
+Dim key_repeat_delay(0 To 4) As Integer
+Dim key_pressed_flags(0 To 4) As Integer
+Dim key_direction_flags(0 To 4) As Integer
+Dim battle_role_data_ext(0 To 4) As battle_role_data_ext
+Dim battle_enemy_data_ext(0 To 4) As Integer
+Dim party(0 To 4) As party
+Dim trail(0 To 4) As trail
+Dim battle_order_array(0 To 255) As Integer
+Dim save_temp_buf(0 To 99) As Integer
+Dim rng_anim_frames(0 To 5) As Integer
+Dim battle_action_queue_ext(0 To 9) As Integer
+Dim battle_sprite_ext(0 To 9) As Integer
+Dim battle_sprite_data(0 To 15) As Integer
+Dim battle_sprite_data_ext(0 To 15) As Integer
+Dim battle_role_data_copy(0 To 7) As UDT(10 B)
+Dim battle_role_action(0 To 7) As battle_role_action
+Dim enemy_battle_data(0 To 4) As enemy_battle_data
+Dim player_battle_sprite(0 To 9) As player_battle_sprite
+Dim effect_x_coords(1 To 5) As Integer
+Dim effect_y_coords(1 To 5) As Integer
+Dim effect_frames(1 To 5) As Integer
+Dim player_hit_flags(0 To 4) As Integer
+Dim enemy_battle_data_ext(0 To 4) As Integer
+Dim key_scan_map(0 To 4) As Integer
+Dim key_action_map(0 To 4) As Integer
+Dim enemy_runtime_data(0 To 4) As enemy_runtime_data
+Dim enemy_pos_data(0 To 4, 0 To 4) As enemy_pos_data
+Dim player_status(0 To 4, 0 To 15) As Integer
+Dim enemy_status(0 To 4, 0 To 15) As Integer
+Dim poison_status(0 To 4, 0 To 15) As poison_status_struct
+Dim enemy_poison_status(0 To 4, 0 To 15) As poison_status_struct
+Dim objects(0 To 599) As objects
+Dim inventory(0 To 255) As inventory
+Dim equipment_effect(0 To 5, 11 To 17, 17 To 30) As Integer
+Dim playerRoles(0 To 5, 0 To 74) As Integer
+Dim playerExp(0 To 5, 0 To 7) As playerExp
+Dim npc_display_data(0 To 160) As npc_display_data
+Dim battle_effect_data(0 To 9) As battle_effect_data
+Dim file_offset_table(0 To 31) As Single
+Dim theurgy_data(0 To 0) As theurgy_data
+Dim enemy_attack_order(0 To 4) As Integer
+Dim key_scan_codes(0 To 7) As Byte
+Dim vb_form_ref ' 对象引用（kind=0x0004，payload=000000008000）
+
 VB4 p-code decompilation (VB-style pseudocode)
 Procedures: 198
 

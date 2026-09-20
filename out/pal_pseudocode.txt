@@ -1,3 +1,85 @@
+' --------------------------------------------------------------------------
+' 模块级声明（VB4 声明流 @ 0x00401A7C，74 条记录，实例数据区 0x878 字节）
+' 数组边界来自 EXE 内嵌 SAFEARRAY 描述符模板（src/decl_stream.py）；
+' kind=0x0005 固定数组 / 0x0105 动态数组（运行期 ReDim）/ 0x0004 对象引用。
+' 描述符 bounds[0] 对应源码最后一个下标（ExDerefAry 列主序），此处已按源码顺序还原。
+' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）。
+' --------------------------------------------------------------------------
+Dim Me.f0018(0 To 1023) As Byte
+Dim Me.f0030(0 To 1023) As Byte
+Dim Me.f0048(0 To 4095) As Byte
+Dim Me.f0060(0 To 4095) As Byte
+Dim Me.f0078(0 To 12287) As Byte
+Dim Me.f0090(0 To 26623) As Byte
+Dim Me.f00A8(0 To 18431) As Byte
+Dim Me.f00C0(0 To 65535) As Byte
+Dim Me.f00D8(0 To 65535) As Byte
+Dim Me.f00F0(0 To 65535) As Byte
+Dim Me.f0108(0 To 389119) As Byte
+Dim Me.f0120(0 To 147455) As Byte
+Dim Me.f0138(0 To 171008) As Byte
+Dim Me.f0150(0 To 1535) As Integer
+Dim Me.f0168(0 To 32767) As Integer
+Dim Me.f0180(0 To 32767) As Integer
+Dim Me.f0198(0 To 65535) As Integer
+Dim Me.f01B0(0 To 128000) As Byte
+Dim Me.f01C8(0 To 31999) As Integer
+Dim Me.f01E0(0 To 14599) As Integer
+Dim Me.f01F8() ' 动态数组（kind=0x0105，payload=010000000000，运行期 ReDim 定界）
+Dim Me.f020C(0 To 255) As Byte
+Dim Me.f0344(0 To 599) As String * 10
+Dim Me.f035C(0 To 149) As Integer
+Dim Me.f0374(0 To 11) As UDT(10 B)
+Dim Me.f038C(1 To 300) As UDT(8 B)
+Dim Me.f03A4(0 To 255) As Byte
+Dim Me.f03BC(0 To 19, 0 To 1) As Byte
+Dim Me.f03DC(0 To 4, 0 To 19) As UDT(4 B)
+Dim Me.f03FC(0 To 8, 0 To 20) As Integer
+Dim Me.f041C(0 To 4) As Integer
+Dim Me.f0434(0 To 4) As Integer
+Dim Me.f044C(0 To 4) As Integer
+Dim Me.f0464(0 To 4) As Integer
+Dim Me.f047C(0 To 4) As UDT(4 B)
+Dim Me.f0494(0 To 4) As Integer
+Dim Me.f04AC(0 To 4) As UDT(10 B)
+Dim Me.f04C4(0 To 4) As UDT(6 B)
+Dim Me.f04DC(0 To 255) As Integer
+Dim Me.f04F4(0 To 99) As Integer
+Dim Me.f050C(0 To 5) As Integer
+Dim Me.f0524(0 To 9) As Integer
+Dim Me.f053C(0 To 9) As Integer
+Dim Me.f0554(0 To 15) As Integer
+Dim Me.f056C(0 To 15) As Integer
+Dim Me.f0584(0 To 7) As UDT(10 B)
+Dim Me.f059C(0 To 7) As UDT(10 B)
+Dim Me.f05B4(0 To 4) As UDT(30 B)
+Dim Me.f05CC(0 To 9) As UDT(24 B)
+Dim Me.f05E4(1 To 5) As Integer
+Dim Me.f05FC(1 To 5) As Integer
+Dim Me.f0614(1 To 5) As Integer
+Dim Me.f062C(0 To 4) As Integer
+Dim Me.f0644(0 To 4) As Integer
+Dim Me.f065C(0 To 4) As Integer
+Dim Me.f0674(0 To 4) As Integer
+Dim Me.f068C(0 To 4) As UDT(70 B)
+Dim Me.f06A4(0 To 4, 0 To 4) As UDT(4 B)
+Dim Me.f06C4(0 To 4, 0 To 15) As Integer
+Dim Me.f06E4(0 To 4, 0 To 15) As Integer
+Dim Me.f0704(0 To 4, 0 To 15) As UDT(4 B)
+Dim Me.f0724(0 To 4, 0 To 15) As UDT(4 B)
+Dim Me.f0744(0 To 599) As UDT(14 B)
+Dim Me.f075C(0 To 255) As UDT(6 B)
+Dim Me.f0774(0 To 5, 11 To 17, 17 To 30) As Integer
+Dim Me.f079C(0 To 5, 0 To 74) As Integer
+Dim Me.f07BC(0 To 5, 0 To 7) As UDT(8 B)
+Dim Me.f07DC(0 To 160) As UDT(32 B)
+Dim Me.f07F4(0 To 9) As UDT(4 B)
+Dim Me.f080C(0 To 31) As Single
+Dim Me.f0824(0 To 0) As UDT(32 B)
+Dim Me.f083C(0 To 4) As Integer
+Dim Me.f0854(0 To 7) As Byte
+Dim Me.f086C ' 对象引用（kind=0x0004，payload=000000008000）
+
 VB4 p-code decompilation (VB-style pseudocode)
 Procedures: 198
 

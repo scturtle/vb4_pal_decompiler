@@ -26,9 +26,11 @@ uv run run_pipeline.py
 
 1. 扫描 ProcDsc，恢复 PAL 的过程边界；
 2. 使用 `VB40032.DLL` 恢复 16-bit word-pcode 指令；
-3. 用栈机生成 VB 风格伪代码；
-4. 使用 `input/mapping.json` 重映射名称；
-5. 校验 `out/pal_*.txt` 的 SHA-256。
+3. 解析模块声明流（`src/decl_stream.py`），恢复模块级数组的真实边界
+   与元素类型，写入反汇编头部、行内注释和伪代码声明块；
+4. 用栈机生成 VB 风格伪代码；
+5. 使用 `input/mapping.json` 重映射名称；
+6. 校验 `out/pal_*.txt` 的 SHA-256。
 
 可覆盖输入和输出路径。使用自定义输出目录时，同时指定对应的 hash 文件：
 

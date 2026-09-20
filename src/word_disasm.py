@@ -330,7 +330,13 @@ def format_proc(pal, analysis, index, name):
             nargs, ", ".join("%s a%d" % (k, i)
                               for i, k in enumerate(kinds))))
 
+    decls = analysis.get("decls")
     for pos, byte_hex, display_label, operand in decoded:
-        out.append("%08X  %-24s %s  %s" %
-                   (pos, byte_hex, display_label, operand))
+        line = "%08X  %-24s %s  %s" % (
+            pos, byte_hex, display_label, operand)
+        if decls is not None:
+            note = decls.annotate_operand(operand)
+            if note:
+                line += "  ; " + note
+        out.append(line)
     return "\n".join(out)
