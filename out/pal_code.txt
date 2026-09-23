@@ -1665,9 +1665,10 @@ Sub walk_party_fastest(ByRef startFrame, ByRef endFrame, ByRef speed)
             Call PAL_WaitTime(floatVal)
             Call fade_out_palette(1)
             Call update_shake()
-        Else
-            Exit For
+            GoTo L_004096C8
         End If
+        Exit For
+L_004096C8:
     Next
     Call PAL_CopyMem(global_buf_1(0), bg_buf(0), 64000)
     Exit Sub
@@ -5493,9 +5494,8 @@ L_0041A8CE:
         comTmp2 = VB40032.rtcMsgBox(tmp10, 1, tmp20)
         If comTmp2 = 1 Then
             GoTo L_0041A8CE
-        Else
-            End
         End If
+        End
     End If
     Call Me.method_0268(Me.method_0028(vb_com_object_1.f0000, vb_com_object_2.f0000), 0, vb_com_object_1.f0000)
     Call DoEvents_check_exit()
@@ -5578,10 +5578,11 @@ L_0041AED4:
         End If
         Call LoadRPG_internal(tmp + 1)
         If RPG_save_number = 0 Then
-        Else
-            redraw_flag = redraw_flag Or 2
+            GoTo L_0041AFD0
         End If
+        redraw_flag = redraw_flag Or 2
     Else
+L_0041AFD0:
         Call Me.method_0038(midi_close(), fade_in(1), dsInitResult, vb_com_object_1.f0000)
         Call PAL_PlayAvi(dsInitResult, 3, 0)
         scene_to_load = 1

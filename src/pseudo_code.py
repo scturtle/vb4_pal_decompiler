@@ -499,6 +499,25 @@ def _convert_gotos(stmts, label_at_stmt, proc_start, proc_end):
                 # Check that label is at the same depth as the code after End If
                 # (endif_depth - 1 = depth after End If closes the If).
                 label_depth = nesting_depth(label_idx)
+                # Convergence guard: the would-be false branch (stmts between
+                # the End If and the label) must actually fall through to the
+                # label.  If its last statement is a GoTo to a DIFFERENT
+                # target, or an Exit/End, the false path leaves before the
+                # label — the Then's GoTo then targets some other construct
+                # (e.g. it jumps into an enclosing If's Else branch), and
+                # folding it into Else/End If would reroute the true path
+                # into the false branch.  Keep the explicit GoTo instead.
+                # (Sub_Main @0041AFB8: If RPG_save_number = 0 Then
+                #  GoTo <new-game block> — false branch ends with
+                #  GoTo <join>, different targets, must not fold.)
+                last_text = stmts[label_idx - 1].text.strip()
+                if _re.match(r'GoTo L_[0-9A-F]+$', last_text):
+                    if last_text != 'GoTo L_%08X' % tgt:
+                        continue
+                elif (_re.match(r'Exit (Sub|Function|Property|For|Do)$',
+                                last_text)
+                        or last_text == 'End'):
+                    continue
                 if label_depth == endif_depth - 1:
                     blank.add(i)
                     replace[endif_idx] = stack_ir.Stmt(
@@ -1003,6 +1022,11 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
     # If there are consecutive closers at the same VA (nested Ifs that
     # all close at the same BranchF target), the label must go after ALL
     # of them.  Move such labels forward to the first non-closer stmt.
+    # The same applies to a label sitting on an 'Else' marker: the Branch
+    # targets the Else block's first statement (BranchF target of the
+    # enclosing If), and rendering the label above the 'Else' keyword
+    # would place it inside the Then part — the moved label keeps the
+    # GoTo unambiguously jumping into the Else block.
     if label_at_stmt:
         adjusted = {}
         for idx in sorted(label_at_stmt):
@@ -1012,7 +1036,8 @@ def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None):
                 continue
             stmt = stmts[idx]
             is_closer = (stmt.indent_delta < 0
-                         or stmt.text == 'End Select')
+                         or stmt.text == 'End Select'
+                         or stmt.text == 'Else')
             if not is_closer:
                 adjusted[idx] = labels
                 continue

@@ -1665,9 +1665,10 @@ Sub pub_123_0040959C(ByRef a0, ByRef a1, ByRef a2)
             Call Pal.wtime(stack-134)
             Call pub_065_004054A4(1)
             Call pub_038_00404284()
-        Else
-            Exit For
+            GoTo L_004096C8
         End If
+        Exit For
+L_004096C8:
     Next
     Call Pal.copymen(Me.f01B0(0), Me.f00D8(0), 64000)
     Exit Sub
@@ -5493,9 +5494,8 @@ L_0041A8CE:
         stack-136 = VB40032.rtcMsgBox(stack-212, 1, stack-276)
         If stack-136 = 1 Then
             GoTo L_0041A8CE
-        Else
-            End
         End If
+        End
     End If
     Call Me.method_0268(Me.method_0028(Me.f0878.f0000, Me.f087C.f0000), 0, Me.f0878.f0000)
     Call pub_002_00403264()
@@ -5578,10 +5578,11 @@ L_0041AED4:
         End If
         Call pub_169_00410A40(stack-142 + 1)
         If Me.f025C = 0 Then
-        Else
-            Me.f0306 = Me.f0306 Or 2
+            GoTo L_0041AFD0
         End If
+        Me.f0306 = Me.f0306 Or 2
     Else
+L_0041AFD0:
         Call Me.method_0038(pub_114_00408850(), pub_084_004065B0(1), stack-316, Me.f0878.f0000)
         Call Pal.PlayAvi(stack-316, 3, 0)
         Me.f026A = 1
