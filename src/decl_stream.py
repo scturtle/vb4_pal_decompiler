@@ -32,11 +32,20 @@ PAL.EXE 只有一个窗体模块（Pal.frm），其声明流位于 .text 的
 **最后**一个下标，渲染 VB Dim 时按逆序还原。
 
 元素类型无法只靠描述符区分（cbE=4 可能是 Long/Single/UDT；cbE=8 可能是
-Double/UDT），由使用侧 opcode 推断：FMemLdRf 之后紧跟 Ary1Ld/Ary1St 的
-标量后缀（I2/UI1/R4/...）给出标量元素类型；Ary*Pr/Rf 之后紧跟 MemLd/St
-时，字段偏移 >0 说明元素是 UDT；紧跟 LdFixedStr 说明是定长字符串。
+Double/UDT），由使用侧 opcode 推断（scan_element_usage 的“当前引用”
+状态机）：FMemLdRf / ImpAdLdRf|Pr（同基址）压入模块数组基址后，
+Ary1Ld/Ary1St 的标量后缀（I2/UI1/R4/...）给出标量元素类型；Ary*Pr/Rf
+取元素引用后紧跟 MemLd/St 时，字段偏移 >0 说明元素是 UDT，且 Mem
+后缀给出字段类型（struct_types.py）；紧跟 LdFixedStr 说明是定长字符
+串。UDT 元素在伪代码声明块里展开为槽位级匿名类型 ``UDT_fXXXX`` 的
+``Type ... End Type`` 块（字段名 fXXXX、类型由证据推断），重映射
+（remap.py）阶段只做名称替换：结构体名 → 帕斯卡（首字母大写）、
+字段名 → 语义名。
 """
+import re
 import struct
+
+import struct_types
 
 KIND_FIXED = 0x0005
 KIND_DYNAMIC = 0x0105
@@ -105,15 +114,20 @@ class DeclStream(object):
         self.data_size = data_size
         self.records = records
         self.by_offset = dict((r.off, r) for r in records)
+        self.usage = {}    # resolve_types() 之后有效：元素访问证据
 
     # -- 类型解析 -----------------------------------------------------------
 
     def resolve_types(self, usage):
-        """usage = scan_element_usage() 的结果；None 时全部走回退。"""
+        """usage = scan_element_usage() 的结果；None 时全部走回退。
+
+        usage 同时留存在 self.usage，供 decl_block_lines() 生成 UDT 的
+        Type 声明块（字段类型推断）。"""
+        self.usage = usage or {}
         for rec in self.records:
             if rec.kind != KIND_FIXED:
                 continue
-            rec.elem_type = self._elem_type(rec, usage)
+            rec.elem_type = self._elem_type(rec, self.usage)
 
     @staticmethod
     def _elem_type(rec, usage):
@@ -145,8 +159,20 @@ class DeclStream(object):
 
     # -- 渲染 ---------------------------------------------------------------
 
+    _UDT_TYPE_RE = re.compile(r"^UDT\((\d+) B\)$")
+
+    def udt_type_name(self, rec):
+        """UDT 元素的槽位级匿名类型名（pal_pseudocode.txt 层）。"""
+        return "UDT_f%04X" % rec.off
+
+    def _udt_type_lines(self, rec):
+        """渲染 UDT 元素的 Type 声明块（字段名/类型由访问 opcode 推断）。"""
+        mem_pairs = (self.usage.get(rec.off) or {}).get("mem", set())
+        fields = struct_types.build_udt_fields(rec.cb_elements, mem_pairs)
+        return struct_types.type_block_lines(self.udt_type_name(rec), fields)
+
     def decl_block_lines(self):
-        """pal_pseudocode.txt 顶部的模块级声明块（VB 风格 Dim）。"""
+        """pal_pseudocode.txt 顶部的模块级声明块（VB 风格 Dim + Type）。"""
         lines = [
             "' " + "-" * 74,
             "' 模块级声明（VB4 声明流 @ 0x%08X，%d 条记录，实例数据区 0x%X 字节）"
@@ -154,13 +180,23 @@ class DeclStream(object):
             "' 数组边界来自 EXE 内嵌 SAFEARRAY 描述符模板（src/decl_stream.py）；",
             "' kind=0x0005 固定数组 / 0x0105 动态数组（运行期 ReDim）/ 0x0004 对象引用。",
             "' 描述符 bounds[0] 对应源码最后一个下标（ExDerefAry 列主序），此处已按源码顺序还原。",
-            "' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）。",
+            "' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）；",
+            "' UDT 元素展开为槽位级匿名类型 UDT_fXXXX：字段类型由 MemLd/St 后缀推断",
+            "' （I2=Integer、UI1=Byte、R4=Single…），无证据字段默认 Integer，",
+            "' 与元素大小的空洞补 fXXXX 占位；重映射后为帕斯卡结构体名与语义字段名。",
             "' " + "-" * 74,
         ]
         for rec in self.records:
             if rec.kind == KIND_FIXED:
+                if self._UDT_TYPE_RE.match(rec.elem_type or ""):
+                    lines.append("")
+                    lines.extend(self._udt_type_lines(rec))
+                    lines.append("")
+                    as_type = self.udt_type_name(rec)
+                else:
+                    as_type = rec.elem_type
                 lines.append("Dim %s(%s) As %s"
-                             % (rec.name, rec.vb_bounds(), rec.elem_type))
+                             % (rec.name, rec.vb_bounds(), as_type))
             elif rec.kind == KIND_DYNAMIC:
                 lines.append("Dim %s() ' 动态数组（kind=0x0105，payload=%s，"
                              "运行期 ReDim 定界）" % (rec.name, rec.payload))
@@ -343,12 +379,18 @@ def scan_element_usage(pal, analysis):
     """扫描全部过程，收集每个 Me.fXXXX 数组字段的元素访问证据。
 
     返回 {field_off: {"ary": {label,...}, "mem": {(offset,label),...},
-    "fixed_str": n}}。模式（均为相邻指令）：
+    "fixed_str": n}}。
 
-    - ``FMemLdRf mem=stack+8.fXXXX`` 之后紧跟 ``Ary1Ld*/Ary1St*``（直接
-      标量元素访问）或 ``Ary*Pr/Rf``（元素引用）；
-    - ``Ary*Pr/Rf`` 之后紧跟 ``MemLd*/MemSt*``（元素内字段访问，mem=XXXX
-      是字段偏移）或 ``LdFixedStr/StFixedStr``（定长字符串元素）。
+    链条识别用“当前引用”状态机而非固定相邻三元组：
+
+    - ``FMemLdRf mem=stack+8.fXXXX`` / ``ImpAdLdRf|ImpAdLdPr global=XXXX``
+      压入模块数组基址（两者同基址，见 stack_ir.parse_mem）；
+    - ``Ary*Pr/Rf`` 取元素引用（基址不变），随后的 ``MemLd*/MemSt*``
+      访问元素内字段（``mem=XXXX`` 为字段偏移），``LdFixedStr`` 说明
+      元素是定长字符串；
+    - 标量后缀的 ``Ary1Ld*/Ary1St*`` 直接给出元素类型并消费掉引用；
+    - 压入其它引用（FLdRfVar/CVarRef/PopTmp*…）、调用、分支都会断链
+      （p-code 栈机状态跨这些指令不延续）。
     """
     import word_disasm
 
@@ -376,34 +418,70 @@ def scan_element_usage(pal, analysis):
                     opcode, label, raw, start,
                     analysis["stub_names"], analysis["declares"], pal)
             decoded.append((label, operand))
-        for i in range(len(decoded) - 1):
-            operand = decoded[i][1]
-            nxt = decoded[i + 1][0]
-            if not operand.startswith("mem=stack+8.f"):
-                continue
-            if not nxt.startswith(("Ary1Ld", "Ary1St", "AryLd", "ArySt")):
-                continue
+        _scan_usage(decoded, usage)
+    return usage
+
+
+# 压入其它引用/消费栈上引用/跨基本块——都会打断元素访问链条。
+_USAGE_REF_BREAKS = frozenset({
+    "FLdRfVar", "FLdPr", "FLdPrThis", "CVarRef",
+    "PopTmpLdAd2", "PopTmpLdAd4", "PopAd", "PopAdLdVar",
+    "NewIfNullPr", "NewIfNullAd", "LateIdLdVar",
+    "ImpAdCall", "ImpAdCallAd", "ImpAdCallI2", "ImpAdCallI4",
+    "ImpAdCallHresult", "ImpAdCallFPR4", "ImpAdCallFPR8", "ImpAdCallCy",
+    "Branch", "BranchF", "BranchT", "Gosub", "Return",
+    "ExitProcStr", "ExitProcI2", "ExitProcHresult", "End",
+    "VCallHresult", "VCallI2", "VCallI4", "CopyBytes",
+})
+
+
+def _scan_usage(decoded, usage):
+    """状态机扫描单条过程的 (label, operand) 序列，就地更新 usage。"""
+    current = None    # None | ("elref", field_off) | ("nested", field_off)
+    for label, operand in decoded:
+        if label == "FMemLdRf" and operand.startswith("mem=stack+8.f"):
             try:
-                off = int(operand[14:18], 16)
+                current = ("elref", int(operand[14:18], 16))
+            except ValueError:
+                current = None
+        elif (label in ("ImpAdLdRf", "ImpAdLdPr")
+                and operand.startswith("global=")):
+            try:
+                current = ("elref", int(operand[7:15], 16))
+            except ValueError:
+                current = None
+        elif label in _USAGE_REF_BREAKS:
+            current = None
+        elif current is None:
+            continue
+        elif current[0] == "elref" and label.startswith(
+                ("Ary1Ld", "Ary1St", "AryLd", "ArySt")):
+            slot = usage.setdefault(
+                current[1], {"ary": set(), "mem": set(), "fixed_str": 0})
+            slot["ary"].add(label)
+            if not label.endswith(("Pr", "Rf")):
+                current = None    # 标量 load/store 消费掉元素引用
+        elif (current[0] == "elref" and label in ("LdFixedStr", "StFixedStr")
+                and operand.startswith("len=")):
+            slot = usage.setdefault(
+                current[1], {"ary": set(), "mem": set(), "fixed_str": 0})
+            try:
+                slot["fixed_str"] = max(
+                    slot["fixed_str"], int(operand.split("len=")[1]))
+            except ValueError:
+                pass
+            current = None
+        elif (current[0] == "elref" and label.startswith("Mem")
+                and operand.startswith("mem=")):
+            try:
+                mem_off = int(operand[4:8], 16)
             except ValueError:
                 continue
-            slot = usage.setdefault(off, {"ary": set(), "mem": set(),
-                                          "fixed_str": 0})
-            slot["ary"].add(nxt)
-            if not (nxt.endswith(("Pr", "Rf")) and i + 2 < len(decoded)):
-                continue
-            label2, operand2 = decoded[i + 2]
-            if label2.startswith("Mem") and operand2.startswith("mem="):
-                try:
-                    mem_off = int(operand2[4:8], 16)
-                except ValueError:
-                    continue
-                slot["mem"].add((mem_off, label2))
-            elif label2 in ("LdFixedStr", "StFixedStr") and \
-                    operand2.startswith("len="):
-                try:
-                    slot["fixed_str"] = max(
-                        slot["fixed_str"], int(operand2.split("len=")[1]))
-                except ValueError:
-                    pass
-    return usage
+            slot = usage.setdefault(
+                current[1], {"ary": set(), "mem": set(), "fixed_str": 0})
+            slot["mem"].add((mem_off, label))
+            if label == "MemLdRf":
+                # 嵌套字段引用：后续 Mem 属于嵌套结构（PAL 中不存在），
+                # 停止归属，避免污染外层字段表。
+                current = ("nested", current[1])
+        # 其余指令（压下标、算术等）不改变当前引用

@@ -3,7 +3,10 @@
 ' 数组边界来自 EXE 内嵌 SAFEARRAY 描述符模板（src/decl_stream.py）；
 ' kind=0x0005 固定数组 / 0x0105 动态数组（运行期 ReDim）/ 0x0004 对象引用。
 ' 描述符 bounds[0] 对应源码最后一个下标（ExDerefAry 列主序），此处已按源码顺序还原。
-' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）。
+' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）；
+' UDT 元素展开为槽位级匿名类型 UDT_fXXXX：字段类型由 MemLd/St 后缀推断
+' （I2=Integer、UI1=Byte、R4=Single…），无证据字段默认 Integer，
+' 与元素大小的空洞补 fXXXX 占位；重映射后为帕斯卡结构体名与语义字段名。
 ' --------------------------------------------------------------------------
 Dim Me.f0018(0 To 1023) As Byte
 Dim Me.f0030(0 To 1023) As Byte
@@ -29,20 +32,65 @@ Dim Me.f01F8() ' 动态数组（kind=0x0105，payload=010000000000，运行期 R
 Dim Me.f020C(0 To 255) As Byte
 Dim Me.f0344(0 To 599) As String * 10
 Dim Me.f035C(0 To 149) As Integer
-Dim Me.f0374(0 To 11) As UDT(10 B)
-Dim Me.f038C(1 To 300) As UDT(8 B)
+
+Type UDT_f0374
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+End Type
+
+Dim Me.f0374(0 To 11) As UDT_f0374
+
+Type UDT_f038C
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+End Type
+
+Dim Me.f038C(1 To 300) As UDT_f038C
 Dim Me.f03A4(0 To 255) As Byte
 Dim Me.f03BC(0 To 19, 0 To 1) As Byte
-Dim Me.f03DC(0 To 4, 0 To 19) As UDT(4 B)
+
+Type UDT_f03DC
+    f0000 As Integer
+    f0002 As Integer
+End Type
+
+Dim Me.f03DC(0 To 4, 0 To 19) As UDT_f03DC
 Dim Me.f03FC(0 To 8, 0 To 20) As Integer
 Dim Me.f041C(0 To 4) As Integer
 Dim Me.f0434(0 To 4) As Integer
 Dim Me.f044C(0 To 4) As Integer
 Dim Me.f0464(0 To 4) As Integer
-Dim Me.f047C(0 To 4) As UDT(4 B)
+
+Type UDT_f047C
+    f0000 As Integer
+    f0002 As Integer
+End Type
+
+Dim Me.f047C(0 To 4) As UDT_f047C
 Dim Me.f0494(0 To 4) As Integer
-Dim Me.f04AC(0 To 4) As UDT(10 B)
-Dim Me.f04C4(0 To 4) As UDT(6 B)
+
+Type UDT_f04AC
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+End Type
+
+Dim Me.f04AC(0 To 4) As UDT_f04AC
+
+Type UDT_f04C4
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+End Type
+
+Dim Me.f04C4(0 To 4) As UDT_f04C4
 Dim Me.f04DC(0 To 255) As Integer
 Dim Me.f04F4(0 To 99) As Integer
 Dim Me.f050C(0 To 5) As Integer
@@ -50,10 +98,63 @@ Dim Me.f0524(0 To 9) As Integer
 Dim Me.f053C(0 To 9) As Integer
 Dim Me.f0554(0 To 15) As Integer
 Dim Me.f056C(0 To 15) As Integer
-Dim Me.f0584(0 To 7) As UDT(10 B)
-Dim Me.f059C(0 To 7) As UDT(10 B)
-Dim Me.f05B4(0 To 4) As UDT(30 B)
-Dim Me.f05CC(0 To 9) As UDT(24 B)
+
+Type UDT_f0584
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+End Type
+
+Dim Me.f0584(0 To 7) As UDT_f0584
+
+Type UDT_f059C
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+End Type
+
+Dim Me.f059C(0 To 7) As UDT_f059C
+
+Type UDT_f05B4
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+    f000A As Integer
+    f000C As Integer
+    f000E As Integer
+    f0010 As Integer
+    f0012 As Integer
+    f0014 As Integer
+    f0016 As Integer
+    f0018 As Integer
+    f001A As Integer
+    f001C As Integer
+End Type
+
+Dim Me.f05B4(0 To 4) As UDT_f05B4
+
+Type UDT_f05CC
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+    f000A As Integer
+    f000C As Integer
+    f000E As Integer
+    f0010 As Integer
+    f0012 As Integer
+    f0014 As Integer
+    f0016 As Integer
+End Type
+
+Dim Me.f05CC(0 To 9) As UDT_f05CC
 Dim Me.f05E4(1 To 5) As Integer
 Dim Me.f05FC(1 To 5) As Integer
 Dim Me.f0614(1 To 5) As Integer
@@ -61,21 +162,149 @@ Dim Me.f062C(0 To 4) As Integer
 Dim Me.f0644(0 To 4) As Integer
 Dim Me.f065C(0 To 4) As Integer
 Dim Me.f0674(0 To 4) As Integer
-Dim Me.f068C(0 To 4) As UDT(70 B)
-Dim Me.f06A4(0 To 4, 0 To 4) As UDT(4 B)
+
+Type UDT_f068C
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+    f000A As Integer
+    f000C As Integer
+    f000E As Integer
+    f0010 As Integer
+    f0012 As Integer
+    f0014 As Integer
+    f0016 As Integer
+    f0018 As Integer
+    f001A As Integer
+    f001C As Integer
+    f001E As Integer
+    f0020 As Integer
+    f0022 As Integer
+    f0024 As Integer
+    f0026 As Integer
+    f0028 As Integer
+    f002A As Integer
+    f002C As Integer
+    f002E As Integer
+    f0030 As Integer
+    f0032 As Integer
+    f0034 As Integer
+    f0036 As Integer
+    f0038 As Integer
+    f003A As Integer
+    f003C As Integer
+    f003E As Integer
+    f0040 As Integer
+    f0042 As Integer
+    f0044 As Integer
+End Type
+
+Dim Me.f068C(0 To 4) As UDT_f068C
+
+Type UDT_f06A4
+    f0000 As Integer
+    f0002 As Integer
+End Type
+
+Dim Me.f06A4(0 To 4, 0 To 4) As UDT_f06A4
 Dim Me.f06C4(0 To 4, 0 To 15) As Integer
 Dim Me.f06E4(0 To 4, 0 To 15) As Integer
-Dim Me.f0704(0 To 4, 0 To 15) As UDT(4 B)
-Dim Me.f0724(0 To 4, 0 To 15) As UDT(4 B)
-Dim Me.f0744(0 To 599) As UDT(14 B)
-Dim Me.f075C(0 To 255) As UDT(6 B)
+
+Type UDT_f0704
+    f0000 As Integer
+    f0002 As Integer
+End Type
+
+Dim Me.f0704(0 To 4, 0 To 15) As UDT_f0704
+
+Type UDT_f0724
+    f0000 As Integer
+    f0002 As Integer
+End Type
+
+Dim Me.f0724(0 To 4, 0 To 15) As UDT_f0724
+
+Type UDT_f0744
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+    f000A As Integer
+    f000C As Integer
+End Type
+
+Dim Me.f0744(0 To 599) As UDT_f0744
+
+Type UDT_f075C
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+End Type
+
+Dim Me.f075C(0 To 255) As UDT_f075C
 Dim Me.f0774(0 To 5, 11 To 17, 17 To 30) As Integer
 Dim Me.f079C(0 To 5, 0 To 74) As Integer
-Dim Me.f07BC(0 To 5, 0 To 7) As UDT(8 B)
-Dim Me.f07DC(0 To 160) As UDT(32 B)
-Dim Me.f07F4(0 To 9) As UDT(4 B)
+
+Type UDT_f07BC
+    f0000 As Single
+    f0004 As Integer
+    f0006 As Integer
+End Type
+
+Dim Me.f07BC(0 To 5, 0 To 7) As UDT_f07BC
+
+Type UDT_f07DC
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+    f000A As Integer
+    f000C As Integer
+    f000E As Integer
+    f0010 As Integer
+    f0012 As Integer
+    f0014 As Integer
+    f0016 As Integer
+    f0018 As Integer
+    f001A As Integer
+    f001C As Integer
+    f001E As Integer
+End Type
+
+Dim Me.f07DC(0 To 160) As UDT_f07DC
+
+Type UDT_f07F4
+    f0000 As Integer
+    f0002 As Integer
+End Type
+
+Dim Me.f07F4(0 To 9) As UDT_f07F4
 Dim Me.f080C(0 To 31) As Single
-Dim Me.f0824(0 To 0) As UDT(32 B)
+
+Type UDT_f0824
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+    f000A As Integer
+    f000C As Integer
+    f000E As Integer
+    f0010 As Integer
+    f0012 As Integer
+    f0014 As Integer
+    f0016 As Integer
+    f0018 As Integer
+    f001A As Integer
+    f001C As Integer
+    f001E As Integer
+End Type
+
+Dim Me.f0824(0 To 0) As UDT_f0824
 Dim Me.f083C(0 To 4) As Integer
 Dim Me.f0854(0 To 7) As Byte
 Dim Me.f086C ' 对象引用（kind=0x0004，payload=000000008000）

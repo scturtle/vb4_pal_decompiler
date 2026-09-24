@@ -27,9 +27,14 @@ uv run run_pipeline.py
 1. 扫描 ProcDsc，恢复 PAL 的过程边界；
 2. 使用 `VB40032.DLL` 恢复 16-bit word-pcode 指令；
 3. 解析模块声明流（`src/decl_stream.py`），恢复模块级数组的真实边界
-   与元素类型，写入反汇编头部、行内注释和伪代码声明块；
+   与元素类型，写入反汇编头部、行内注释和伪代码声明块；依据字段访问
+   opcode（`Mem*` 后缀：I2/UI1/R4/…）推断 UDT 字段类型，在伪代码声明块
+   里展开为槽位级匿名类型 `UDT_fXXXX` 的 `Type ... End Type` 声明
+   （`src/struct_types.py`）；
 4. 用栈机生成 VB 风格伪代码；
-5. 使用 `input/mapping.json` 重映射名称；
+5. 使用 `input/mapping.json` 重映射名称（仅替换，无推断）：结构体名
+   → 帕斯卡命名（首字母大写），`fXXXX` 字段 → 语义字段名，同名结构体
+   只保留首个 Type 块；
 6. 校验 `out/pal_*.txt` 的 SHA-256。
 
 可覆盖输入和输出路径。使用自定义输出目录时，同时指定对应的 hash 文件：

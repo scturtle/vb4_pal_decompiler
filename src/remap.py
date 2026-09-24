@@ -3,16 +3,21 @@
 remap.py — 将 VB4 p-code 伪代码中的匿名标识符替换为可读名称
 
 用法：python3 remap.py [mapping.json] [pal_pseudocode.txt] [pal_code.txt]
+                      [pal_disasm.txt]
 
 读取 mapping.json 中的 functions/globals/pal_funcs/params/
 stack_vars/struct_fields/var_to_struct 映射，将 pal_pseudocode.txt 转换为可读的
-pal_code.txt。
+pal_code.txt。pal_disasm.txt（默认取伪代码同目录）提供结构体字段访问的
+opcode 证据，用于推断 UDT 字段类型，在每个结构体全局变量前生成 Type 声明
+（src/struct_types.py），结构体名采用帕斯卡命名（首字母大写）。
 """
 
 import json
 import re
 import sys
 from pathlib import Path
+
+import struct_types
 
 
 # ---------------------------------------------------------------------------
@@ -235,12 +240,6 @@ SUB_DEF_RE = re.compile(
 # 匹配 End Sub / End Function
 END_SUB_RE = re.compile(r"^\s*(End\s+Sub|End\s+Function)\b")
 
-# 匹配声明块 Dim 行（名称已被 apply_rules_to_line 重映射）：
-#   Dim party(0 To 4) As UDT(10 B)
-DIM_UDT_RE = re.compile(
-    r"^(?P<indent>\s*)Dim\s+(?P<var>[A-Za-z_]\w*)\((?P<bounds>[^)]*)\)\s+"
-    r"As\s+UDT\(\d+\s*B\)(?P<rest>.*)$")
-
 
 def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> str:
     """
@@ -319,17 +318,6 @@ def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> s
     # 非 Sub/Function 行：应用全部替换规则
     result = apply_rules_to_line(line, rules)
 
-    # 声明块 Dim 行：`As UDT(N B)` 是声明流给出的匿名元素形态，
-    # 若变量在 var_to_struct 里有对应结构体，则替换为结构体名。
-    m = DIM_UDT_RE.match(result)
-    if m:
-        struct_type = VAR_TO_STRUCT.get(m.group("var"))
-        if struct_type and struct_type != "word_array":
-            newline = "\n" if result.endswith("\n") else ""
-            result = "%sDim %s(%s) As %s%s%s" % (
-                m.group("indent"), m.group("var"), m.group("bounds"),
-                struct_type, m.group("rest"), newline)
-
     # 替换当前函数的参数名 a0/a1/... → 有意义的名称
     param_names = current_func.get("param_names")
     if param_names:
@@ -346,6 +334,129 @@ def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> s
                 result = re.sub(r"\b" + re.escape(stack_name) + r"\b", var_name, result)
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# 声明块结构体重命名（UDT_fXXXX → 帕斯卡名，fXXXX → 语义字段名）
+# ---------------------------------------------------------------------------
+
+# 声明块里的槽位级匿名结构体（伪代码阶段由 decl_stream 生成）：
+#   Type UDT_f05B4
+#       f0000 As Integer
+#       ...
+#   End Type
+#   Dim Me.f05B4(0 To 4) As UDT_f05B4
+TYPE_DEF_RE = re.compile(r"^Type (UDT_f[0-9A-F]{4})\s*$")
+END_TYPE_RE = re.compile(r"^End Type\s*$")
+TYPE_FIELD_RE = re.compile(r"^(\s*)f([0-9A-F]{4})( As \w+)\s*$")
+UDT_REF_RE = re.compile(r"\bUDT_f([0-9A-F]{4})\b")
+
+
+def remap_struct_decls(lines: list, mapping: dict) -> list:
+    """重命名声明块中的槽位级匿名结构体（仅名称替换，无推断）。
+
+    - 结构体名：UDT_fXXXX → var_to_struct 结构体键的帕斯卡形式；无映射
+      时回退为变量名的帕斯卡形式（如 BattleRoleDataCopy）。
+    - 字段名：Type 块内 fXXXX → struct_fields 的语义字段名；无命名的
+      占位字段保持 fXXXX。
+    - 去重：不同槽位映射到同一结构体名时（如 poison_status 与
+      enemy_poison_status → PoisonStatusStruct）只保留首个 Type 块，
+      后续块连同块前后的空行一起丢弃，As 子句仍指向保留的块。
+    """
+    globals_map = mapping.get("globals", {})
+    var_to_struct = mapping.get("var_to_struct", {})
+    struct_fields = mapping.get("struct_fields", {})
+
+    # 槽位 hex → var_to_struct 结构体键（word_array/无映射为 None）。
+    struct_key_by_slot = {}
+    for slot_key, var in globals_map.items():
+        if slot_key.startswith("Me.f"):
+            key = var_to_struct.get(var)
+            struct_key_by_slot[slot_key[len("Me.f"):]] = (
+                key if key and key != "word_array" else None)
+
+    names = {}          # 槽位 hex → 帕斯卡结构体名
+    name_by_src = {}     # 结构体键/变量名 → 帕斯卡名（同键同名单，去重用）
+    used = set()         # 已占用的帕斯卡名（撞名加后缀）
+
+    def pascal_for_slot(slot):
+        if slot in names:
+            return names[slot]
+        key = struct_key_by_slot.get(slot)
+        src = key if key is not None else globals_map.get("Me.f" + slot)
+        if src is None:
+            names[slot] = None
+            return None
+        if src not in name_by_src:
+            base = struct_types.to_pascal(src)
+            name, n = base, 1
+            while name in used:
+                name = "%s_%d" % (base, n)
+                n += 1
+            used.add(name)
+            name_by_src[src] = name
+        names[slot] = name_by_src[src]
+        return names[slot]
+
+    out = []
+    in_block = None       # 当前 Type 块的槽位（None = 不在块内）
+    emitted = set()       # 已输出的帕斯卡结构体名
+    state = None          # None | "drop"（丢弃重复块） | "skip_blank"
+    for line in lines:
+        had_nl = line.endswith("\n")
+        text = line.rstrip("\n")
+        if state == "drop":
+            if END_TYPE_RE.match(text):
+                state = "skip_blank"
+            continue
+        if state == "skip_blank":
+            state = None
+            if text == "":
+                continue        # 吞掉被丢块后的空行
+        m = TYPE_DEF_RE.match(text)
+        if m:
+            slot = m.group(1)[len("UDT_f"):]
+            name = pascal_for_slot(slot)
+            if name is None:
+                # 无映射：保留匿名块原样。
+                out.append(line)
+                continue
+            if name in emitted:
+                # 重复结构体：丢弃整个块（连同块前空行）。
+                if out and out[-1].rstrip("\n").strip() == "":
+                    out.pop()
+                state = "drop"
+                continue
+            emitted.add(name)
+            in_block = slot
+            out.append(("Type %s" % name) + ("\n" if had_nl else ""))
+            continue
+        if END_TYPE_RE.match(text):
+            in_block = None
+            out.append(line)
+            continue
+        if in_block is not None:
+            fm = TYPE_FIELD_RE.match(text)
+            if fm:
+                offset = str(int(fm.group(2), 16))
+                fname = (struct_fields.get(
+                    struct_key_by_slot.get(in_block)) or {}).get(offset)
+                if fname:
+                    out.append("%s%s%s%s" % (
+                        fm.group(1), fname, fm.group(3),
+                        "\n" if had_nl else ""))
+                    continue
+            out.append(line)
+            continue
+        if "UDT_f" in text:
+            def _ref_sub(m):
+                name = pascal_for_slot(m.group(1))
+                return name if name is not None else m.group(0)
+            new_text = UDT_REF_RE.sub(_ref_sub, text)
+            out.append(new_text + ("\n" if had_nl else ""))
+            continue
+        out.append(line)
+    return out
 
 
 def main():
@@ -382,7 +493,13 @@ def main():
     print(f"Loaded mapping: {stats}")
 
     current_func = {}
-    output_lines = [process_line(line, mapping, rules, current_func) for line in lines]
+    output_lines = [process_line(line, mapping, rules, current_func)
+                    for line in lines]
+
+    # 声明块结构体重命名：UDT_fXXXX → 帕斯卡结构体名、fXXXX 字段 →
+    # struct_fields 语义名；同名结构体（如 poison_status 与
+    # enemy_poison_status）只保留首个 Type 块。
+    output_lines = remap_struct_decls(output_lines, mapping)
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.writelines(output_lines)

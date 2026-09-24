@@ -3,7 +3,10 @@
 ' 数组边界来自 EXE 内嵌 SAFEARRAY 描述符模板（src/decl_stream.py）；
 ' kind=0x0005 固定数组 / 0x0105 动态数组（运行期 ReDim）/ 0x0004 对象引用。
 ' 描述符 bounds[0] 对应源码最后一个下标（ExDerefAry 列主序），此处已按源码顺序还原。
-' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）。
+' 元素类型由访问 opcode 推断（Ary1Ld/St 后缀、MemLd/St 字段偏移、LdFixedStr）；
+' UDT 元素展开为槽位级匿名类型 UDT_fXXXX：字段类型由 MemLd/St 后缀推断
+' （I2=Integer、UI1=Byte、R4=Single…），无证据字段默认 Integer，
+' 与元素大小的空洞补 fXXXX 占位；重映射后为帕斯卡结构体名与语义字段名。
 ' --------------------------------------------------------------------------
 Dim data_battlefield(0 To 1023) As Byte
 Dim data_levelup_exp(0 To 1023) As Byte
@@ -29,20 +32,65 @@ Dim rng_anim_data() ' 动态数组（kind=0x0105，payload=010000000000，运行
 Dim image_offset_table(0 To 255) As Byte
 Dim word_dat_data(0 To 599) As String * 10
 Dim data_mkf_chunk12(0 To 149) As Integer
-Dim damage_numbers(0 To 11) As damage_numbers
-Dim scenes(1 To 300) As scenes
+
+Type DamageNumbers
+    x As Integer
+    y As Integer
+    number As Integer
+    colorType As Integer
+    timer As Integer
+End Type
+
+Dim damage_numbers(0 To 11) As DamageNumbers
+
+Type Scenes
+    mapNum As Integer
+    scriptOnEnter As Integer
+    scriptOnLeave As Integer
+    eventObjectIndex As Integer
+End Type
+
+Dim scenes(1 To 300) As Scenes
 Dim key_state_array(0 To 255) As Byte
 Dim key_mapping_table(0 To 19, 0 To 1) As Byte
-Dim data_levelup_magic(0 To 4, 0 To 19) As levelupMagic
+
+Type LevelupMagic
+    level As Integer
+    magic As Integer
+End Type
+
+Dim data_levelup_magic(0 To 4, 0 To 19) As LevelupMagic
 Dim data_store(0 To 8, 0 To 20) As Integer
 Dim fh_M_MSG_global(0 To 4) As Integer
 Dim key_repeat_delay(0 To 4) As Integer
 Dim key_pressed_flags(0 To 4) As Integer
 Dim key_direction_flags(0 To 4) As Integer
-Dim battle_role_data_ext(0 To 4) As battle_role_data_ext
+
+Type BattleRoleDataExt
+    savedHP As Integer
+    savedMP As Integer
+End Type
+
+Dim battle_role_data_ext(0 To 4) As BattleRoleDataExt
 Dim battle_enemy_data_ext(0 To 4) As Integer
-Dim party(0 To 4) As party
-Dim trail(0 To 4) As trail
+
+Type Party
+    role As Integer
+    x As Integer
+    y As Integer
+    frame As Integer
+    imageOffset As Integer
+End Type
+
+Dim party(0 To 4) As Party
+
+Type Trail
+    x As Integer
+    y As Integer
+    direction As Integer
+End Type
+
+Dim trail(0 To 4) As Trail
 Dim battle_order_array(0 To 255) As Integer
 Dim save_temp_buf(0 To 99) As Integer
 Dim rng_anim_frames(0 To 5) As Integer
@@ -50,10 +98,63 @@ Dim battle_action_queue_ext(0 To 9) As Integer
 Dim battle_sprite_ext(0 To 9) As Integer
 Dim battle_sprite_data(0 To 15) As Integer
 Dim battle_sprite_data_ext(0 To 15) As Integer
-Dim battle_role_data_copy(0 To 7) As UDT(10 B)
-Dim battle_role_action(0 To 7) As battle_role_action
-Dim enemy_battle_data(0 To 4) As enemy_battle_data
-Dim player_battle_sprite(0 To 9) As player_battle_sprite
+
+Type BattleRoleDataCopy
+    f0000 As Integer
+    f0002 As Integer
+    f0004 As Integer
+    f0006 As Integer
+    f0008 As Integer
+End Type
+
+Dim battle_role_data_copy(0 To 7) As BattleRoleDataCopy
+
+Type BattleRoleAction
+    target As Integer
+    actionType As Integer
+    itemID As Integer
+    invIndex As Integer
+    flag As Integer
+End Type
+
+Dim battle_role_action(0 To 7) As BattleRoleAction
+
+Type EnemyBattleData
+    enemyID As Integer
+    x As Integer
+    y As Integer
+    origX As Integer
+    origY As Integer
+    direction As Integer
+    flag As Integer
+    mapValue As Integer
+    tileData As Integer
+    hp As Integer
+    objectID As Integer
+    useScript As Integer
+    battleStartScript As Integer
+    battleEndScript As Integer
+    f001C As Integer
+End Type
+
+Dim enemy_battle_data(0 To 4) As EnemyBattleData
+
+Type PlayerBattleSprite
+    spriteNum As Integer
+    x As Integer
+    y As Integer
+    animOffset As Integer
+    origX As Integer
+    origY As Integer
+    direction As Integer
+    origDirection As Integer
+    spriteBase As Integer
+    actionState As Integer
+    objectID As Integer
+    equipID As Integer
+End Type
+
+Dim player_battle_sprite(0 To 9) As PlayerBattleSprite
 Dim effect_x_coords(1 To 5) As Integer
 Dim effect_y_coords(1 To 5) As Integer
 Dim effect_frames(1 To 5) As Integer
@@ -61,21 +162,143 @@ Dim player_hit_flags(0 To 4) As Integer
 Dim enemy_battle_data_ext(0 To 4) As Integer
 Dim key_scan_map(0 To 4) As Integer
 Dim key_action_map(0 To 4) As Integer
-Dim enemy_runtime_data(0 To 4) As enemy_runtime_data
-Dim enemy_pos_data(0 To 4, 0 To 4) As enemy_pos_data
+
+Type EnemyRuntimeData
+    idleFrames As Integer
+    magicFrames As Integer
+    attackFrames As Integer
+    idleAnimSpeed As Integer
+    actWaitFrames As Integer
+    yPosOffset As Integer
+    attackSound As Integer
+    actionSound As Integer
+    magicSound As Integer
+    deathSound As Integer
+    callSound As Integer
+    health As Integer
+    exp As Integer
+    cash As Integer
+    level As Integer
+    magic As Integer
+    magicRate As Integer
+    attackEquivItem As Integer
+    attackEquivItemRate As Integer
+    stealItem As Integer
+    stealItemCount As Integer
+    attackStrength As Integer
+    magicStrength As Integer
+    defense As Integer
+    dexterity As Integer
+    fleeRate As Integer
+    poisonResistance As Integer
+    elemResistance0 As Integer
+    elemResistance1 As Integer
+    elemResistance2 As Integer
+    elemResistance3 As Integer
+    elemResistance4 As Integer
+    physicalResistance As Integer
+    dualMove As Integer
+    collectValue As Integer
+End Type
+
+Dim enemy_runtime_data(0 To 4) As EnemyRuntimeData
+
+Type EnemyPosData
+    x As Integer
+    y As Integer
+End Type
+
+Dim enemy_pos_data(0 To 4, 0 To 4) As EnemyPosData
 Dim player_status(0 To 4, 0 To 15) As Integer
 Dim enemy_status(0 To 4, 0 To 15) As Integer
-Dim poison_status(0 To 4, 0 To 15) As poison_status_struct
-Dim enemy_poison_status(0 To 4, 0 To 15) As poison_status_struct
-Dim objects(0 To 599) As objects
-Dim inventory(0 To 255) As inventory
+
+Type PoisonStatusStruct
+    poisonID As Integer
+    poisonScript As Integer
+End Type
+
+Dim poison_status(0 To 4, 0 To 15) As PoisonStatusStruct
+Dim enemy_poison_status(0 To 4, 0 To 15) As PoisonStatusStruct
+
+Type Objects
+    data0 As Integer
+    data1 As Integer
+    data2 As Integer
+    data3 As Integer
+    data4 As Integer
+    data5 As Integer
+    data6 As Integer
+End Type
+
+Dim objects(0 To 599) As Objects
+
+Type Inventory
+    item As Integer
+    amount As Integer
+    amountInUse As Integer
+End Type
+
+Dim inventory(0 To 255) As Inventory
 Dim equipment_effect(0 To 5, 11 To 17, 17 To 30) As Integer
 Dim playerRoles(0 To 5, 0 To 74) As Integer
-Dim playerExp(0 To 5, 0 To 7) As playerExp
-Dim npc_display_data(0 To 160) As npc_display_data
-Dim battle_effect_data(0 To 9) As battle_effect_data
+
+Type PlayerExp
+    exp As Single
+    level As Integer
+    count As Integer
+End Type
+
+Dim playerExp(0 To 5, 0 To 7) As PlayerExp
+
+Type NpcDisplayData
+    vanishTime As Integer
+    x As Integer
+    y As Integer
+    layer As Integer
+    triggerScript As Integer
+    autoScript As Integer
+    state As Integer
+    triggerMode As Integer
+    spriteNum As Integer
+    spriteFrames As Integer
+    direction As Integer
+    currentFrame As Integer
+    scriptIdleFrame As Integer
+    spritePtrOffset As Integer
+    spriteFramesAuto As Integer
+    scriptIdleFrameAuto As Integer
+End Type
+
+Dim npc_display_data(0 To 160) As NpcDisplayData
+
+Type BattleEffectData
+    effect As Integer
+    frames As Integer
+End Type
+
+Dim battle_effect_data(0 To 9) As BattleEffectData
 Dim file_offset_table(0 To 31) As Single
-Dim theurgy_data(0 To 0) As theurgy_data
+
+Type TheurgyData
+    effect As Integer
+    type As Integer
+    xOffset As Integer
+    yOffset As Integer
+    layerOffset As Integer
+    speed As Integer
+    keepEffect As Integer
+    fireDelay As Integer
+    effectTimes As Integer
+    shake As Integer
+    wave As Integer
+    f0016 As Integer
+    costMP As Integer
+    baseDamage As Integer
+    elemental As Integer
+    sound As Integer
+End Type
+
+Dim theurgy_data(0 To 0) As TheurgyData
 Dim enemy_attack_order(0 To 4) As Integer
 Dim key_scan_codes(0 To 7) As Byte
 Dim vb_form_ref ' 对象引用（kind=0x0004，payload=000000008000）
