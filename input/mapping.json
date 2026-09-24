@@ -1014,7 +1014,7 @@
  },
  "stack_vars": {
   "pub_005": {
-   "stack-134": "retval"
+   "stack-134": "swapTemp"
   },
   "pub_006": {},
   "pub_008": {
@@ -1049,7 +1049,7 @@
    "stack-136": "filename"
   },
   "pub_027": {
-   "stack-134": "retval",
+   "stack-134": "frameOffset",
    "stack-136": "x"
   },
   "pub_028": {
@@ -1060,7 +1060,7 @@
    "stack-136": "filename"
   },
   "pub_031": {
-   "stack-134": "retval",
+   "stack-134": "menuResult",
    "stack-136": "tmp",
    "stack-148": "tmp2"
   },
@@ -1083,7 +1083,7 @@
    "stack-136": "filename"
   },
   "pub_038": {
-   "stack-134": "retval"
+   "stack-134": "shakeOffset"
   },
   "pub_039": {
    "stack-136": "i",
@@ -1097,19 +1097,19 @@
    "stack-136": "i"
   },
   "pub_042": {
-   "stack-134": "retval"
+   "stack-134": "keyResult"
   },
   "pub_043": {
    "stack-134": "i"
   },
   "pub_045": {
-   "stack-134": "retval"
+   "stack-134": "roleIndex"
   },
   "pub_049": {
    "stack-136": "i"
   },
   "pub_050": {
-   "stack-134": "retval"
+   "stack-134": "dataSize"
   },
   "pub_051": {
    "stack-136": "rng"
@@ -1121,7 +1121,7 @@
   },
   "pub_054": {
    "stack-136": "i",
-   "stack-134": "retval"
+   "stack-134": "frameOffset"
   },
   "pub_055": {
    "stack-136": "lockMem"
@@ -1183,7 +1183,7 @@
    "stack-144": "filename"
   },
   "pub_073": {
-   "stack-134": "retval",
+   "stack-134": "menuResult",
    "stack-136": "tmp",
    "stack-148": "tmp2"
   },
@@ -1194,7 +1194,7 @@
   },
   "pub_075": {
    "stack-136": "i",
-   "stack-134": "retval"
+   "stack-134": "lastFrame"
   },
   "pub_077": {
    "stack-134": "colorBase",
@@ -1216,7 +1216,7 @@
   },
   "pub_080": {
    "stack-138": "i",
-   "stack-134": "retval",
+   "stack-134": "fadeStart",
    "stack-136": "j"
   },
   "pub_081": {
@@ -1225,13 +1225,13 @@
    "stack-144": "seekResult"
   },
   "pub_082": {
-   "stack-134": "retval",
-   "stack-136": "menuItemSelected",
+   "stack-134": "menuResult",
+   "stack-136": "cursorPos",
    "stack-138": "tmp",
    "stack-140": "result"
   },
   "pub_083": {
-   "stack-134": "retval",
+   "stack-134": "frameOffset",
    "stack-136": "baseIdx",
    "stack-138": "y"
   },
@@ -1262,7 +1262,7 @@
   },
   "pub_091": {
    "stack-136": "i",
-   "stack-134": "retval"
+   "stack-134": "objIdx"
   },
   "priv_092": {
    "stack-134": "i",
@@ -1280,14 +1280,14 @@
    "stack-140": "k"
   },
   "pub_095": {
-   "stack-134": "retval",
+   "stack-134": "menuResult",
    "stack-136": "magicCount",
    "stack-138": "i",
    "stack-140": "j",
    "stack-148": "maxMagic"
   },
   "pub_096": {
-   "stack-134": "retval"
+   "stack-134": "ballIdx"
   },
   "pub_098": {
    "stack-134": "i"
@@ -1315,10 +1315,10 @@
    "stack-136": "i",
    "stack-138": "j",
    "stack-140": "k",
-   "stack-134": "retval"
+   "stack-134": "hitOffset"
   },
   "pub_104": {
-   "stack-134": "retval",
+   "stack-134": "effectSpeed",
    "stack-136": "j",
    "stack-140": "bufPtr"
   },
@@ -1355,7 +1355,7 @@
   },
   "pub_110": {
    "stack-136": "i",
-   "stack-134": "retval"
+   "stack-134": "lungeStep"
   },
   "pub_111": {
    "stack-134": "frameIdx",
@@ -1366,7 +1366,7 @@
   },
   "pub_112": {
    "stack-136": "i",
-   "stack-134": "retval",
+   "stack-134": "attackTimes",
    "stack-164": "rng"
   },
   "pub_113": {
@@ -1392,7 +1392,7 @@
   },
   "pub_116": {
    "stack-136": "i",
-   "stack-134": "retval"
+   "stack-134": "walkFrames"
   },
   "pub_117": {
    "stack-196": "tmp",
@@ -1404,7 +1404,7 @@
    "stack-220": "tmp7"
   },
   "pub_118": {
-   "stack-134": "retval"
+   "stack-134": "walkFrames"
   },
   "pub_119": {
    "stack-134": "ratio",
@@ -1419,7 +1419,7 @@
   "pub_122": {
    "stack-136": "i",
    "stack-138": "j",
-   "stack-134": "retval"
+   "stack-134": "magicCount"
   },
   "pub_123": {
    "stack-136": "i",
@@ -1447,8 +1447,8 @@
    "stack-136": "k"
   },
   "pub_127": {
-   "stack-136": "menuX",
-   "stack-138": "menuY",
+   "stack-136": "menuPosX",
+   "stack-138": "menuPosY",
    "stack-140": "selection",
    "stack-142": "isYes",
    "stack-144": "inputResult",
@@ -1470,7 +1470,7 @@
    "stack-144": "frameCount"
   },
   "pub_130": {
-   "stack-134": "retval",
+   "stack-134": "menuResult",
    "stack-136": "tmp",
    "stack-138": "result",
    "stack-140": "result2",
@@ -1573,7 +1573,7 @@
   },
   "pub_142": {
    "stack-138": "i",
-   "stack-134": "retval",
+   "stack-134": "magicNotFound",
    "stack-136": "foundIdx"
   },
   "pub_143": {
@@ -1586,7 +1586,7 @@
    "stack-148": "j"
   },
   "pub_144": {
-   "stack-134": "retval"
+   "stack-134": "glyphOffset"
   },
   "pub_145": {
    "stack-134": "lastRow",
@@ -1619,7 +1619,7 @@
   "pub_150": {
    "stack-138": "i",
    "stack-140": "j",
-   "stack-134": "retval",
+   "stack-134": "subfileNum",
    "stack-136": "k"
   },
   "pub_151": {
@@ -1667,8 +1667,8 @@
    "stack-176": "rng"
   },
   "pub_156": {
-   "stack-136": "menuItemSelected",
-   "stack-138": "menuStarted",
+   "stack-136": "actionResult",
+   "stack-138": "cursorStart",
    "stack-140": "result",
    "stack-142": "tmp",
    "stack-144": "tmp2",
@@ -1717,7 +1717,7 @@
   },
   "pub_161": {
    "stack-136": "dirChanged",
-   "stack-134": "retval",
+   "stack-134": "dirX",
    "stack-138": "dirX1",
    "stack-140": "dirY1",
    "stack-142": "dirX2",
@@ -1862,18 +1862,18 @@
    "stack-152": "bufPtr"
   },
   "pub_176": {
-   "stack-134": "retval",
+   "stack-134": "itemCount",
    "stack-136": "i",
    "stack-138": "itemID",
-   "stack-140": "menuX",
-   "stack-142": "menuY",
+   "stack-140": "menuPosX",
+   "stack-142": "menuPosY",
    "stack-144": "cursorPos",
    "stack-146": "selection",
    "stack-148": "maxItems",
    "stack-150": "wordIdx",
    "stack-152": "invIdx",
    "stack-154": "keyResult",
-   "stack-156": "confirmResult"
+   "stack-156": "confirmFlags"
   },
   "pub_177": {
    "stack-134": "i",
@@ -1882,7 +1882,7 @@
   },
   "pub_178": {
    "stack-140": "i",
-   "stack-134": "retval",
+   "stack-134": "roleIdx",
    "stack-136": "result",
    "stack-138": "k",
    "stack-142": "result2",
@@ -2006,8 +2006,8 @@
    "stack-138": "i",
    "stack-140": "j",
    "stack-142": "magicObjID",
-   "stack-144": "menuX",
-   "stack-146": "menuY",
+   "stack-144": "menuPosX",
+   "stack-146": "menuPosY",
    "stack-148": "colCount",
    "stack-150": "rowCount",
    "stack-152": "maxPage",
