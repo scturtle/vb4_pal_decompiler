@@ -569,13 +569,13 @@ Sub update_trail_data()
 End Sub
 
 Function check_party_alive() As Integer
-    foundIdx = 0
+    aliveCount = 0
     For i = 0 To enemy_pos_count
         If playerRoles(party(i).role, 9) > 0 Then
-            foundIdx = foundIdx + 1
+            aliveCount = aliveCount + 1
         End If
     Next
-    Return foundIdx
+    Return aliveCount
 End Function
 
 Function find_magic_index(ByRef partyIdx, ByRef magicID) As Integer
@@ -1620,13 +1620,13 @@ End Sub
 Sub draw_effect_sprites(ByRef useOverlay)
     frameIdx = fire_mkf_data(effect_frame_count)
     For i = 1 To effect_particle_count
-        y = effect_x_coords(i) - (fire_mkf_data(frameIdx) \ 2)
+        drawX = effect_x_coords(i) - (fire_mkf_data(frameIdx) \ 2)
         If useOverlay Then
-            x = (effect_y_coords(i) - fire_mkf_data(frameIdx + 1)) - battle_y_offset
+            drawY = (effect_y_coords(i) - fire_mkf_data(frameIdx + 1)) - battle_y_offset
             bufPtr = PAL_ArrayPtr(global_buf_1(0))
-            Call PAL_PutP(y, x, fire_mkf_data(frameIdx), bufPtr, 0, 0)
+            Call PAL_PutP(drawX, drawY, fire_mkf_data(frameIdx), bufPtr, 0, 0)
         Else
-            Call PAL_AddToTree(y, (effect_y_coords(i) + effect_frames(i)) - battle_y_offset, effect_frames(i), fire_mkf_data(frameIdx))
+            Call PAL_AddToTree(drawX, (effect_y_coords(i) + effect_frames(i)) - battle_y_offset, effect_frames(i), fire_mkf_data(frameIdx))
         End If
     Next
     Exit Sub
@@ -2123,7 +2123,7 @@ Function select_party_member() As Integer
     inputResult = bufPtr
     Call PAL_CopyMem(global_buf_2(0), menu_bg_data(0), menu_bg_size)
     selection = -2
-    x = 158
+    selY = 158
     highlight = 0
     selectedIndex = 0
     While selection = -2
@@ -2133,9 +2133,9 @@ Function select_party_member() As Integer
         If selectedIndex < 0 Then
             selectedIndex = 0
         End If
-        y = 75 + (selectedIndex * 80)
+        selX = 75 + (selectedIndex * 80)
         Call PAL_CopyMem(global_buf_1(0), screen_buf(0), 64000)
-        Call PAL_PutP(y, x, global_buf_2(global_buf_2(67)), inputResult, 0, 0)
+        Call PAL_PutP(selX, selY, global_buf_2(global_buf_2(67)), inputResult, 0, 0)
         Call PAL_PopScreen(global_buf_1(0))
         keyResult = read_key()
         If keyResult = 5 Then
@@ -2480,19 +2480,19 @@ End Sub
 
 Function menu_select(ByRef cursorPos, ByRef x, ByRef y, ByRef midBlocks, ByRef rowCount) As Integer
     maxCol = midBlocks - 1
-    inputResult = rowCount - 1
+    maxIdx = rowCount - 1
     Call draw_menu_table(x, y, 0, midBlocks, rowCount, -1)
     selection = -2
     While selection = -2
         If cursorPos < 0 Then
-            cursorPos = inputResult
+            cursorPos = maxIdx
         End If
-        If cursorPos > inputResult Then
+        If cursorPos > maxIdx Then
             cursorPos = 0
         End If
         rowY = y + 12
         textX = x + 13
-        For i = 0 To inputResult
+        For i = 0 To maxIdx
             If battle_order_array(i + 100) Then
                 If (i = cursorPos) And (selection = -2) Then
                     j = 250
@@ -2586,14 +2586,14 @@ End Sub
 Sub draw_role_battle_frame()
     For i = enemy_pos_count To 0 Step -1
         frameIdx = mgo_frame_offsets(player_battle_sprite(i).spriteBase + player_battle_sprite(i).direction) + player_battle_sprite(i).spriteBase
-        y = player_battle_sprite(i).x - (mgo_frame_offsets(frameIdx) \ 2)
+        drawX = player_battle_sprite(i).x - (mgo_frame_offsets(frameIdx) \ 2)
         If (player_battle_sprite(i).direction = 0) And player_status(i, 0) Then
-            x = VB40032.rtcRandomNext()
+            jitter = VB40032.rtcRandomNext()
         Else
-            x = 0
+            jitter = 0
         End If
         If battle_select_max = 0 Then
-            Call PAL_AddToTree(y, (player_battle_sprite(i).y - x) + player_battle_sprite(i).animOffset, player_battle_sprite(i).animOffset, mgo_frame_offsets(frameIdx))
+            Call PAL_AddToTree(drawX, (player_battle_sprite(i).y - jitter) + player_battle_sprite(i).animOffset, player_battle_sprite(i).animOffset, mgo_frame_offsets(frameIdx))
         End If
         If battle_role_idx_2 Then
             If i = battle_target_cursor Then
@@ -3044,43 +3044,43 @@ Function check_save_file() As Integer
         End If
         Call kernel32._lclose(openResult)
     Next
-    year = -1
-    month = -2
-    day = 0
-    While month = -2
-        If day < 0 Then
-            day = 0
+    highlight = -1
+    selectedSlot = -2
+    cursorSlot = 0
+    While selectedSlot = -2
+        If cursorSlot < 0 Then
+            cursorSlot = 0
         End If
-        If day > 4 Then
-            day = 4
+        If cursorSlot > 4 Then
+            cursorSlot = 4
         End If
-        retryCount = 4
+        menuY = 4
         For i = 0 To 4
-            Call frame_menu(180, retryCount, 6, year)
-            If i = day Then
-                Call draw_text_at(197, retryCount + 9, 43 + i, 250)
+            Call frame_menu(180, menuY, 6, highlight)
+            If i = cursorSlot Then
+                Call draw_text_at(197, menuY + 9, 43 + i, 250)
             Else
-                Call draw_string(198, retryCount + 10, word_dat_data(43 + i), 3, 0)
+                Call draw_string(198, menuY + 10, word_dat_data(43 + i), 3, 0)
             End If
-            Call display_number(270, retryCount + 15, battle_order_array(i), 0)
-            retryCount = retryCount + 38
+            Call display_number(270, menuY + 15, battle_order_array(i), 0)
+            menuY = menuY + 38
         Next
-        year = 0
+        highlight = 0
         fileResult = read_key()
         If fileResult = 1 Then
-            month = -1
+            selectedSlot = -1
         End If
         If fileResult = 3 Then
-            day = day - 1
+            cursorSlot = cursorSlot - 1
         End If
         If fileResult = 4 Then
-            day = day + 1
+            cursorSlot = cursorSlot + 1
         End If
         If fileResult = 2 Then
-            month = day
+            selectedSlot = cursorSlot
         End If
     Wend
-    Return month
+    Return selectedSlot
 End Function
 
 Sub play_all_kinds_music(ByRef musicNum, ByRef loopFlag)
@@ -3333,7 +3333,7 @@ Function produce_screen_map(ByRef x, ByRef y, ByRef viewportIdx) As Integer
         battle_sprite_data_ext(baseIdx) = viewportY
         Call PAL_ExRij(save_temp_buf(baseIdx), battle_sprite_data(baseIdx), battle_sprite_data_ext(baseIdx))
     Next
-    screenX = -1
+    npcIdx = -1
     For j = 0 To 12
         For baseIdx = 1 To curr_scene_event_count
             If npc_display_data(baseIdx).state > 0 Then
@@ -3342,7 +3342,7 @@ Function produce_screen_map(ByRef x, ByRef y, ByRef viewportIdx) As Integer
                     mapY = npc_display_data(baseIdx).y
                     Call PAL_ExRij(tileData, mapX, mapY)
                     If ((tileData = save_temp_buf(j)) And (mapX = battle_sprite_data(j))) And (mapY = battle_sprite_data_ext(j)) Then
-                        screenX = baseIdx
+                        npcIdx = baseIdx
                         GoTo L_0040FBF8
                     End If
                 End If
@@ -3350,7 +3350,7 @@ Function produce_screen_map(ByRef x, ByRef y, ByRef viewportIdx) As Integer
         Next
     Next
 L_0040FBF8:
-    Return screenX
+    Return npcIdx
 End Function
 
 Sub render_dialog_control(ByRef x, ByRef y)
@@ -3629,22 +3629,22 @@ Sub add_sprite_to_tree(ByRef x, ByRef y, ByRef depth, ByRef roleIdx, ByRef frame
     End If
     If depth < 72 Then
         i = (frameH + 15) \ 16
-        screenX = y + RPG_viewport_y
+        mapRow = y + RPG_viewport_y
         j = frameW \ 64
-        screenY = x + RPG_viewport_x
-        tmp = screenX
-        Call PAL_ExRij(k, screenY, tmp)
+        mapCol = x + RPG_viewport_x
+        tmp = mapRow
+        Call PAL_ExRij(k, mapCol, tmp)
         For l = (tmp - i) To tmp
-            For tileIdx = (screenY - j) To (screenY + j)
-                Call PAL_ExBB(screenX, k, tileIdx, l, map_data_buf(0), global_buf_2(0))
-                Call PAL_ExBB(screenX, k, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
-                Call PAL_ExBB(screenX, k, tileIdx + 1, l, map_data_buf(0), global_buf_2(0))
+            For tileIdx = (mapCol - j) To (mapCol + j)
+                Call PAL_ExBB(mapRow, k, tileIdx, l, map_data_buf(0), global_buf_2(0))
+                Call PAL_ExBB(mapRow, k, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
+                Call PAL_ExBB(mapRow, k, tileIdx + 1, l, map_data_buf(0), global_buf_2(0))
                 If k = 0 Then
-                    Call PAL_ExBB(screenX, 1, tileIdx, l, map_data_buf(0), global_buf_2(0))
-                    Call PAL_ExBB(screenX, 1, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(mapRow, 1, tileIdx, l, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(mapRow, 1, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
                 Else
-                    Call PAL_ExBB(screenX, 0, tileIdx + 1, l + 1, map_data_buf(0), global_buf_2(0))
-                    Call PAL_ExBB(screenX, 0, tileIdx, l + 1, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(mapRow, 0, tileIdx + 1, l + 1, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(mapRow, 0, tileIdx, l + 1, map_data_buf(0), global_buf_2(0))
                 End If
             Next
         Next
@@ -3803,20 +3803,20 @@ Sub draw_enemy_battle_frame()
     For i = team_number To 0 Step -1
         If enemy_battle_data(i).hp > 0 Then
             spriteIdx = map_data_buf(enemy_battle_data(i).mapValue + enemy_battle_data(i).direction) + enemy_battle_data(i).mapValue
-            y = enemy_battle_data(i).x - (map_data_buf(spriteIdx) \ 2)
-            x = enemy_battle_data(i).y - map_data_buf(spriteIdx + 1)
+            drawX = enemy_battle_data(i).x - (map_data_buf(spriteIdx) \ 2)
+            drawY = enemy_battle_data(i).y - map_data_buf(spriteIdx + 1)
             If player_hit_flags(i) Then
-                Call PAL_PutP(y, x, map_data_buf(spriteIdx), tmp, 6, 1)
+                Call PAL_PutP(drawX, drawY, map_data_buf(spriteIdx), tmp, 6, 1)
             Else
-                Call PAL_PutP(y, x, map_data_buf(spriteIdx), tmp, 0, 0)
+                Call PAL_PutP(drawX, drawY, map_data_buf(spriteIdx), tmp, 0, 0)
             End If
         End If
     Next
     If npc_dir_frame Then
         spriteIdx = mgo_frame_offsets(curr_npc_idx)
-        y = npc_anchor_x - (mgo_frame_offsets(spriteIdx) \ 2)
-        x = npc_anchor_y - mgo_frame_offsets(spriteIdx + 1)
-        Call PAL_PutP(y, x, mgo_frame_offsets(spriteIdx), tmp, 0, 0)
+        drawX = npc_anchor_x - (mgo_frame_offsets(spriteIdx) \ 2)
+        drawY = npc_anchor_y - mgo_frame_offsets(spriteIdx + 1)
+        Call PAL_PutP(drawX, drawY, mgo_frame_offsets(spriteIdx), tmp, 0, 0)
         Exit Sub
     End If
     If battle_select_max = 0 Then
@@ -3835,9 +3835,9 @@ Sub draw_enemy_battle_frame()
         For j = 0 To enemy_pos_count
             i = save_temp_buf(j)
             spriteIdx = mgo_frame_offsets(player_battle_sprite(i).spriteBase + player_battle_sprite(i).direction) + player_battle_sprite(i).spriteBase
-            y = player_battle_sprite(i).x - (mgo_frame_offsets(spriteIdx) \ 2)
-            x = player_battle_sprite(i).y - mgo_frame_offsets(spriteIdx + 1)
-            Call PAL_PutP(y, x, mgo_frame_offsets(spriteIdx), tmp, 0, 0)
+            drawX = player_battle_sprite(i).x - (mgo_frame_offsets(spriteIdx) \ 2)
+            drawY = player_battle_sprite(i).y - mgo_frame_offsets(spriteIdx + 1)
+            Call PAL_PutP(drawX, drawY, mgo_frame_offsets(spriteIdx), tmp, 0, 0)
         Next
     End If
     Exit Sub
@@ -3865,11 +3865,11 @@ Sub buy_item_menu(ByRef storeID)
         menuPosY = 21
         For i = 0 To itemCount
             If i = cursorPos Then
-                maxItems = 47
+                textColor = 47
             Else
-                maxItems = 78
+                textColor = 78
             End If
-            Call draw_text_at(menuPosX + 28, menuPosY, battle_order_array(i), maxItems)
+            Call draw_text_at(menuPosX + 28, menuPosY, battle_order_array(i), textColor)
             Call display_number(menuPosX + 140, menuPosY + 5, battle_order_array(i + 10), 0)
             menuPosY = menuPosY + 18
         Next
@@ -3888,8 +3888,8 @@ Sub buy_item_menu(ByRef storeID)
         If keyResult = 2 Then
             If RPG_money >= battle_order_array(cursorPos + 10) Then
                 Call push_screen_buffer()
-                maxItems = yes_no_menu(confirmFlags, 19)
-                If maxItems = 1 Then
+                textColor = yes_no_menu(confirmFlags, 19)
+                If textColor = 1 Then
                     RPG_money = RPG_money - battle_order_array(cursorPos + 10)
                     Call add_inventory_item(battle_order_array(cursorPos), 1)
                 End If
@@ -4102,14 +4102,14 @@ Sub process_event_objects(ByRef checkTrigger)
             npc_display_data(i).vanishTime = npc_display_data(i).vanishTime - Sgn (npc_display_data(i).vanishTime)
             If npc_display_data(i).state > 0 Then
                 If (checkTrigger And (npc_display_data(i).vanishTime = 0)) And (npc_display_data(i).triggerMode >= 4) Then
-                    npcX = ((npc_display_data(i).triggerMode - 4) * 32) + 16
-                    npcY = party_abs_x - npc_display_data(i).x
-                    partyX = party_abs_y - npc_display_data(i).y
-                    If (Abs (npcY) + (Abs (partyX) * 2)) < npcX Then
+                    range = ((npc_display_data(i).triggerMode - 4) * 32) + 16
+                    dxDiff = party_abs_x - npc_display_data(i).x
+                    dyDiff = party_abs_y - npc_display_data(i).y
+                    If (Abs (dxDiff) + (Abs (dyDiff) * 2)) < range Then
                         If npc_display_data(i).spriteFrames > 0 Then
                             Call init_walk_frames()
                             npc_display_data(i).currentFrame = 0
-                            Call PAL_ExTF(npc_display_data(i).direction, npcY, partyX)
+                            Call PAL_ExTF(npc_display_data(i).direction, dxDiff, dyDiff)
                             Call check_in_battle(1)
                         End If
                         scene_enter_flag = 0
@@ -4120,9 +4120,9 @@ Sub process_event_objects(ByRef checkTrigger)
                 GoTo L_00413BCE
             End If
             If npc_display_data(i).vanishTime = 0 Then
-                partyY = npc_display_data(i).x - RPG_viewport_x
-                dx = npc_display_data(i).y - RPG_viewport_y
-                If (((partyY < 0) Or (partyY > 320)) Or (dx < 0)) Or (dx > 220) Then
+                newX = npc_display_data(i).x - RPG_viewport_x
+                newY = npc_display_data(i).y - RPG_viewport_y
+                If (((newX < 0) Or (newX > 320)) Or (newY < 0)) Or (newY > 220) Then
                     npc_display_data(i).state = Abs (npc_display_data(i).state)
                     npc_display_data(i).currentFrame = 0
                 End If
@@ -4139,19 +4139,19 @@ L_00413BCE:
                 Call process_AutoScript(i, npc_display_data(i).autoScript)
             End If
             If (checkTrigger And (npc_display_data(i).state = 2)) And (npc_display_data(i).spriteNum > 0) Then
-                npcY = party_abs_x - npc_display_data(i).x
-                partyX = party_abs_y - npc_display_data(i).y
-                If (Abs (npcY) + (Abs (partyX) * 2)) < 13 Then
+                dxDiff = party_abs_x - npc_display_data(i).x
+                dyDiff = party_abs_y - npc_display_data(i).y
+                If (Abs (dxDiff) + (Abs (dyDiff) * 2)) < 13 Then
                     triggerScript = npc_display_data(i).direction
                     Do
                         triggerScript = (triggerScript + 1) And 3
-                        partyY = party_abs_x + fh_M_MSG_global(triggerScript)
-                        dx = party_abs_y + key_repeat_delay(triggerScript)
-                        If load_map_data(partyY, dx, 0) Then
+                        newX = party_abs_x + fh_M_MSG_global(triggerScript)
+                        newY = party_abs_y + key_repeat_delay(triggerScript)
+                        If load_map_data(newX, newY, 0) Then
                             x_off = party_abs_x
                             y_off = party_abs_y
-                            party_abs_x = partyY
-                            party_abs_y = dx
+                            party_abs_x = newX
+                            party_abs_y = newY
                             viewport_x_bak = RPG_viewport_x
                             viewport_y_bak = RPG_viewport_y
                             RPG_viewport_x = party_abs_x - team_abstract_x
@@ -4228,20 +4228,20 @@ End Sub
 
 Sub player_attack_all(ByRef roleIdx, ByRef animate)
     roleID = party(roleIdx).role
-    hitCount = 69
-    l = CSng (1)
+    soundAttrIdx = 69
+    dmgScale = CSng (1)
     If (player_status(roleIdx, 5) > 0) Or (Int (VB40032.rtcRandomNext() * CSng (6)) = CSng (4)) Then
-        l = CSng (3)
-        hitCount = 71
+        dmgScale = CSng (3)
+        soundAttrIdx = 71
     End If
-    hitCount = playerRoles(roleID, hitCount)
+    soundAttrIdx = playerRoles(roleID, soundAttrIdx)
     effect_particle_count = 0
     Call load_battle_effect_sprites()
     If animate = 0 Then
         player_battle_sprite(roleIdx).direction = 7
         Call draw_battle_scene(4, 0)
     End If
-    Call play_sound(hitCount, 1)
+    Call play_sound(soundAttrIdx, 1)
     player_battle_sprite(roleIdx).direction = 8
     If animate = 0 Then
         player_battle_sprite(roleIdx).x = player_battle_sprite(roleIdx).x - 40
@@ -4271,13 +4271,13 @@ Sub player_attack_all(ByRef roleIdx, ByRef animate)
         i = enemy_attack_order(j)
         If enemy_battle_data(i).hp > 0 Then
             battle_order_array(i) = -1
-            targetRole = get_player_attribute_total(roleID, 17)
+            atkPower = get_player_attribute_total(roleID, 17)
             tmp = calc_level_bonus(i, 4)
-            targetIdx = (calc_battle_damage(targetRole, enemy_runtime_data(i).defense + tmp) * 2) \ enemy_runtime_data(i).physicalResistance
-            targetIdx = CSng (targetIdx) * l
-            battle_order_array(i + 20) = battle_order_array(i + 20) + targetIdx
-            l = l / CSng (2)
-            Call add_damage_number(enemy_battle_data(i).x, enemy_battle_data(i).y - 110, targetIdx, 1)
+            damage = (calc_battle_damage(atkPower, enemy_runtime_data(i).defense + tmp) * 2) \ enemy_runtime_data(i).physicalResistance
+            damage = CSng (damage) * dmgScale
+            battle_order_array(i + 20) = battle_order_array(i + 20) + damage
+            dmgScale = dmgScale / CSng (2)
+            Call add_damage_number(enemy_battle_data(i).x, enemy_battle_data(i).y - 110, damage, 1)
             player_hit_flags(i) = -1
         End If
     Next
@@ -4516,19 +4516,19 @@ Sub role_physical_attack(ByRef attackerIdx, ByRef targetIdx, ByRef targetRole, B
     If (Int (VB40032.rtcRandomNext() * CSng (6)) = CSng (3)) Or (player_status(attackerIdx, 5) > 0) Then
         targetRole = targetRole * 3
         hitCount = 2
-        targetHP = playerRoles(attackerRole, 71)
+        soundNum = playerRoles(attackerRole, 71)
     Else
         hitCount = 1
-        targetHP = playerRoles(attackerRole, 69)
+        soundNum = playerRoles(attackerRole, 69)
     End If
     rng = VB40032.rtcRandomNext()
     targetRole = CSng (targetRole) * (CSng (1) + (rng / CSng (8)))
     If (attackerRole = 0) And (Int (VB40032.rtcRandomNext() * CSng (12)) = CSng (3)) Then
         targetRole = targetRole * 2
         hitCount = 2
-        targetHP = playerRoles(attackerRole, 71)
+        soundNum = playerRoles(attackerRole, 71)
     End If
-    Call play_sound(targetHP, 1)
+    Call play_sound(soundNum, 1)
     player_battle_sprite(attackerIdx).direction = 8
     player_battle_sprite(attackerIdx).x = (enemy_battle_data(targetIdx).x + 64) - damage
     player_battle_sprite(attackerIdx).y = (enemy_battle_data(targetIdx).y + 20) + damage
@@ -4943,8 +4943,8 @@ L_004178B2:
             Call restore_screen()
         End If
         If flag_trigger = 0 Then
-            dialogY = dialog_width
-            dialogH = dialog_height
+            dialogX = dialog_width
+            dialogY = dialog_height
             If mutex_can_change_palette = 0 Then
                 Call push_screen_buffer()
             End If
@@ -4952,10 +4952,10 @@ L_004178B2:
         If dialog_type >= 10 Then
             Call load_script_data(operand1)
             imgOffset = image_offset_table(0) \ 2
-            dialogY = dialog_width - (imgOffset * 8)
-            Call frame_menu(dialogY, dialogH, imgOffset, 0)
-            Call PAL_DrawString(image_offset_table(1), dialogY + 6, dialogH + 8, 3, 64, screen_buffer_ptr)
-            dialogH = dialogH + 18
+            dialogX = dialog_width - (imgOffset * 8)
+            Call frame_menu(dialogX, dialogY, imgOffset, 0)
+            Call PAL_DrawString(image_offset_table(1), dialogX + 6, dialogY + 8, 3, 64, screen_buffer_ptr)
+            dialogY = dialogY + 18
             flag_key_updown = flag_key_updown + 1
             flag_trigger = flag_key_updown
             GoTo L_0041805E
@@ -4967,22 +4967,22 @@ L_004178B2:
             GoTo L_0041805E
         End If
         If dialog_type = 9 Then
-            If dialogH > 100 Then
+            If dialogY > 100 Then
                 dialogTemp = 0
             Else
                 dialogTemp = 28
             End If
-            Call PAL_DrawString(image_offset_table(1), dialogY + dialogTemp, dialogH, 0, dialog_x, screen_buffer_ptr)
+            Call PAL_DrawString(image_offset_table(1), dialogX + dialogTemp, dialogY, 0, dialog_x, screen_buffer_ptr)
             dialog_height = dialog_height + 16
         Else
             flag_trigger = flag_trigger + 1
-            Call render_dialog_control(dialogY, dialogH)
+            Call render_dialog_control(dialogX, dialogY)
         End If
         dialogTemp = 16
         If dialog_type = 0 Then
             dialogTemp = 18
         End If
-        dialogH = dialogH + dialogTemp
+        dialogY = dialogY + dialogTemp
         GoTo L_0041805E
     End If
     If tmp2 = 0 Then
@@ -5452,13 +5452,13 @@ Sub enemy_physical_attack(ByRef enemyIdx, ByRef targetIdx, ByRef targetRole, ByR
         End If
     End If
     battle_order_array(targetIdx + 10) = rngVal
-    idleAnimSpeed = enemy_runtime_data(enemyIdx).attackSound
+    attackSound = enemy_runtime_data(enemyIdx).attackSound
     If enemy_runtime_data(enemyIdx).magic = 0 Then
         If useMagic Then
-            idleAnimSpeed = enemy_runtime_data(enemyIdx).magicSound
+            attackSound = enemy_runtime_data(enemyIdx).magicSound
         End If
     End If
-    Call play_sound(idleAnimSpeed, 0)
+    Call play_sound(attackSound, 0)
     If enemy_runtime_data(enemyIdx).magicFrames > 0 Then
         attack_done_flag = 0
         For i = 1 To enemy_runtime_data(enemyIdx).magicFrames
@@ -5476,15 +5476,15 @@ Sub enemy_physical_attack(ByRef enemyIdx, ByRef targetIdx, ByRef targetRole, ByR
     attack_done_flag = 0
     enemy_battle_data(enemyIdx).x = player_battle_sprite(targetIdx).x - 44
     enemy_battle_data(enemyIdx).y = player_battle_sprite(targetIdx).y - 16
-    j = enemy_runtime_data(enemyIdx).callSound
+    callSound = enemy_runtime_data(enemyIdx).callSound
     If rngVal = -1 Then
         player_battle_sprite(targetIdx).direction = 3
-        j = playerRoles(party(targetIdx).role, 73)
+        callSound = playerRoles(party(targetIdx).role, 73)
     End If
     If rngVal <= -10 Then
         hitChance = Abs (rngVal + 10)
         player_battle_sprite(hitChance).direction = 3
-        j = playerRoles(party(hitChance).role, 73)
+        callSound = playerRoles(party(hitChance).role, 73)
         player_battle_sprite(hitChance).x = player_battle_sprite(targetIdx).x - 24
         player_battle_sprite(hitChance).y = player_battle_sprite(targetIdx).y - 12
     End If
@@ -5516,7 +5516,7 @@ Sub enemy_physical_attack(ByRef enemyIdx, ByRef targetIdx, ByRef targetRole, ByR
         playerRoles(attackerRole, 9) = playerRoles(attackerRole, 9) - damage
         Call add_damage_number(player_battle_sprite(targetIdx).x, player_battle_sprite(targetIdx).y - 70, damage, 1)
     End If
-    Call play_sound(j, 0)
+    Call play_sound(callSound, 0)
     Call draw_battle_scene(1, 0)
     If rngVal > -10 Then
         player_battle_sprite(targetIdx).x = player_battle_sprite(targetIdx).x + 8
@@ -5556,7 +5556,7 @@ Sub calc_display_theurgy(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
     If theurgy_data(0).effect < 0 Then
         Exit Sub
     End If
-    actionType = theurgy_data(0).baseDamage
+    theurgyBaseDmg = theurgy_data(0).baseDamage
     If enemyIdx <= enemy_pos_count Then
         Call load_theurgy_image(itemObj)
         If theurgy_data(0).fireDelay = 0 Then
@@ -5657,7 +5657,7 @@ Sub calc_display_theurgy(ByRef enemyIdx, ByRef targetRole, ByRef itemID, ByRef p
                 attrIdx = theurgy_data(0).elemental
                 baseDmg = calc_level_bonus(j, 4) + enemy_runtime_data(j).defense
                 If battle_order_array(j) Then
-                    damage = (calc_battle_damage(damage, baseDmg) \ 2) + actionType
+                    damage = (calc_battle_damage(damage, baseDmg) \ 2) + theurgyBaseDmg
                     If (attrIdx > 0) And (attrIdx < 7) Then
                         resistVal = enemy_runtime_data(j).elemResistance0
                         If attrIdx = 2 Then

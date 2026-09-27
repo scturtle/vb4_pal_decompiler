@@ -1069,7 +1069,7 @@
   },
   "pub_034": {
    "stack-138": "i",
-   "stack-136": "foundIdx"
+   "stack-136": "aliveCount"
   },
   "pub_035": {
    "stack-138": "i",
@@ -1360,8 +1360,8 @@
   "pub_111": {
    "stack-134": "frameIdx",
    "stack-136": "i",
-   "stack-138": "y",
-   "stack-140": "x",
+   "stack-138": "drawX",
+   "stack-140": "drawY",
    "stack-148": "bufPtr"
   },
   "pub_112": {
@@ -1479,8 +1479,8 @@
   "pub_131": {
    "stack-140": "inputResult",
    "stack-142": "selection",
-   "stack-144": "y",
-   "stack-146": "x",
+   "stack-144": "selX",
+   "stack-146": "selY",
    "stack-148": "highlight",
    "stack-150": "selectedIndex",
    "stack-152": "keyResult",
@@ -1578,7 +1578,7 @@
   },
   "pub_143": {
    "stack-136": "maxCol",
-   "stack-138": "inputResult",
+   "stack-138": "maxIdx",
    "stack-140": "selection",
    "stack-142": "textX",
    "stack-144": "rowY",
@@ -1599,8 +1599,8 @@
   "pub_146": {
    "stack-134": "i",
    "stack-136": "frameIdx",
-   "stack-138": "y",
-   "stack-140": "x",
+   "stack-138": "drawX",
+   "stack-140": "jitter",
    "stack-142": "rng"
   },
   "pub_148": {
@@ -1695,11 +1695,11 @@
   },
   "pub_159": {
    "stack-136": "i",
-   "stack-138": "retryCount",
+   "stack-138": "menuY",
    "stack-140": "fileResult",
-   "stack-142": "year",
-   "stack-144": "month",
-   "stack-146": "day",
+   "stack-142": "highlight",
+   "stack-144": "selectedSlot",
+   "stack-146": "cursorSlot",
    "stack-152": "openResult",
    "stack-156": "filename",
    "stack-164": "bstr"
@@ -1772,7 +1772,7 @@
    "stack-142": "baseIdx",
    "stack-144": "dataIdx",
    "stack-146": "dataIdx2",
-   "stack-148": "screenX",
+   "stack-148": "npcIdx",
    "stack-150": "j",
    "stack-152": "mapX",
    "stack-154": "mapY",
@@ -1819,8 +1819,8 @@
    "stack-138": "frameH",
    "stack-140": "i",
    "stack-142": "j",
-   "stack-144": "screenX",
-   "stack-146": "screenY",
+   "stack-144": "mapRow",
+   "stack-146": "mapCol",
    "stack-148": "tmp",
    "stack-150": "k",
    "stack-152": "tileIdx",
@@ -1854,8 +1854,8 @@
   "pub_175": {
    "stack-134": "i",
    "stack-136": "spriteIdx",
-   "stack-138": "y",
-   "stack-140": "x",
+   "stack-138": "drawX",
+   "stack-140": "drawY",
    "stack-142": "j",
    "stack-144": "k",
    "stack-148": "tmp",
@@ -1869,7 +1869,7 @@
    "stack-142": "menuPosY",
    "stack-144": "cursorPos",
    "stack-146": "selection",
-   "stack-148": "maxItems",
+   "stack-148": "textColor",
    "stack-150": "wordIdx",
    "stack-152": "invIdx",
    "stack-154": "keyResult",
@@ -1902,11 +1902,11 @@
   },
   "pub_180": {
    "stack-134": "i",
-   "stack-136": "npcX",
-   "stack-138": "npcY",
-   "stack-140": "partyX",
-   "stack-142": "partyY",
-   "stack-144": "dx",
+   "stack-136": "range",
+   "stack-138": "dxDiff",
+   "stack-140": "dyDiff",
+   "stack-142": "newX",
+   "stack-144": "newY",
    "stack-146": "triggerScript"
   },
   "pub_181": {
@@ -1918,14 +1918,14 @@
   },
   "pub_182": {
    "stack-134": "roleID",
-   "stack-136": "hitCount",
+   "stack-136": "soundAttrIdx",
    "stack-138": "i",
    "stack-140": "j",
-   "stack-142": "targetIdx",
+   "stack-142": "damage",
    "stack-144": "k",
-   "stack-148": "l",
+   "stack-148": "dmgScale",
    "stack-172": "rng",
-   "stack-182": "targetRole",
+   "stack-182": "atkPower",
    "stack-184": "tmp"
   },
   "pub_183": {
@@ -1964,7 +1964,7 @@
    "stack-134": "attackerRole",
    "stack-136": "damage",
    "stack-138": "hitCount",
-   "stack-140": "targetHP",
+   "stack-140": "soundNum",
    "stack-142": "targetX",
    "stack-144": "targetY",
    "stack-146": "j",
@@ -2048,8 +2048,8 @@
    "stack-154": "tmp",
    "stack-156": "battleResult",
    "stack-158": "i",
-   "stack-160": "dialogY",
-   "stack-162": "dialogH",
+   "stack-160": "dialogX",
+   "stack-162": "dialogY",
    "stack-168": "subfileIdx",
    "stack-170": "tmp2",
    "stack-192": "rng"
@@ -2099,8 +2099,8 @@
    "stack-138": "rngVal",
    "stack-140": "hitChance",
    "stack-142": "i",
-   "stack-144": "idleAnimSpeed",
-   "stack-146": "j",
+   "stack-144": "attackSound",
+   "stack-146": "callSound",
    "stack-148": "damage",
    "stack-150": "dmgRoll",
    "stack-192": "rng",
@@ -2108,7 +2108,7 @@
   },
   "pub_193": {
    "stack-134": "itemObj",
-   "stack-136": "actionType",
+   "stack-136": "theurgyBaseDmg",
    "stack-138": "i",
    "stack-140": "targetIdx",
    "stack-142": "j",
