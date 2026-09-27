@@ -7199,12 +7199,12 @@ L_00421140:
     End If
     If opcodeCopy = 26 Then
         If operand3 <= 0 Then
-            palDst = operand1
-            If palDst = 1 Then
+            attrIdx = operand1
+            If attrIdx = 1 Then
                 player_battle_sprite(eventObjID).spriteNum = operand2
                 Exit Sub
             End If
-            If palDst = 65 Then
+            If attrIdx = 65 Then
                 player_battle_sprite(eventObjID).equipID = operand2
                 Exit Sub
             End If
@@ -7356,11 +7356,11 @@ L_00421140:
             loopRoleID = party(j).role
             oldVal = playerRoles(loopRoleID, 9)
             If playerRoles(loopRoleID, 9) <= 0 Then
-                healAmount = (playerRoles(loopRoleID, 7) \ 10) * operand2
-                If healAmount <= 0 Then
-                    healAmount = 1
+                var1 = (playerRoles(loopRoleID, 7) \ 10) * operand2
+                If var1 <= 0 Then
+                    var1 = 1
                 End If
-                playerRoles(loopRoleID, 9) = healAmount
+                playerRoles(loopRoleID, 9) = var1
                 For i = 0 To 15
                     poison_status(j, i).poisonID = 0
                     If player_status(j, i) < 999 Then
@@ -7446,7 +7446,7 @@ L_00421140:
             rng = VB40032.rtcRandomNext()
             If CSng (objects(enemy_battle_data(j).objectID).data1) < Int (rng * CSng (10)) Then
                 For i = 0 To 15
-                    poisonSlot = -1
+                    var2 = -1
                     If enemy_poison_status(j, i).poisonID = 0 Then
                         enemy_poison_status(j, i).poisonID = operand2
                         enemy_poison_status(j, i).poisonScript = objects(operand2).data4
@@ -7610,19 +7610,19 @@ L_00422744:
         If RPG_current_calabash_number > 0 Then
             enemy_runtime_data(eventObjID).exp = 0
             rng = VB40032.rtcRandomNext()
-            healAmount = Int (CSng (RPG_current_calabash_number) * rng)
-            If healAmount > 8 Then
-                healAmount = 8
+            var1 = Int (CSng (RPG_current_calabash_number) * rng)
+            If var1 > 8 Then
+                var1 = 8
             End If
-            RPG_current_calabash_number = (RPG_current_calabash_number - healAmount) - 1
-            healAmount = data_store(healAmount, 0)
-            Call add_inventory_item(healAmount, 1)
+            RPG_current_calabash_number = (RPG_current_calabash_number - var1) - 1
+            var1 = data_store(var1, 0)
+            Call add_inventory_item(var1, 1)
             k = 42
             Call frame_menu(88, 32, 8, -1)
             Call draw_string(98, 42, word_dat_data(k), 3, 0)
-            Call draw_string(156, 42, word_dat_data(healAmount), 3, 23)
+            Call draw_string(156, 42, word_dat_data(var1), 3, 23)
             Call PAL_PutP(128, 73, global_buf_2(global_buf_2(70)), screen_buffer_ptr, 0, 0)
-            Call read_ball_mkf_index(objects(healAmount).data0)
+            Call read_ball_mkf_index(objects(var1).data0)
             Call PAL_PutP(135, 80, global_buf_2(global_buf_2(0)), screen_buffer_ptr, 0, 0)
             Call wait_frame(100)
             Exit Sub
@@ -7771,21 +7771,21 @@ L_00422744:
     End If
     If opcodeCopy = 66 Then
 L_004234FA:
-        loopRoleID2 = eventObjID
+        enemyIdx = eventObjID
         If (operand3 > 0) And (operand3 <= 5) Then
-            loopRoleID2 = operand3 - 1
+            enemyIdx = operand3 - 1
         End If
         If operand3 < 0 Then
-            loopRoleID2 = Int (VB40032.rtcRandomNext() * CSng (enemy_max_id))
+            enemyIdx = Int (VB40032.rtcRandomNext() * CSng (enemy_max_id))
         End If
 L_00423550:
-        If enemy_battle_data(loopRoleID2).hp <= 0 Then
-            loopRoleID2 = (loopRoleID2 + 1) Mod enemy_max_id
+        If enemy_battle_data(enemyIdx).hp <= 0 Then
+            enemyIdx = (enemyIdx + 1) Mod enemy_max_id
             GoTo L_00423550
         End If
         itemObjID = objects(operand1).data0
         Call load_theurgy_image(itemObjID)
-        Call calc_display_theurgy(8, loopRoleID2, operand1, operand2)
+        Call calc_display_theurgy(8, enemyIdx, operand1, operand2)
         Call apply_enemy_poison_damage()
         Exit Sub
     End If
@@ -7809,12 +7809,12 @@ L_00423634:
             tmp2 = targetX - party_abs_x
             tmp3 = targetY - party_abs_y
             If (tmp2 Or tmp3) <> 0 Then
-                Call PAL_ExTF(extfResult, tmp2, tmp3)
+                Call PAL_ExTF(walkDir, tmp2, tmp3)
                 If tmp2 <> 0 Then
-                    tmp2 = key_pressed_flags(extfResult) * tmp
+                    tmp2 = key_pressed_flags(walkDir) * tmp
                 End If
                 If tmp3 <> 0 Then
-                    tmp3 = key_direction_flags(extfResult) * stepSize
+                    tmp3 = key_direction_flags(walkDir) * stepSize
                 End If
                 x_off = party_abs_x
                 y_off = party_abs_y
@@ -7824,7 +7824,7 @@ L_00423634:
                 viewport_y_bak = RPG_viewport_y
                 RPG_viewport_x = party_abs_x - team_abstract_x
                 RPG_viewport_y = party_abs_y - team_abstract_y
-                npc_display_data(eventObjID).direction = extfResult
+                npc_display_data(eventObjID).direction = walkDir
                 npc_display_data(eventObjID).x = npc_display_data(eventObjID).x + tmp2
                 npc_display_data(eventObjID).y = npc_display_data(eventObjID).y + tmp3
                 Call update_trail_data()
@@ -7918,36 +7918,36 @@ L_00423634:
                 If tmp3 = 0 Then
                     tmp3 = key_direction_flags(VB40032.rtcRandomNext())
                 End If
-                extfResult = npc_display_data(eventObjID).direction
-                Call PAL_ExTF(extfResult, tmp2, tmp3)
+                walkDir = npc_display_data(eventObjID).direction
+                Call PAL_ExTF(walkDir, tmp2, tmp3)
                 j = targetX
                 i = targetY
-                Call PAL_ExRij(stepCount, j, i)
-                screenX = ((j + j) + stepCount) * 16
-                screenY = ((i + i) + stepCount) * 8
-                tmp4 = screenX + fh_M_MSG_global(extfResult)
-                tmp5 = screenY + key_repeat_delay(extfResult)
+                Call PAL_ExRij(var3, j, i)
+                npcX = ((j + j) + var3) * 16
+                npcY = ((i + i) + var3) * 8
+                tmp4 = npcX + fh_M_MSG_global(walkDir)
+                tmp5 = npcY + key_repeat_delay(walkDir)
                 If operand3 Then
-                    npc_display_data(eventObjID).direction = extfResult
+                    npc_display_data(eventObjID).direction = walkDir
                     stepSize = operand2
                     GoTo L_00423D86
                 End If
                 If load_map_data(tmp4, tmp5, eventObjID) Then
-                    npc_display_data(eventObjID).direction = extfResult
+                    npc_display_data(eventObjID).direction = walkDir
                     stepSize = operand2
                     GoTo L_00423D86
                 End If
-                npc_display_data(eventObjID).x = screenX
-                npc_display_data(eventObjID).y = screenY
+                npc_display_data(eventObjID).x = npcX
+                npc_display_data(eventObjID).y = npcY
 L_00423D86:
                 If operand3 = 0 Then
                     For k = 0 To 3
                         targetX = npc_display_data(eventObjID).x + (key_pressed_flags(k) * 4)
                         targetY = npc_display_data(eventObjID).y + (key_direction_flags(k) * 2)
-                        Call PAL_ExGm1(targetX, targetY, map_data_buf(0), healAmount)
-                        If healAmount = 0 Then
-                            npc_display_data(eventObjID).x = screenX
-                            npc_display_data(eventObjID).y = screenY
+                        Call PAL_ExGm1(targetX, targetY, map_data_buf(0), var1)
+                        If var1 = 0 Then
+                            npc_display_data(eventObjID).x = npcX
+                            npc_display_data(eventObjID).y = npcY
                         End If
                     Next
                 End If
@@ -7957,13 +7957,13 @@ L_00423D86:
         End If
         Call npc_walk_one_step(eventObjID, stepSize)
         If (operand3 = 0) And (stepSize = 0) Then
-            Call PAL_ExGm1(npc_display_data(eventObjID).x, npc_display_data(eventObjID).y, map_data_buf(0), healAmount)
-            If healAmount = 0 Then
+            Call PAL_ExGm1(npc_display_data(eventObjID).x, npc_display_data(eventObjID).y, map_data_buf(0), var1)
+            If var1 = 0 Then
                 k = Int (VB40032.rtcRandomNext() * CSng (4))
                 targetX = npc_display_data(eventObjID).x + fh_M_MSG_global(k)
                 targetY = npc_display_data(eventObjID).y + key_repeat_delay(k)
-                Call PAL_ExGm1(targetX, targetY, map_data_buf(0), healAmount)
-                If healAmount Then
+                Call PAL_ExGm1(targetX, targetY, map_data_buf(0), var1)
+                If var1 Then
                     npc_display_data(eventObjID).x = targetX
                     npc_display_data(eventObjID).y = targetY
                 End If
@@ -7972,7 +7972,7 @@ L_00423D86:
         Exit Sub
     End If
     If opcodeCopy = 77 Then
-        healAmount = read_key()
+        var1 = read_key()
         Exit Sub
     End If
     If opcodeCopy = 78 Then
@@ -7995,19 +7995,19 @@ L_00423D86:
         Exit Sub
     End If
     If opcodeCopy = 80 Then
-        healAmount = operand1
-        If healAmount = 0 Then
-            healAmount = 1
+        var1 = operand1
+        If var1 = 0 Then
+            var1 = 1
         End If
-        Call fade_in(healAmount)
+        Call fade_in(var1)
         Exit Sub
     End If
     If opcodeCopy = 81 Then
-        healAmount = operand1
-        If healAmount = 0 Then
-            healAmount = 1
+        var1 = operand1
+        If var1 = 0 Then
+            var1 = 1
         End If
-        Call fade_out_palette(healAmount)
+        Call fade_out_palette(var1)
         Exit Sub
     End If
     If opcodeCopy = 82 Then
@@ -8048,10 +8048,10 @@ L_00423D86:
         If operand2 = 0 Then
             operand2 = 8
         End If
-        healAmount = objects(operand1).data0
-        Call copy_subfile_data(healAmount)
+        var1 = objects(operand1).data0
+        Call copy_subfile_data(var1)
         theurgy_data(0).baseDamage = playerRoles(roleID, 10) * operand2
-        Call PAL_CopyMem(data_magic(healAmount * 32), theurgy_data(0).effect, 32)
+        Call PAL_CopyMem(data_magic(var1 * 32), theurgy_data(0).effect, 32)
         playerRoles(roleID, 10) = 1
         Exit Sub
     End If
@@ -8093,25 +8093,25 @@ L_00423D86:
         Exit Sub
     End If
     If opcodeCopy = 93 Then
-        poisonSlot = -1
+        var2 = -1
         For j = 0 To 15
             If poison_status(eventObjID, j).poisonID = operand1 Then
-                poisonSlot = 0
+                var2 = 0
             End If
         Next
-        If poisonSlot Then
+        If var2 Then
             scriptEntry = operand2 - 1
         End If
         Exit Sub
     End If
     If opcodeCopy = 94 Then
-        poisonSlot = -1
+        var2 = -1
         For j = 0 To 15
             If enemy_poison_status(eventObjID, j).poisonID = operand1 Then
-                poisonSlot = 0
+                var2 = 0
             End If
         Next
-        If poisonSlot Then
+        If var2 Then
             scriptEntry = operand2 - 1
         End If
         Exit Sub
@@ -8125,13 +8125,13 @@ L_00423D86:
         Exit Sub
     End If
     If opcodeCopy = 97 Then
-        poisonSlot = -1
+        var2 = -1
         For j = 0 To 15
             If poison_status(eventObjID, j).poisonID > 0 Then
-                poisonSlot = 0
+                var2 = 0
             End If
         Next
-        If poisonSlot Then
+        If var2 Then
             scriptEntry = operand1 - 1
         End If
         Exit Sub
@@ -8210,19 +8210,19 @@ L_00423D86:
         Exit Sub
     End If
     If opcodeCopy = 106 Then
-        loopRoleID2 = battle_role_action(battle_enemy_idx).target
-        While enemy_battle_data(loopRoleID2).hp <= 0
-            loopRoleID2 = (loopRoleID2 + 1) Mod enemy_max_id
+        enemyIdx = battle_role_action(battle_enemy_idx).target
+        While enemy_battle_data(enemyIdx).hp <= 0
+            enemyIdx = (enemyIdx + 1) Mod enemy_max_id
         Wend
-        distX8 = (loopRoleID2 - battle_enemy_idx) * 8
+        rankDist = (enemyIdx - battle_enemy_idx) * 8
         player_battle_sprite(battle_enemy_idx).direction = 10
-        player_battle_sprite(battle_enemy_idx).x = (enemy_battle_data(loopRoleID2).x + 64) - distX8
-        player_battle_sprite(battle_enemy_idx).y = (enemy_battle_data(loopRoleID2).y + 22) + distX8
+        player_battle_sprite(battle_enemy_idx).x = (enemy_battle_data(enemyIdx).x + 64) - rankDist
+        player_battle_sprite(battle_enemy_idx).y = (enemy_battle_data(enemyIdx).y + 22) + rankDist
         Call draw_battle_scene(1, 0)
         For j = 0 To 4
             player_battle_sprite(battle_enemy_idx).x = (player_battle_sprite(battle_enemy_idx).x - 8) - j
             player_battle_sprite(battle_enemy_idx).y = player_battle_sprite(battle_enemy_idx).y - 4
-            player_hit_flags(loopRoleID2) = j = 4
+            player_hit_flags(enemyIdx) = j = 4
             Call draw_battle_scene(1, 0)
         Next
         player_battle_sprite(battle_enemy_idx).x = player_battle_sprite(battle_enemy_idx).x - 1
@@ -8233,26 +8233,26 @@ L_00423D86:
             operand1 = 10
         End If
         rng = VB40032.rtcRandomNext()
-        If (enemy_runtime_data(loopRoleID2).stealItemCount > 0) And (CSng (operand1) >= Int (rng * CSng (10))) Then
-            If enemy_runtime_data(loopRoleID2).stealItem = 0 Then
+        If (enemy_runtime_data(enemyIdx).stealItemCount > 0) And (CSng (operand1) >= Int (rng * CSng (10))) Then
+            If enemy_runtime_data(enemyIdx).stealItem = 0 Then
                 rng = VB40032.rtcRandomNext()
-                fleeRate = enemy_runtime_data(loopRoleID2).stealItemCount \ (CSng (2) + rng)
-                If fleeRate > 0 Then
-                    enemy_runtime_data(loopRoleID2).stealItemCount = enemy_runtime_data(loopRoleID2).stealItemCount - fleeRate
-                    RPG_money = RPG_money + fleeRate
+                cashAmount = enemy_runtime_data(enemyIdx).stealItemCount \ (CSng (2) + rng)
+                If cashAmount > 0 Then
+                    enemy_runtime_data(enemyIdx).stealItemCount = enemy_runtime_data(enemyIdx).stealItemCount - cashAmount
+                    RPG_money = RPG_money + cashAmount
                     Call frame_menu(88, 32, 8, -1)
                     Call draw_string(100, 42, word_dat_data(34), 3, 23)
-                    Call show_small_number(148, 46, fleeRate, 5)
+                    Call show_small_number(148, 46, cashAmount, 5)
                     Call draw_string(188, 42, word_dat_data(10), 3, 23)
                 End If
             Else
-                enemy_runtime_data(loopRoleID2).stealItemCount = enemy_runtime_data(loopRoleID2).stealItemCount - 1
-                healAmount = enemy_runtime_data(loopRoleID2).stealItem
-                Call add_inventory_item(healAmount, 1)
+                enemy_runtime_data(enemyIdx).stealItemCount = enemy_runtime_data(enemyIdx).stealItemCount - 1
+                var1 = enemy_runtime_data(enemyIdx).stealItem
+                Call add_inventory_item(var1, 1)
                 k = 34
                 Call frame_menu(88, 32, 8, -1)
                 Call draw_string(98, 42, word_dat_data(k), 3, 0)
-                Call draw_string(156, 42, word_dat_data(healAmount), 3, 23)
+                Call draw_string(156, 42, word_dat_data(var1), 3, 23)
             End If
             Call wait_frame(125)
         End If
@@ -8375,13 +8375,13 @@ L_00425278:
         Exit Sub
     End If
     If opcodeCopy = 116 Then
-        poisonSlot = 0
+        var2 = 0
         For j = 0 To RPG_team_number
             If (playerRoles(j, 9) < playerRoles(j, 7)) Or (playerRoles(j, 10) < playerRoles(j, 8)) Then
-                poisonSlot = -1
+                var2 = -1
             End If
         Next
-        If poisonSlot Then
+        If var2 Then
             scriptEntry = operand1 - 1
         End If
         Exit Sub
@@ -8491,15 +8491,15 @@ L_00425278:
             team_abstract_y = 112
             RPG_viewport_x = party_abs_x - team_abstract_x
             RPG_viewport_y = party_abs_y - team_abstract_y
-            stepCount = 0
+            var3 = 0
             GoTo L_00425B08
         End If
-        stepCount = operand3
-        If stepCount <= 0 Then
-            stepCount = 1
+        var3 = operand3
+        If var3 <= 0 Then
+            var3 = 1
         End If
 L_00425B08:
-        For j = 1 To stepCount
+        For j = 1 To var3
             viewport_x_bak = RPG_viewport_x
             viewport_y_bak = RPG_viewport_y
             oldTeamX = team_abstract_x
@@ -8538,10 +8538,10 @@ L_00425B08:
         Exit Sub
     End If
     If opcodeCopy = 128 Then
-        healAmount = 384 - RPG_color_begin_ptr
+        var1 = 384 - RPG_color_begin_ptr
         Call PAL_CopyMem(palette_data(768), palette_data(RPG_color_begin_ptr), 768)
         For j = 1 To 32
-            Call PAL_CvPalate(palette_data(768), palette_data(healAmount))
+            Call PAL_CvPalate(palette_data(768), palette_data(var1))
             Call PAL_IntPalate(palette_data(768))
             If operand1 <= 0 Then
                 Call process_event_objects(0)
@@ -8550,7 +8550,7 @@ L_00425B08:
                 Call PAL_WaitTime(operand1)
             End If
         Next
-        RPG_color_begin_ptr = healAmount
+        RPG_color_begin_ptr = var1
         Call PAL_IntPalate(palette_data(RPG_color_begin_ptr))
         palette_fade_active = 0
         Exit Sub
@@ -8596,11 +8596,11 @@ L_00425B08:
         If (eventObjIdx > 0) And (eventObjIdx <= curr_scene_event_count) Then
             targetX = party_abs_x + fh_M_MSG_global(RPG_team_direction)
             targetY = party_abs_y + key_repeat_delay(RPG_team_direction)
-            healAmount = -1
+            var1 = -1
             If operand3 <> 0 Then
-                Call PAL_ExGm1(targetX, targetY, map_data_buf(0), healAmount)
+                Call PAL_ExGm1(targetX, targetY, map_data_buf(0), var1)
             End If
-            If healAmount Then
+            If var1 Then
                 npc_display_data(eventObjIdx).x = targetX
                 npc_display_data(eventObjIdx).y = targetY
                 npc_display_data(eventObjIdx).state = operand2
@@ -8631,15 +8631,15 @@ L_00425B08:
     End If
     If opcodeCopy = 136 Then
         If RPG_money > 5000 Then
-            fleeRate = 5000
+            cashAmount = 5000
         Else
-            fleeRate = RPG_money
+            cashAmount = RPG_money
         End If
-        healAmount = objects(operand1).data0
-        Call copy_subfile_data(healAmount)
-        theurgy_data(0).baseDamage = (fleeRate * 2) \ 5
-        Call PAL_CopyMem(data_magic(healAmount * 32), theurgy_data(0).effect, 32)
-        RPG_money = RPG_money - fleeRate
+        var1 = objects(operand1).data0
+        Call copy_subfile_data(var1)
+        theurgy_data(0).baseDamage = (cashAmount * 2) \ 5
+        Call PAL_CopyMem(data_magic(var1 * 32), theurgy_data(0).effect, 32)
+        RPG_money = RPG_money - cashAmount
         Exit Sub
     End If
     If opcodeCopy = 137 Then
@@ -8666,15 +8666,15 @@ L_00425B08:
         End If
         Call PAL_CopyMem(palette_data(768), palette_data(RPG_color_begin_ptr), 768)
         Call PAL_CopyMem(palette_data(1152), palette_data(RPG_color_begin_ptr), 768)
-        healAmount = 768
-        palSrc = 1152
-        Call PAL_CorPalate(operand1, palette_data(healAmount))
+        var1 = 768
+        var4 = 1152
+        Call PAL_CorPalate(operand1, palette_data(var1))
         If operand3 Then
-            Call swap_values(healAmount, palSrc)
+            Call swap_values(var1, var4)
         End If
         For j = 1 To 63
-            Call PAL_CvPalate(palette_data(palSrc), palette_data(healAmount))
-            Call PAL_IntPalate(palette_data(palSrc))
+            Call PAL_CvPalate(palette_data(var4), palette_data(var1))
+            Call PAL_IntPalate(palette_data(var4))
             Call PAL_WaitTime(operand2)
         Next
         Exit Sub
@@ -8710,18 +8710,18 @@ L_00425B08:
         Exit Sub
     End If
     If opcodeCopy = 145 Then
-        healAmount = enemy_battle_data(eventObjID).enemyID
-        palSrc = 0
-        poisonSlot = 0
+        var1 = enemy_battle_data(eventObjID).enemyID
+        var4 = 0
+        var2 = 0
         For j = 0 To team_number
-            If healAmount = enemy_battle_data(j).enemyID Then
-                palSrc = palSrc + 1
+            If var1 = enemy_battle_data(j).enemyID Then
+                var4 = var4 + 1
                 If j = eventObjID Then
-                    poisonSlot = palSrc
+                    var2 = var4
                 End If
             End If
         Next
-        If poisonSlot > 1 Then
+        If var2 > 1 Then
             scriptEntry = operand1 - 1
         End If
         Exit Sub
