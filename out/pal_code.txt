@@ -3629,22 +3629,22 @@ Sub add_sprite_to_tree(ByRef x, ByRef y, ByRef depth, ByRef roleIdx, ByRef frame
     End If
     If depth < 72 Then
         i = (frameH + 15) \ 16
-        mapRow = y + RPG_viewport_y
+        thresholdY = y + RPG_viewport_y
         j = frameW \ 64
         mapCol = x + RPG_viewport_x
-        tmp = mapRow
-        Call PAL_ExRij(k, mapCol, tmp)
-        For l = (tmp - i) To tmp
+        rowY = thresholdY
+        Call PAL_ExRij(k, mapCol, rowY)
+        For l = (rowY - i) To rowY
             For tileIdx = (mapCol - j) To (mapCol + j)
-                Call PAL_ExBB(mapRow, k, tileIdx, l, map_data_buf(0), global_buf_2(0))
-                Call PAL_ExBB(mapRow, k, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
-                Call PAL_ExBB(mapRow, k, tileIdx + 1, l, map_data_buf(0), global_buf_2(0))
+                Call PAL_ExBB(thresholdY, k, tileIdx, l, map_data_buf(0), global_buf_2(0))
+                Call PAL_ExBB(thresholdY, k, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
+                Call PAL_ExBB(thresholdY, k, tileIdx + 1, l, map_data_buf(0), global_buf_2(0))
                 If k = 0 Then
-                    Call PAL_ExBB(mapRow, 1, tileIdx, l, map_data_buf(0), global_buf_2(0))
-                    Call PAL_ExBB(mapRow, 1, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(thresholdY, 1, tileIdx, l, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(thresholdY, 1, tileIdx - 1, l, map_data_buf(0), global_buf_2(0))
                 Else
-                    Call PAL_ExBB(mapRow, 0, tileIdx + 1, l + 1, map_data_buf(0), global_buf_2(0))
-                    Call PAL_ExBB(mapRow, 0, tileIdx, l + 1, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(thresholdY, 0, tileIdx + 1, l + 1, map_data_buf(0), global_buf_2(0))
+                    Call PAL_ExBB(thresholdY, 0, tileIdx, l + 1, map_data_buf(0), global_buf_2(0))
                 End If
             Next
         Next

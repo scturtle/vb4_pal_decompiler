@@ -1819,9 +1819,9 @@
    "stack-138": "frameH",
    "stack-140": "i",
    "stack-142": "j",
-   "stack-144": "mapRow",
+   "stack-144": "thresholdY",
    "stack-146": "mapCol",
-   "stack-148": "tmp",
+   "stack-148": "rowY",
    "stack-150": "k",
    "stack-152": "tileIdx",
    "stack-154": "l"
