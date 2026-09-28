@@ -39,6 +39,36 @@ def strip(expr_text):
     return s
 
 
+# Top-level (depth-0) infix operators that break under prefix negation:
+# -a + b != -(a + b). Multiplication/division commute with the sign but are
+# included so the rendered grouping always matches the p-code operand tree.
+_NEG_PAREN_OPS = (
+    " + ", " - ", " * ", " / ", " \\ ", " Mod ", " And ", " Or ", " Xor ",
+    " Eqv ", " Imp ", " & ", " = ", " < ", " > ", " <= ", " >= ", " <> ",
+)
+
+
+def _has_top_level_binary_op(text):
+    """True if text contains a depth-0 infix operator (needs parens after -)."""
+    depth = 0
+    i = 0
+    n = len(text)
+    while i < n:
+        ch = text[i]
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+        elif depth == 0:
+            if ch == "^":
+                return True
+            for op in _NEG_PAREN_OPS:
+                if text.startswith(op, i):
+                    return True
+        i += 1
+    return False
+
+
 def parse_mem(operand):
     """Parse a word-disassembler mem= operand into a readable variable reference."""
     if operand and operand.startswith("global="):
@@ -804,7 +834,15 @@ class StackMachine(object):
         # Propagate deferred call effects.
         effects = list(a.effects)
         if op == "-":
-            self.push("-" + strip(a.text), effects=effects)
+            text = strip(a.text)
+            if _has_top_level_binary_op(text):
+                # UMi* negates the whole popped operand: -(a + b) is not
+                # -a + b. Parenthesize compound operands so the rendered
+                # precedence matches the p-code (in re: enemy_physical_attack
+                # rngVal = -(hitChance + 10), was rendered -hitChance + 10).
+                self.push("-(" + text + ")", effects=effects)
+            else:
+                self.push("-" + text, effects=effects)
         else:
             self.push("%s (%s)" % (op, strip(a.text)), effects=effects)
 

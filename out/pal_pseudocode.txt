@@ -2772,10 +2772,10 @@ End Sub
 Sub pub_152_0040D194_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
     Call Pal.vwindow(a0, a1, a2, a3)
     stack-134 = a4 \ 32
-    stack-138 = -a4 Mod 32 - 16
+    stack-138 = -(a4 Mod 32) - 16
     stack-136 = (((a4 + a2) - a0) + 16) \ 32
     stack-142 = a5 \ 16
-    stack-140 = -a5 Mod 16 - 8
+    stack-140 = -(a5 Mod 16) - 8
     stack-144 = (((a5 + a3) - a1) + 8) \ 16
     stack-146 = a1 + stack-140
     For stack-148 = stack-142 To stack-144
@@ -5450,7 +5450,7 @@ Sub pub_192_00419328(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
             Next
             If stack-140 >= 0 Then
                 If pub_093_00406F08_hot(stack-140) > 1 Then
-                    stack-138 = -stack-140 + 10
+                    stack-138 = -(stack-140 + 10)
                 End If
             End If
         Else

@@ -2766,10 +2766,10 @@ End Sub
 Sub redraw_tile(ByRef x, ByRef y, ByRef right, ByRef bottom, ByRef tileX, ByRef tileY)
     Call PAL_VWindow(x, y, right, bottom)
     tileCol = tileX \ 32
-    xPixelOffset = -tileX Mod 32 - 16
+    xPixelOffset = -(tileX Mod 32) - 16
     endTileCol = (((tileX + right) - x) + 16) \ 32
     tileRow = tileY \ 16
-    yPixelOffset = -tileY Mod 16 - 8
+    yPixelOffset = -(tileY Mod 16) - 8
     endTileRow = (((tileY + bottom) - y) + 8) \ 16
     screenY = y + yPixelOffset
     For i = tileRow To endTileRow
@@ -5444,7 +5444,7 @@ Sub enemy_physical_attack(ByRef enemyIdx, ByRef targetIdx, ByRef targetRole, ByR
             Next
             If hitChance >= 0 Then
                 If check_player_alive(hitChance) > 1 Then
-                    rngVal = -hitChance + 10
+                    rngVal = -(hitChance + 10)
                 End If
             End If
         Else
