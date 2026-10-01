@@ -31,7 +31,10 @@ uv run run_pipeline.py
    opcode（`Mem*` 后缀：I2/UI1/R4/…）推断 UDT 字段类型，在伪代码声明块
    里展开为槽位级匿名类型 `UDT_fXXXX` 的 `Type ... End Type` 声明
    （`src/struct_types.py`）；
-4. 用栈机生成 VB 风格伪代码；
+4. 用栈机生成 VB 风格伪代码。控制流走 CFG 结构化器
+   （`src/structuring.py`：基本块 CFG、Cooper-Harvey-Kennedy 支配树、
+   后支配树 join、SCC 循环分析 → While/Do/For/If-Else/Select Case；
+   不支持的结构抛 `StructureUnsupported`，按过程输出错误桩并计数）；
 5. 使用 `input/mapping.json` 重映射名称（仅替换，无推断）：结构体名
    → 帕斯卡命名（首字母大写），`fXXXX` 字段 → 语义字段名，同名结构体
    只保留首个 Type 块；

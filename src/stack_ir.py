@@ -1,22 +1,30 @@
 """Stack-machine IR and expression tree building.
 
 VB4 p-code is a stack machine: LitI2 pushes a constant, AddI2 pops two and
-pushes one.  This module simulates the evaluation stack and folds
-instruction sequences into expression trees, then emits VB-style
-statements.
+pushes one.  This module simulates the evaluation stack, folds instructions
+into expression trees, and emits VB-style statements.
 
-The engine walks instructions linearly (like Semi VB Decompiler's
-modPCode.bas and pcode2code).  Control-flow recovery uses the branch-target
-stack approach: BranchF emits "If cond Then" and pushes the target; when
-the walk reaches a pending target, "End If" is emitted.  For/Next are
-recovered from the explicit loop-var and branch target operands.
-
-Cross-procedure branch targets (most point into the proc-197 script
-dispatcher) are rendered as GoTo label comments rather than intra-proc jumps.
+Control flow is owned by src/structuring.py, which builds the CFG and calls
+StackMachine.process() only for straight-line instructions (For/Next go
+through _loop_start/_loop_end for their stack bookkeeping).  Feeding a branch
+or loop opcode to process() raises: a caller that bypassed the structurer
+fails loudly instead of emitting a misplaced If/GoTo.
 """
 
 
+import copy
+import re
+
 import declare_specs
+
+
+# Compiled once: _subst_param runs for every load/store/loop instruction.
+_STACK_POS_RE = re.compile(r'stack\+(\d+)')
+_STACK_NEG_RE = re.compile(r'stack-(\d+)')
+
+# Bound on a Redim's dimension count; a corrupt "dims=99999999" operand would
+# otherwise pop tens of millions of <empty> values.
+_REDIM_MAX_DIMS = 64
 
 
 # ----------------------------------------------------------------------
@@ -24,11 +32,26 @@ import declare_specs
 # ----------------------------------------------------------------------
 
 def strip(expr_text):
-    """Remove one redundant outer paren pair if it wraps the whole string."""
+    """Remove one redundant outer paren pair wrapping the whole string.
+
+    Quote-aware: parens inside a "..." literal are ignored.  Examples:
+    "()" -> "", "(a)(b)" -> "(a)(b)", "(a + b)" -> "a + b", '"(x)"' -> '"(x)"'.
+
+    Assumes a '"' toggles string state; VB's doubled-quote escape (say ""hi"")
+    briefly clears in_str between the two quotes, so a paren that straddles
+    that gap could skew the depth count.  Operand texts here never contain a
+    doubled quote, so the simple toggle is sufficient.
+    """
     s = expr_text.strip()
     if len(s) >= 2 and s[0] == "(" and s[-1] == ")":
         depth = 0
+        in_str = False
         for k, ch in enumerate(s):
+            if ch == '"':
+                in_str = not in_str
+                continue
+            if in_str:
+                continue
             if ch == "(":
                 depth += 1
             elif ch == ")":
@@ -39,49 +62,63 @@ def strip(expr_text):
     return s
 
 
-# Top-level (depth-0) infix operators that break under prefix negation:
-# -a + b != -(a + b). Multiplication/division commute with the sign but are
-# included so the rendered grouping always matches the p-code operand tree.
+# Depth-0 infix ops that break under prefix negation (-a + b != -(a + b)).
+# Every entry starts with a space because emitters render ops space-separated.
 _NEG_PAREN_OPS = (
     " + ", " - ", " * ", " / ", " \\ ", " Mod ", " And ", " Or ", " Xor ",
     " Eqv ", " Imp ", " & ", " = ", " < ", " > ", " <= ", " >= ", " <> ",
 )
 
-
 def _has_top_level_binary_op(text):
-    """True if text contains a depth-0 infix operator (needs parens after -)."""
+    """True if text has a depth-0 infix operator (needs parens after -).
+
+    All _NEG_PAREN_OPS entries start with a space, so a depth-0 space is the
+    only possible operator start.  "^" (power) is handled separately.
+    """
     depth = 0
+    in_str = False
     i = 0
     n = len(text)
     while i < n:
         ch = text[i]
-        if ch == "(":
+        if ch == '"':
+            in_str = not in_str
+        elif in_str:
+            pass
+        elif ch == "(":
             depth += 1
         elif ch == ")":
             depth -= 1
         elif depth == 0:
             if ch == "^":
                 return True
-            for op in _NEG_PAREN_OPS:
-                if text.startswith(op, i):
-                    return True
+            if ch == " ":
+                for op in _NEG_PAREN_OPS:
+                    if text.startswith(op, i):
+                        return True
         i += 1
     return False
 
 
 def parse_mem(operand):
-    """Parse a word-disassembler mem= operand into a readable variable reference."""
+    """Normalize a mem=/global= operand to a readable reference.
+
+    global=XXXXXXXX (ImpAd*) and mem=stack+8.fXXXX (FMem*) both address the
+    form-module data block, so both render as Me.fXXXX (see docs/vb40032.md).
+    """
     if operand and operand.startswith("global="):
-        # ImpAdLd/ImpAdSt operand: an inline dword added to the p-code global
-        # base.  That base is the form-module data block — the same block
-        # FMem* instructions address via the stack+8 base — so normalize it
-        # to the Me.fXXXX member form used everywhere else (e.g. Form_Load's
-        # ImpAdStI2 global=00000334 writes the same slot that consumers read
-        # as FMemLdI2 mem=stack+8.f0334).  See docs/vb40032.md.
-        return "Me.f%04X" % int(operand[7:], 16)
+        # Split off any '.suffix' (defensive; current binaries never emit one).
+        token = operand[7:].split(".", 1)[0]
+        try:
+            return "Me.f%04X" % int(token, 16)
+        except ValueError:
+            # Malformed operand: pass it through rather than abort the proc.
+            return operand
     if not operand or not operand.startswith("mem="):
         return operand
     ref = operand[4:]
+    if ref.startswith("stack+8.f"):
+        return "Me." + ref.split(".", 1)[1]
     parts = ref.split(".", 1)
     head = parts[0]
     if head and head[0] in "0123456789":
@@ -106,7 +143,10 @@ def parse_target(operand):
     """Extract to=ADDR hex from a branch/loop operand."""
     if not operand or "to=" not in operand:
         return None
-    token = operand.split("to=")[1].split()[0].split(",")[0]
+    tail = operand.split("to=", 1)[1].split()
+    if not tail:
+        return None
+    token = tail[0].split(",")[0]
     try:
         return int(token, 16)
     except ValueError:
@@ -114,19 +154,21 @@ def parse_target(operand):
 
 
 def parse_vcall_slot(operand):
-    """Parse vcall=XXXX / this.vcall=XXXX -> slot hex string."""
+    """Parse vcall=XXXX / this.vcall=XXXX -> slot hex string (None if absent)."""
     if not operand:
         return None
     for prefix in ("this.vcall=", "vcall="):
         if operand.startswith(prefix):
-            return operand[len(prefix):].split("@")[0].split()[0]
+            tokens = operand[len(prefix):].split("@")[0].split()
+            return tokens[0] if tokens else None
     return None
 
 
 def parse_lit(operand):
     """Parse val=N / text='...' into a display literal."""
     if not operand:
-        return operand
+        # Never return None: Expr.text is a string everywhere (e.g. .strip()).
+        return ""
     if operand.startswith("val="):
         return operand[4:]
     if operand.startswith("text="):
@@ -136,6 +178,8 @@ def parse_lit(operand):
 
 def parse_lit_str(operand):
     """Extract the quoted string from a LitStr operand."""
+    if not operand:
+        return ""
     if "text=" in operand:
         return operand.split("text=", 1)[1]
     return repr(operand)
@@ -170,10 +214,10 @@ def _is_plumbing_temp(text):
 
 
 def _field_ref(operand):
-    """Render a MemLd/MemSt field offset as '.fXXXX'.
+    """Render a MemLd/MemSt offset operand as '.fXXXX'.
 
-    Operands look like 'mem=0002' or 'mem=0002.a0004'.  The first hex word
-    is the struct member offset.
+    A trailing '.aNNNN' sub-offset is intentionally dropped: MemLd*/MemSt*
+    only name the containing member.
     """
     if not operand or not operand.startswith("mem="):
         return ""
@@ -181,7 +225,16 @@ def _field_ref(operand):
     head = ref.split(".")[0]
     if head and head[0] in "0123456789":
         return ".f" + head
-    return "" + ref
+    # Non-numeric head: the caller concatenates addr + field, so a raw ref
+    # would yield "addrstack+8.fXXXX".  Drop the field (unreachable for PAL).
+    return ""
+
+
+def _render_label(label, operand):
+    """Render 'Label operand', omitting the '-' no-operand sentinel."""
+    if operand and operand != "-":
+        return "%s %s" % (label, operand)
+    return label
 
 
 # ----------------------------------------------------------------------
@@ -220,7 +273,8 @@ UNARY_OPS = {
     "FnFixR8": "Fix", "FnFixR4": "Fix",
 }
 
-# Transparent conversions: pop 1, push 1 (result text unchanged).
+# Transparent conversions (text unchanged), pop 1/push 1 in process().
+# CStr2Ansi / CStr2Uni are special-cased there and pop 2.
 CONV_LABELS = {
     "CI4I2", "CI2I4", "CI4I4", "CR8I2", "CR8I4", "CR4I2", "CR4I4",
     "CBoolI4", "CBoolI2", "CI2UI1", "CI4UI1", "CUI1I2", "CUI1I4",
@@ -237,7 +291,7 @@ LOAD_LABELS = {
     "FMemLdI2", "FMemLdI4", "FMemLdR4", "FMemLdR8", "FMemLdStr",
     "LitVarI2", "LitVar_Missing",
     "FLdRfVar", "FLdZeroAd",
-    # ByRef field loads: push the address reference (used as call/array base).
+    # ByRef field loads: push the address reference (call/array base).
     "FMemLdRf", "FMemLdRfVar", "FLdRf",
     "ImpAdLdRf", "ImpAdLdPr",
     "ImpAdLdI2", "ImpAdLdI4", "ImpAdLdR4", "ImpAdLdR8", "ImpAdLdCy",
@@ -245,7 +299,7 @@ LOAD_LABELS = {
     "FLdPr", "FLdPrThis",
 }
 
-# Array element load: pop 2 (index + arrayref), push 1 (arrayref(index)).
+# Array element load: pop 2 (index + arrayref), push 1.
 ARY_LOAD = {"Ary1LdI2", "Ary1LdI4", "Ary1LdRf", "Ary1LdPr", "Ary1LdR8",
             "Ary1LdUI1", "Ary1LdFPR4", "Ary1LdFPR8", "Ary1LdR4"}
 
@@ -275,16 +329,17 @@ STORE_LABELS = {
 
 STORE_NOPOP = {"FStStrNoPop"}
 
+# SetLastSystemError ends a void Declare call: flush the eval stack so the
+# discarded call result becomes a statement.  It is deliberately not a no-op
+# (that emits hundreds of _opaque comments and misplaces void calls); it never
+# drains a live condition.
 FREE_LABELS = {
     "SetLastSystemError",
 }
 
-# FFree* handlers free frame slots (mem=stack-N or byteLen=N stack=[...]),
-# NOT eval-stack items.  They should not flush the eval stack, because the
-# eval stack may hold comparison results or other values that are still
-# needed by the next BranchF/Call.  Previously they were in FREE_LABELS and
-# their flush_leftovers() call drained the eval stack, causing 17 of the 22
-# <empty> occurrences (If <empty> Then after FFree1Var drained the condition).
+# FFree* free frame slots, not eval-stack items.  They must not flush the
+# eval stack: it may hold a comparison result still needed by the next
+# BranchF/Call (the root of 17 of the 22 "<empty>" conditions).
 FFREE_LABELS = {
     "FFree1Str", "FFree1Var", "FFree1Ad", "FFree1R4", "FFree1R8",
     "FFreeStr", "FFreeVar", "FFreeAd",
@@ -298,19 +353,12 @@ CALL_LABELS = {
 
 CALL_NORETURN = {"ImpAdCallHresult"}
 
-# Runtime function arg counts, verified from p-code call patterns.
-# rtcMidCharVar: 4 args (start, length, source, ByRef output) -> Mid$()
-# rtcLeftCharVar: 3 args (length, source, ByRef output) -> Left$()
-# rtcStrFromVar: 1 arg (variant) -> Str$()
-# rtcVarStrFromVar: 2 args (variant, ByRef output) -> CStr()
-# rtcLeftTrimVar: 2 args (source, ByRef output) -> LTrim$()
-# rtcAnsiValueBstr: 1 arg (bstr) -> Asc()
-# rtcRandomNext: 1 arg (optional seed, often missing) -> Rnd()
-# rtcRandomize: 1 arg (seed) -> Randomize()
-# rtcMsgBox: 3 args (prompt, buttons, title) -> MsgBox()
-# rtcDoEvents: 0 args -> DoEvents()
-# rtcGetTimer: 0 args -> Timer
-# rtcBstrFromAnsi: 1 arg (ptr) -> StrConv()
+# Runtime function arg counts, each verified from the p-code push sequence at
+# its call sites.  Add an entry only with the proc/address that proves it.
+# rtcMidCharVar(4)=Mid$, rtcLeftCharVar(3)=Left$, rtcStrFromVar(1)=Str$,
+# rtcVarStrFromVar(2)=CStr$, rtcLeftTrimVar(2)=LTrim$, rtcAnsiValueBstr(1)=Asc,
+# rtcRandomNext(1)=Rnd, rtcRandomize(1), rtcMsgBox(3), rtcDoEvents(0),
+# rtcGetTimer(0), rtcBstrFromAnsi(1)=Chr (see RUNTIME_RENDER).
 RUNTIME_SPECS = {
     "VB40032.rtcMidCharVar": 4,
     "VB40032.rtcLeftCharVar": 3,
@@ -326,40 +374,40 @@ RUNTIME_SPECS = {
     "VB40032.rtcBstrFromAnsi": 1,
 }
 
-# Runtime functions with a ByRef output parameter (last arg).
-# When called, the output slot (a frame ref pushed via FLdRfVar) receives
-# the function result.  We record an alias so that subsequent loads of
-# that slot resolve to the VB expression (e.g. CStr(input)).
-#   out_index: index of the ByRef output arg (0-based, from oldest/source order).
-#   renderer: VB function name for display (e.g. "CStr", "LTrim").
-#   nargs: total arg count (including the ByRef output).
-#   input_map: list mapping VB arg position -> p-code arg index.
-#     e.g. Mid$(source, start, length) has p-code args [start, length, source],
-#     so input_map = [2, 0, 1] (VB arg0=source=p-code[2], VB arg1=start=p-code[0], etc.)
-RUNTIME_BYREF_SPECS = {
-    "VB40032.rtcVarStrFromVar": {
-        "nargs": 2, "out_index": 1, "renderer": "CStr",
-        "input_map": [0]},
-    "VB40032.rtcLeftTrimVar": {
-        "nargs": 2, "out_index": 1, "renderer": "LTrim",
-        "input_map": [0]},
-    "VB40032.rtcMidCharVar": {
-        "nargs": 4, "out_index": 3, "renderer": "Mid",
-        "input_map": [2, 0, 1]},  # Mid(source, start, length)
-    "VB40032.rtcLeftCharVar": {
-        "nargs": 3, "out_index": 2, "renderer": "Left",
-        "input_map": [1, 0]},  # Left(source, length)
+# rtcBstrFromAnsi builds a BSTR from one ANSI code == Chr$(code); all three
+# PAL.EXE sites build Chr(48 + n) & ".RPG" filenames.
+RUNTIME_RENDER = {
+    "VB40032.rtcBstrFromAnsi": "Chr",
 }
 
-# Win32 API arg counts (verified from call patterns):
-# _hread(hFile, buffer, count) = 3
-# _hwrite(hFile, buffer, count) = 3
-# _lclose(hFile) = 1
-# _lcreat(path, attr) = 2
-# _llseek(hFile, offset, origin) = 3
-# _lopen(path, mode) = 2
-# mciSendStringA(cmd, retBuf, retLen, hwnd) = 4
-# ShowCursor(show) = 1
+# Runtime helpers with a ByRef output slot (pushed last via FLdRfVar).  The
+# call records an alias so later loads of that slot render the VB expression.
+# TOS=ARG1 (same convention as _call), so the output is ARG1 (out_index 0)
+# and _byref_call does not reverse.
+#   nargs/out_index/renderer; input_map maps VB arg position -> input index.
+# Verified: rtcMidCharVar @00405718 pushes [1, stack-140, a0, &out] ->
+# Mid(a0, stack-140, 1) (char scan), so input_map = [0, 1, 2].
+RUNTIME_BYREF_SPECS = {
+    "VB40032.rtcVarStrFromVar": {
+        "nargs": 2, "out_index": 0, "renderer": "CStr",
+        "input_map": [0]},
+    "VB40032.rtcLeftTrimVar": {
+        "nargs": 2, "out_index": 0, "renderer": "LTrim",
+        "input_map": [0]},
+    "VB40032.rtcMidCharVar": {
+        "nargs": 4, "out_index": 0, "renderer": "Mid",
+        "input_map": [0, 1, 2]},  # Mid(source, start, length)
+    "VB40032.rtcLeftCharVar": {
+        "nargs": 3, "out_index": 0, "renderer": "Left",
+        "input_map": [0, 1]},  # Left(source, length)
+}
+
+# Win32 arg counts.  Keys follow the Lib string in PAL.EXE's Declare table
+# (what the disassembler prints in call=NAME@ADDR): the binary says
+# winmm.ShowCursor / kernel32.mciSendStringA even though the real DLLs are
+# user32/winmm.  Do not "fix" them -- a mismatch silently loses the arity.
+# _hread/_hwrite(h,buf,n)=3, _lclose(h)=1, _lcreat(path,attr)=2,
+# _llseek(h,off,org)=3, _lopen(path,mode)=2, mciSendStringA=4, ShowCursor=1.
 WIN32_SPECS = {
     "kernel32._hread": 3,
     "kernel32._hwrite": 3,
@@ -371,15 +419,8 @@ WIN32_SPECS = {
     "winmm.ShowCursor": 1,
 }
 
-# Argument order (uniform across all call kinds).
-#
-# The p-code evaluates a call's arguments onto its eval stack, and the
-# runtime hands them to the callee so that the *last* pushed value (the
-# eval-stack TOS) becomes the callee's first parameter (ARG1).  Popping
-# TOS-first therefore already yields source order, so _collect_args never
-# reverses the popped items -- this holds for internal `pub_*`/`priv_*`
-# procedures, for Declare-table stdcall targets (Pal.*, kernel32.*, ...)
-# and for the PE-imported VB40032.rtc* runtime helpers alike.
+# Call argument order (see _collect_args): the p-code pushes args so the TOS
+# is ARG1, so popping TOS-first already yields source order (no reverse).
 VCALL_LABELS = {"VCallHresult", "VCallI2", "VCallI4", "VCallAd",
                  "ThisVCallHresult", "ThisVCallI2", "ThisVCallI4",
                  "ThisVCallAd"}
@@ -407,13 +448,8 @@ STMT_LABELS = {
     "AryLock", "AryUnlock",
 }
 
-# Statement-level ops that consume values from the eval stack.
-# Confirmed by handler disassembly:
-#   Close: pop 1 (file number); cmp [esp],0; jne → call(ret 4) / pop eax
-#   Erase: pop 1 (array ref); xchg [esp],0; push; call(ret 8) cleans both
-#   CopyBytes: pop 2 (dest, source); pop edi; pop esi; rep movs
-#   Open: pop 3 (filename, file_number, record_length); call helper ret 0x10
-#   GetRecOwner3: pop 2 (array_ref, file_number); call helper ret 0x0c
+# Statement ops that pop eval-stack values (counts verified by handler
+# disassembly; operand order documented in _stmt_pop).
 STMT_POP_LABELS = {
     "Close": 1,
     "Erase": 1,
@@ -422,10 +458,7 @@ STMT_POP_LABELS = {
     "GetRecOwner3": 2,
 }
 
-# Variant binary ops: pop 2 variants, push 1 result.
-# AddVar = variant + (numeric add or string concat), EqVar = variant =.
-# Confirmed by handler disassembly: AddVar calls helper then pushes result;
-# EqVar pops 2, compares, pushes boolean.
+# Variant binary ops: pop 2, push 1 (AddVar = numeric add or string concat).
 VAR_BINARY_OPS = {
     "AddVar": "+",
     "EqVar": "=",
@@ -449,14 +482,12 @@ PLUMBING = {
 # ----------------------------------------------------------------------
 
 class Expr(object):
-    """An expression on the evaluation stack.
+    """An eval-stack expression.
 
-    ``effects`` tracks deferred call side-effects (origin_va, call_text)
-    that are embedded in this expression.  When the expression is consumed
-    by a store, condition, or outer call, the effects are considered
-    realised (the call text appears in the consuming statement).  When the
-    expression is flushed as a standalone leftover, its effects are emitted
-    as independent ``Call ...`` statements at their original source order.
+    effects: deferred call side-effects as (order, va, text) triples embedded
+    in this expression.  They are realised when the value is consumed by a
+    store, condition, or outer call, and emitted as standalone "Call ..."
+    statements when the value is flushed unconsumed.
     """
     __slots__ = ("text", "is_call", "effects")
 
@@ -482,50 +513,88 @@ class Stmt(object):
 
 
 class StackMachine(object):
-    """Linear stack-machine decompiler for one procedure.
+    """Expression folder and statement emitter for one procedure.
 
-    Walks instructions in order, maintaining an expression stack and a
-    pending-If target stack.  Emits Stmt objects.
+    Walks straight-line instructions in order, maintaining the evaluation
+    stack and emitting Stmt objects.  Control-flow opcodes are rejected (see
+    the module docstring); structuring.py drives those and calls in here for
+    the For/Next stack bookkeeping.
     """
+
+    # Mutable state captured by checkpoint()/restore(); listed here so
+    # rollback cannot drift.  Lists are shallow-copied (Expr is immutable
+    # after construction); dicts are deep-copied.  arg_map/param_map/
+    # exit_keyword/result_* are set once by _prepare_proc but included so
+    # restore() is complete by construction.
+    _SNAPSHOT_SCALARS = ("_source_order", "exit_keyword",
+                         "result_slot", "result_name")
+    _SNAPSHOT_LISTS = ("stack", "statements", "pending_loops")
+    _SNAPSHOT_DICTS = ("temp_aliases", "_alias_effects", "_pending_byref",
+                       "arg_map", "param_map")
 
     def __init__(self):
         self.stack = []
         self.statements = []
-        self.pending_ifs = []  # [(target_va, is_crossproc, open_va), ...]
-        self.if_stack_depths = []  # stack depth at each If open, for flush-on-close
-        self.pending_loops = []  # [exit_target, ...] for Next/Loop end
-        self.loop_starts = []  # VA where each For loop started
-        self.completed_loop_starts = []  # VAs of loops that have finished
-        self.proc_start = 0
-        self.proc_end = 0
+        # Loop-var ref text per open For, innermost last; _loop_end consumes
+        # the NextI2 write-back from the top entry.
+        self.pending_loops = []
         self.arg_map = {}  # proc name -> arg count
         self.param_map = {}  # stack offset -> param name (e.g. {12: "a0"})
         self.exit_keyword = "Exit Sub"  # Functions override to "Exit Function"
         self.result_slot = None  # Function result-slot offset (e.g. -134)
         self.result_name = None  # Function result slot renders as the proc name
-        self._after_goto = False
         self._source_order = 0  # monotonic counter for statement ordering
-        self._insert_anchors = {}  # after_order -> last insert index (FIFO)
         self.temp_aliases = {}  # frame slot -> alias expression text
         self._alias_effects = {}  # frame slot -> deferred effects for alias
+        # ByRef calls whose output slot has not been loaded yet:
+        # slot -> (order, va, call_text, effects); drained by
+        # _flush_pending_byref so an unread call is not dropped.
+        self._pending_byref = {}
 
     def _subst_param(self, text):
         """Replace stack+N references with parameter names where applicable,
         and the Function result slot (stack-N) with the proc name."""
         if not text:
             return text
-        import re as _re
         if self.param_map:
             def repl(m):
                 off = int(m.group(1))
                 return self.param_map.get(off, m.group(0))
-            text = _re.sub(r'stack\+(\d+)', repl, text)
+            text = _STACK_POS_RE.sub(repl, text)
         if self.result_slot is not None and self.result_name:
             rslot, rname = self.result_slot, self.result_name
             def repl_neg(m):
                 return rname if -int(m.group(1)) == rslot else m.group(0)
-            text = _re.sub(r'stack-(\d+)', repl_neg, text)
+            text = _STACK_NEG_RE.sub(repl_neg, text)
         return text
+
+    def _slot_key(self, operand):
+        """Canonical frame-slot key for alias create/invalidate.
+
+        _subst_param renames the Function result slot (stack-134) to the proc
+        name, so raw text would not match the recorded alias.
+        """
+        return self._subst_param(parse_mem(operand))
+
+    def _resolve_alias(self, slot):
+        """Resolve a frame-slot alias -> (text, effects, is_call), or None.
+
+        A pending ByRef call's own effect is appended after the input effects
+        so a stranded alias renders as "Call CStr(x)".  Consuming the pending
+        entry here prevents the discarded-call fallback from emitting it twice.
+        """
+        alias = self.temp_aliases.get(slot)
+        if alias is None:
+            return None
+        effects = list(self._alias_effects.pop(slot, []))
+        pending = self._pending_byref.pop(slot, None)
+        is_call = False
+        if pending is not None:
+            order, va, text, _input_effects = pending
+            effects.append((order, va, text))
+            is_call = True
+        del self.temp_aliases[slot]
+        return alias, effects, is_call
 
     # -- stack helpers ------------------------------------------------------
 
@@ -542,166 +611,149 @@ class StackMachine(object):
         self.statements.append(
             Stmt(va, indent_delta, text, order=self._source_order))
 
-    def _insert_stmt(self, after_order, va, indent_delta, text):
-        """Insert a statement after the statement with order == after_order.
+    def _insert_stmt(self, _origin_order, va, indent_delta, text):
+        """Insert a deferred statement at its original p-code address.
 
-        Used by flush_leftovers to place deferred ``Call ...`` statements
-        at their original source position (before statements that were
-        emitted later but consumed the call result).
-
-        Positioning is by instruction address (``va``): the deferred call
-        belongs at its own p-code location, i.e. after every statement
-        emitted from an instruction at or before ``va``.  Ordering by
-        ``order`` breaks when a later flush inserts a statement whose
-        newly-assigned order (e.g. 16) exceeds an earlier normally-emitted
-        statement's order (e.g. 15) — the caller of the first insert then
-        anchors on the wrong statement and lands after it (verified:
-        pub_148's ``bufPtr = Pal.arrayptr(...)`` leaked below the two
-        deferred calls that precede it in address order).
+        Positions by instruction address (va), not by source order: a later
+        flush can assign a higher order than an earlier normal statement,
+        which would misplace the insert (verified: pub_148 leaked bufPtr
+        below two earlier deferred calls).  _origin_order is accepted for
+        call-site readability only.
         """
         self._source_order += 1
         new_stmt = Stmt(va, indent_delta, text, order=self._source_order)
-        # Insert after the last statement whose instruction address is <= va.
-        # (Statements are emitted in address order apart from earlier
-        # inserts, and each p-code instruction emits at most once, so a
-        # linear scan from the end is both correct and cheap.)
-        insert_idx = len(self.statements)
+        # Insert after the last statement whose address is <= va.  Statements
+        # are emitted in address order apart from earlier inserts, so a
+        # linear scan from the end is both correct and cheap.
+        insert_idx = 0
         for i in range(len(self.statements) - 1, -1, -1):
             if self.statements[i].va <= va:
                 insert_idx = i + 1
                 break
-            if i == 0:
-                insert_idx = 0
         self.statements.insert(insert_idx, new_stmt)
-        self._insert_anchors[va] = insert_idx
+
+    def checkpoint(self):
+        """Snapshot all mutable emission state (used by the ElseIf-leg probe).
+
+        CONTRACT: the snapshot must cover ALL mutable state — statements,
+        stack, deferred calls, alias effects, bookkeeping scalars — so
+        that restore() is a complete rollback.  structuring.py's
+        _leg_is_pure_cond trial-processes a candidate leg and then
+        restores, relying on no probe effects surviving (only the
+        "DEFERRED calls are invisible" subtlety documented there, which
+        is a property of deferral, not of an incomplete snapshot)."""
+        snap = {name: getattr(self, name) for name in self._SNAPSHOT_SCALARS}
+        for name in self._SNAPSHOT_LISTS:
+            snap[name] = list(getattr(self, name))
+        for name in self._SNAPSHOT_DICTS:
+            # deepcopy, not dict(): _alias_effects values are lists, so a
+            # shallow copy would share them with the live state and an
+            # in-place probe edit would survive restore().
+            snap[name] = copy.deepcopy(getattr(self, name))
+        return snap
+
+    def restore(self, cp):
+        """Roll back to a checkpoint() snapshot (in place: callers hold
+        references to self.statements / self.stack)."""
+        for name in self._SNAPSHOT_SCALARS:
+            setattr(self, name, cp[name])
+        for name in self._SNAPSHOT_LISTS:
+            getattr(self, name)[:] = cp[name]
+        for name in self._SNAPSHOT_DICTS:
+            target = getattr(self, name)
+            target.clear()
+            target.update(cp[name])
+
+    def _flush_pending_byref(self, slot=None):
+        """Emit a ByRef call whose output slot was never loaded.
+
+        _byref_call records an alias but pushes nothing; an unread call would
+        otherwise vanish.  Emitted as a discarded "Call <expr>" at its origin.
+        """
+        if slot is None:
+            pending = list(self._pending_byref.values())
+            self._pending_byref.clear()
+        else:
+            entry = self._pending_byref.pop(slot, None)
+            pending = [entry] if entry is not None else []
+        for origin_order, origin_va, call_text, effects in pending:
+            # Inputs are evaluated before the call: surface their effects first.
+            for eff_order, eff_va, eff_text in effects:
+                self._insert_stmt(eff_order, eff_va, 0,
+                                  "Call %s" % eff_text)
+            self._insert_stmt(origin_order, origin_va, 0,
+                              "Call %s" % call_text)
+
+    def _emit_stranded(self, item, va):
+        """Emit one stranded eval-stack value.
+
+        Shared by the three flush paths: effects become "Call ..." statements
+        at their origin, a bare call value becomes "Call <text>", and plumbing
+        temps / empty / <missing> values are dropped.  Returns True if the item
+        was consumed (effects realised or text emitted), not merely dropped.
+        """
+        if not item.text or item.text in ("<missing>", "<empty>"):
+            return False
+        if item.effects:
+            for origin_order, origin_va, call_text in item.effects:
+                self._insert_stmt(origin_order, origin_va, 0,
+                                  "Call %s" % call_text)
+            return True
+        if not item.is_call and _is_plumbing_temp(item.text.strip()):
+            return False
+        stmt = item.text
+        if item.is_call:
+            stmt = "Call " + stmt
+        self.emit(va, 0, stmt)
+        return True
+
+    def _realise_effects(self, items):
+        """Insert each item's deferred Call effects at their origin.
+
+        Only for callers that discard the operand text; callers that embed the
+        text already realise the effect and must not call this (would duplicate).
+        """
+        for item in items:
+            for origin_order, origin_va, call_text in item.effects:
+                self._insert_stmt(origin_order, origin_va, 0,
+                                  "Call %s" % call_text)
 
     def flush_leftovers(self, va):
         """Emit stranded stack values as statements (discarded results).
 
-        Bare variable references (e.g. 'stack-216') are plumbing temps
-        (FLdI4/FLdRfVar pushed for string conversions or ByRef calls) that
-        were never consumed; they are not meaningful statements and are
-        silently dropped.
-
-        Expressions that carry deferred call effects (``Expr.effects``) are
-        emitted as independent ``Call ...`` statements.  Each effect is
-        inserted at the source-order position of its *origin* — the point
-        where the call instruction was processed — rather than at the
-        current flush position.  This ensures ``Call foo()`` appears before
-        subsequent stores that consumed the call result.
+        Bare plumbing temps (stack-216, mem_*, len=) are dropped.  Deferred
+        effects become "Call ..." statements inserted at their origin, so a
+        call appears before later stores that consumed its result.
         """
-        while self.stack:
-            item = self.stack.pop(0)
-            if not item.text or item.text == "<missing>":
-                continue
-            stripped = item.text.strip()
-            # If this item carries deferred call effects, emit each as an
-            # independent Call at its original source position.
-            if item.effects:
-                for origin_order, origin_va, call_text in item.effects:
-                    self._insert_stmt(origin_order, origin_va, 0, "Call %s" % call_text)
-                continue
-            # Skip bare plumbing temps (plain stack offsets, mem_ refs).
-            if not item.is_call and _is_plumbing_temp(stripped):
-                continue
-            stmt = item.text
-            if item.is_call:
-                stmt = "Call " + stmt
-            self.emit(va, 0, stmt)
+        # A ByRef call whose output slot was never loaded is also a
+        # discarded call; surface it here (at its own va).
+        self._flush_pending_byref()
+        items = self.stack[:]
+        self.stack[:] = []
+        for item in items:
+            self._emit_stranded(item, va)
 
     def _flush_to_depth(self, va, depth):
-        """Flush stack values above *depth* as discarded-call statements.
+        """Flush stack values above *depth* as discarded calls (closing an If)."""
+        if len(self.stack) <= depth:
+            return
+        excess = self.stack[depth:]
+        del self.stack[depth:]
+        for item in excess:
+            self._emit_stranded(item, va)
 
-        Used when closing an If: values pushed inside the If body that
-        were not consumed must not flow into code after the End If.
-        Each is emitted as a ``Call ...`` statement at its original source
-        position (like flush_leftovers) so it appears inside the If body.
+    def flush_calls_above(self, va, depth):
+        """Flush only stranded CALL values above *depth* at a block boundary.
+
+        Keeps the Call inside the block that produced it instead of shifting
+        later label positions.
         """
         while len(self.stack) > depth:
-            item = self.stack.pop(depth)  # remove first excess item
-            if not item.text or item.text == "<missing>":
-                continue
-            stripped = item.text.strip()
-            if item.effects:
-                for origin_order, origin_va, call_text in item.effects:
-                    self._insert_stmt(origin_order, origin_va, 0, "Call %s" % call_text)
-                continue
-            if not item.is_call and _is_plumbing_temp(stripped):
-                continue
-            stmt = item.text
-            if item.is_call:
-                stmt = "Call " + stmt
-            self.emit(va, 0, stmt)
-
-    def close_ifs(self, addr):
-        """Close any pending If whose target <= addr (in-proc targets).
-
-        Cross-proc If targets (target outside proc) are closed at the next
-        control-flow boundary instead, since their End If lives in another
-        procedure and will never be reached linearly.
-        """
-        while self.pending_ifs:
-            tgt, is_cross, _ova = self.pending_ifs[-1]
-            if is_cross:
-                # Close cross-proc Ifs at control-flow boundaries only.
-                break
-            if tgt > addr:
-                break
-            self.pending_ifs.pop()
-            # Flush values pushed inside this If that weren't consumed.
-            # These are call results from the If body that would otherwise
-            # flow into code after the End If, which is semantically wrong
-            # (the value may not exist if the condition was false).
-            if self.if_stack_depths:
-                if_depth = self.if_stack_depths.pop()
-                if len(self.stack) > if_depth:
-                    self._flush_to_depth(addr, if_depth)
-            self.emit(addr, -1, "End If")
-
-    def close_ifs_before_loop_end(self, exit_tgt):
-        """Close Ifs before emitting Next, including cross-proc Ifs.
-
-        A cross-proc If whose false-branch target lands at or before the
-        loop's exit point must be closed before the Next keyword, since its
-        End If logically sits inside the loop body (before Next).
-
-        However, a cross-proc If that was opened *before* the loop started
-        encloses the loop, so its End If must come *after* Next — don't
-        close it here.
-        """
-        loop_start_va = self.loop_starts[-1] if self.loop_starts else None
-        while self.pending_ifs:
-            tgt, is_cross, ova = self.pending_ifs[-1]
-            if tgt > exit_tgt:
-                break
-            if loop_start_va is not None and ova < loop_start_va:
-                # This If encloses the loop; its End If is after Next.
-                break
-            self.pending_ifs.pop()
-            if self.if_stack_depths:
-                if_depth = self.if_stack_depths.pop()
-                if len(self.stack) > if_depth:
-                    self._flush_to_depth(exit_tgt, if_depth)
-            self.emit(exit_tgt, -1, "End If")
-
-    def close_crossproc_ifs(self, one=False):
-        """Close pending cross-proc Ifs (called at branch/terminator).
-
-        If one=True, close only the innermost cross-proc If (used after a
-        GoTo that ends an If body).
-        """
-        while self.pending_ifs:
-            tgt, is_cross, _ova = self.pending_ifs[-1]
-            if not is_cross:
-                break
-            self.pending_ifs.pop()
-            if self.if_stack_depths:
-                if_depth = self.if_stack_depths.pop()
-                if len(self.stack) > if_depth:
-                    self._flush_to_depth(0, if_depth)
-            self.emit(0, -1, "End If")
-            if one:
-                break
+            item = self.stack[depth]
+            if not item.is_call and not item.effects:
+                break  # non-call value: leave it for the next block
+            self.stack.pop(depth)
+            self._emit_stranded(item, va)
 
     # -- main dispatch ------------------------------------------------------
 
@@ -709,16 +761,6 @@ class StackMachine(object):
         label = instr.label
         operand = instr.operand
         va = instr.pos
-
-        # Close pending Ifs before processing (targets reached).
-        self.close_ifs(va)
-        # After an unconditional branch (GoTo), the next instruction is the
-        # false-branch landing point of any open cross-proc If whose body
-        # ended with that GoTo.  Close it here so End If appears before the
-        # fallthrough code, not at the proc terminator.
-        if self._after_goto:
-            self._after_goto = False
-            self.close_crossproc_ifs(one=True)
 
         if label in BINARY_OPS:
             self._binary(BINARY_OPS[label])
@@ -730,13 +772,10 @@ class StackMachine(object):
             self._unary(UNARY_OPS[label])
         elif label in CONV_LABELS:
             if label == "CStr2Ansi":
-                # CStr2Ansi: pop 2 (frame slot pointer pushed by FLdRfVar at
-                # TOS, source string below it), convert the string to ANSI,
-                # store the pointer in the frame slot.  The pointer is loaded
-                # separately by the following FLdI4.  VB converts a String
-                # implicitly when passing it to an ANSI API, so record an
-                # alias for the slot: the FLdI4 load then resolves to the
-                # original string expression instead of a bare temp.
+                # CStr2Ansi: pop 2 (slot ptr at TOS, source below), convert,
+                # store ptr in the slot.  Alias the slot to the source so the
+                # following FLdI4 renders the original string (VB passes a
+                # String to an ANSI API implicitly).
                 slot_ref = self.pop()
                 src = self.pop()
                 slot = strip(slot_ref.text)
@@ -745,13 +784,11 @@ class StackMachine(object):
                     if src.effects:
                         self._alias_effects[slot] = list(src.effects)
             elif label == "CStr2Uni":
-                # CStr2Uni: pop 2 (ANSI pointer + destination slot pointer).
-                # The converted-back value is only used by the string-free
-                # epilogue, so we pop 2 and push 0 without recording an alias.
+                # CStr2Uni: pop 2 (ANSI ptr + dest slot ptr); the value only
+                # feeds the string-free epilogue, so no alias.
                 self.pop()
                 self.pop()
-            else:
-                pass  # transparent (pop 1 push 1, text unchanged)
+            # else: transparent conversion (pop 1 push 1, text unchanged).
         elif label in PLUMBING:
             pass  # transparent pointer/address plumbing
         elif label in STMT_LABELS:
@@ -785,38 +822,42 @@ class StackMachine(object):
         elif label in FREE_LABELS:
             self.flush_leftovers(va)
         elif label in FFREE_LABELS:
-            # FFree* free frame slots, not eval-stack items.
-            # No stack effect, no flush — the eval stack may hold
-            # results still needed by the next BranchF/Call.
-            # Invalidate any aliases for freed slots.
+            # FFree* free frame slots, not eval-stack items: no stack effect,
+            # no flush.  Just invalidate any aliases for the freed slots.
             if operand and "stack=[" in operand:
-                # FFreeVar byteLen=N stack=[-248, -264, ...]
-                slots_part = operand.split("stack=[")[1].rstrip("]")
+                # FFreeVar byteLen=N stack=[-248, -264, ...].  Cut at the
+                # FIRST ']' (rstrip would strip a stray suffix into bogus keys).
+                slots_part = operand.split("stack=[", 1)[1].split("]", 1)[0]
                 for s in slots_part.split(","):
                     s = s.strip()
                     if s:
-                        key = "stack" + s
+                        key = self._slot_key("stack" + s)
                         if key in self.temp_aliases:
                             del self.temp_aliases[key]
                         self._alias_effects.pop(key, None)
+                        # A freed slot holding an unresolved ByRef call means
+                        # the call result was discarded.
+                        self._flush_pending_byref(key)
             elif operand and "mem=" in operand:
-                key = self._subst_param(parse_mem(operand))
+                key = self._slot_key(operand)
                 if key in self.temp_aliases:
                     del self.temp_aliases[key]
                 self._alias_effects.pop(key, None)
-            pass
-        elif label in COND_BRANCH:
-            self._cond_branch(label, operand, va)
-        elif label in UNCOND_BRANCH:
-            self._uncond_branch(label, operand, va)
+                self._flush_pending_byref(key)
         elif label in TERMINATOR_LABELS:
             self._terminator(label, va)
         elif label == "Return":
             self.emit(va, 0, "Return")
-        elif label in LOOP_START:
-            self._loop_start(label, operand, va)
-        elif label in LOOP_END:
-            self._loop_end(label, operand, va)
+        elif (label in COND_BRANCH or label in UNCOND_BRANCH
+              or label in LOOP_START or label in LOOP_END):
+            # Control flow belongs to structuring.py, which handles these
+            # opcodes itself and only calls in for straight-line instructions
+            # (For/Next bookkeeping goes through _loop_start/_loop_end).
+            # Reaching here means a caller bypassed the structurer.
+            raise RuntimeError(
+                "control-flow opcode %s @0x%08X reached "
+                "StackMachine.process(); use structuring.structure_proc"
+                % (label, va))
         else:
             self._opaque(label, operand, va)
 
@@ -825,71 +866,83 @@ class StackMachine(object):
     def _binary(self, op):
         b = self.pop()
         a = self.pop()
-        # Propagate deferred call effects from both operands.
         effects = list(a.effects) + list(b.effects)
+        # Unconditional parens: the p-code operand tree is precedence-flat, so
+        # wrapping every binary result guarantees the rendered grouping matches.
         self.push("(%s %s %s)" % (a.text, op, b.text), effects=effects)
 
     def _unary(self, op):
         a = self.pop()
-        # Propagate deferred call effects.
         effects = list(a.effects)
         if op == "-":
             text = strip(a.text)
-            if _has_top_level_binary_op(text):
-                # UMi* negates the whole popped operand: -(a + b) is not
-                # -a + b. Parenthesize compound operands so the rendered
-                # precedence matches the p-code (in re: enemy_physical_attack
-                # rngVal = -(hitChance + 10), was rendered -hitChance + 10).
+            if _has_top_level_binary_op(text) or text.startswith("-"):
+                # UMi* negates the whole operand: -(a + b) != -a + b.
+                # A leading '-' is parenthesized too: "--a" is valid VB but
+                # reads as a typo, while "-(-a)" is unambiguous.
                 self.push("-(" + text + ")", effects=effects)
             else:
                 self.push("-" + text, effects=effects)
+        elif op == "Not":
+            self.push("Not (%s)" % strip(a.text), effects=effects)
         else:
-            self.push("%s (%s)" % (op, strip(a.text)), effects=effects)
+            # Function-style unary ops render as Len(x), not "Len (x)".
+            self.push("%s(%s)" % (op, strip(a.text)), effects=effects)
 
     def _load(self, label, operand):
-        if label in ("LitI2", "LitI2_10", "LitI4", "LitR4", "LitR8", "LitDate"):
+        if label == "LitI2_10" and "val=" not in (operand or ""):
+            # Dedicated push-10 opcode; never leak the '-' sentinel.
+            self.push("10")
+        elif label in ("LitI2", "LitI2_10", "LitI4", "LitR4", "LitR8", "LitDate"):
             self.push(parse_lit(operand))
         elif label in ("LitStr", "LitVarStr"):
             self.push(parse_lit_str(operand))
         elif label == "LitVar_Missing":
             self.push("<missing>")
         elif label == "LitVarI2":
-            if "val=" in operand:
-                self.push(operand.split("val=")[1].split()[0])
+            if operand and "val=" in operand:
+                # An empty val= would make split() yield [] -> IndexError.
+                token = operand.split("val=", 1)[1].strip()
+                self.push(token.split()[0] if token else "<missing>")
             else:
-                self.push(self._subst_param(parse_mem(operand)))
+                ref = self._subst_param(parse_mem(operand))
+                self.push(ref if ref and ref != "-" else "<missing>")
         elif label == "FLdZeroAd":
             self.push("0")
+        elif label == "FLdPrThis":
+            # Push Me; the operand is the '-' sentinel, not a literal.
+            self.push("Me")
+        elif label == "FLdPr":
+            # Push the frame-slot object pointer (Me on a malformed operand).
+            if operand and operand != "-":
+                self.push(self._subst_param(parse_mem(operand)))
+            else:
+                self.push("Me")
         elif label.startswith("ImpAdLd"):
-            # ImpAdLd* push a form-module slot reference; parse_mem rewrites
-            # the global=XXXXX operand to the same Me.fXXXX form as FMemLd*.
+            # ImpAdLd* push a form-module slot ref; global= already renders
+            # Me.fXXXX, so it skips _subst_param (nothing to rewrite).
+            # A missing operand must not reach startswith/parse_mem as None.
+            operand = operand or ""
             if operand.startswith("global="):
                 self.push(parse_mem(operand))
             else:
                 self.push(self._subst_param(parse_mem(operand)))
         elif label == "FLdRfVar":
             slot = self._subst_param(parse_mem(operand))
-            # If this slot has a recorded alias (from a ByRef runtime call),
-            # resolve to the alias expression instead of the raw ref.
-            alias = self.temp_aliases.get(slot)
-            if alias is not None:
-                effects = self._alias_effects.pop(slot, [])
-                self.push(alias, effects=effects)
-                # The alias is consumed; invalidate it so a later store to
-                # the same slot isn't confused.
-                del self.temp_aliases[slot]
+            # Resolve a ByRef alias if this slot has one.
+            resolved = self._resolve_alias(slot)
+            if resolved is not None:
+                text, effects, is_call = resolved
+                self.push(text, is_call=is_call, effects=effects)
             else:
                 self.push(slot)
         elif label in ("FLdI2", "FLdI4", "FLdR4", "FLdR8", "FLdUI1"):
-            # Frame value load.  If the slot has an alias (e.g. the ANSI
-            # conversion temp recorded by CStr2Ansi), resolve to the alias
-            # expression instead of the raw slot reference.
+            # Resolve a CStr2Ansi/ByRef alias if this slot has one.
             slot = self._subst_param(parse_mem(operand))
-            alias = self.temp_aliases.get(slot)
-            if alias is not None:
-                effects = self._alias_effects.pop(slot, [])
-                self.push(alias, effects=effects)
-                del self.temp_aliases[slot]
+            resolved = self._resolve_alias(slot)
+            if resolved is not None:
+                text, effects, is_call = resolved
+                self.push(text, is_call=is_call, effects=effects)
             else:
                 self.push(slot)
         else:
@@ -899,24 +952,32 @@ class StackMachine(object):
         # Ary1Ld*: stack top = arrayref, below = index.
         ary = self.pop()
         idx = self.pop()
-        effects = list(ary.effects) + list(idx.effects)
+        # idx is the deeper operand (pushed first), so its deferred effects
+        # precede the array ref's in evaluation order.
+        effects = list(idx.effects) + list(ary.effects)
         self.push("%s(%s)" % (strip(ary.text), strip(idx.text)),
                   effects=effects)
 
     def _ary_n_load(self, label, operand):
-        # AryLd*: multi-dimensional.  descriptor=0xNNNN gives dim count.
-        ndim = _parse_dim_count(operand) or 2
+        # AryLd* multi-dim; fall back to 2 dims (AryLdPr/Rf are always 2-D
+        # here, and 0 dims would collapse to the bare array name).
+        ndim = _parse_dim_count(operand)
+        if ndim <= 0:
+            ndim = 2
         ary = self.pop()
         indices = [self.pop() for _ in range(ndim)]
         indices.reverse()
-        effects = list(ary.effects)
+        # indices are the deeper operands (pushed first); ary is TOS last.
+        effects = []
         for x in indices:
             effects.extend(x.effects)
+        effects.extend(ary.effects)
         idx_str = ", ".join(strip(x.text) for x in indices)
         self.push("%s(%s)" % (strip(ary.text), idx_str), effects=effects)
 
     def _ary_store(self, label, operand, va):
         # Ary1St*: stack top = arrayref, below = index, below = value.
+        # The texts are embedded in the assignment, so effects are realised.
         ary = self.pop()
         idx = self.pop()
         val = self.pop()
@@ -931,7 +992,7 @@ class StackMachine(object):
                   effects=list(addr.effects))
 
     def _mem_st(self, label, operand, va):
-        # MemSt*: stack top = address, below = value.
+        # MemSt*: stack top = address, below = value; texts are embedded.
         addr = self.pop()
         val = self.pop()
         field = _field_ref(operand)
@@ -941,27 +1002,34 @@ class StackMachine(object):
     def _store(self, label, operand, va):
         dst = self._subst_param(parse_mem(operand))
         val = self.pop()
-        # The store consumes the value's deferred call effects — they are
-        # now realised inside this assignment.  Clear effects so they are
-        # not re-emitted by a later flush.
-        val.effects = []
-        # Invalidate any alias for the destination slot (it's being overwritten).
+        # Save effects before the store realises them: the NoPop variant
+        # re-pushes the value for its real consumer and must keep them.  Do
+        # not clear val.effects in place -- a checkpoint snapshot may still
+        # reference the popped Expr.
+        saved_effects = list(val.effects)
+        # The destination is being overwritten: drop its alias.
         if dst in self.temp_aliases:
             del self.temp_aliases[dst]
         self._alias_effects.pop(dst, None)
+        # An unresolved ByRef call in the destination is discarded by the store.
+        self._flush_pending_byref(dst)
         if label in STORE_NOPOP:
-            self.emit(va, 0, "%s = %s" % (dst, strip(val.text)))
-            # For STORE_NOPOP, the value stays on the stack as a plain
-            # reference (the assignment already emitted it).  Push without
-            # effects to avoid duplicate Call emission.
-            self.push(val.text)
+            # FStStrNoPop copies the BSTR ref into a frame slot for the
+            # FFree1Str epilogue; the value stays on the eval stack for the
+            # real consumer (slot never read back, all 29 PAL sites verified).
+            # Emitting an assignment produced phantom statements and
+            # duplicated the call text.  Re-push with effects intact.
+            self.push(val.text, is_call=val.is_call, effects=saved_effects)
         else:
             self.emit(va, 0, "%s = %s" % (dst, strip(val.text)))
 
     def _fixed_str_store(self, label, operand, va):
         # StFixedStr: pop source BSTR + buffer address (silent store).
-        self.pop()  # source string
-        self.pop()  # buffer address
+        src = self.pop()  # source string
+        buf = self.pop()  # buffer address
+        # No statement is emitted, so the discarded texts' effects must be
+        # surfaced explicitly.
+        self._realise_effects((src, buf))
 
     def _fixed_str_load(self, label, operand, va):
         # LdFixedStr: pop buffer address, push the fixed-string value.
@@ -970,7 +1038,6 @@ class StackMachine(object):
 
     def _call(self, label, operand, va):
         name = parse_call(operand) or "<unknown>"
-        # Check for ByRef runtime functions (rtcVarStrFromVar, etc.).
         byref_spec = RUNTIME_BYREF_SPECS.get(name)
         if byref_spec is not None:
             self._byref_call(name, byref_spec, va)
@@ -983,266 +1050,168 @@ class StackMachine(object):
                 nargs = WIN32_SPECS.get(name)
             if nargs is None:
                 nargs = declare_specs.DECLARE_SPECS.get(name)
-        # Argument order.  The p-code evaluates a call's arguments onto
-        # its eval stack, and the runtime hands them to the callee so
-        # that the *last* pushed value (the eval-stack TOS) becomes the
-        # callee's first parameter (ARG1).  Popping TOS-first therefore
-        # already yields source order, so _collect_args must NOT reverse
-        # the popped items -- for internal `pub_*`/`priv_*` procedures,
-        # for Declare-table stdcall targets (Pal.*, kernel32.*, ...) and
-        # for the VB40032 runtime helpers (VB40032.rtc*) alike.
-        args = self._collect_args(nargs, reverse=False)
+        # Args push so TOS=ARG1, so popping TOS-first is already source order
+        # (reverse=False) for internal, Declare, and rtc* calls alike.  strict:
+        # a known arity larger than the eval stack is a p-code parse error, so
+        # raise (per-proc error stub) instead of silently dropping args.  Never
+        # fires on PAL.EXE (all 198 procs verified), so output is unchanged.
+        args = self._collect_args(nargs, reverse=False, strict=True)
+        disp = RUNTIME_RENDER.get(name, name)
         if label in CALL_NORETURN:
-            if args:
-                self.emit(va, 0, "%s %s" % (name, args))
-            else:
-                self.emit(va, 0, "Call %s" % name)
+            # No-return call: same "Call name(args)" shape, no result push.
+            self.emit(va, 0, "Call %s(%s)" % (disp, args))
         else:
-            call_text = "%s(%s)" % (name, args)
-            # Record the call as a deferred effect so that if the result
-            # is never consumed, flush_leftovers emits "Call name(args)"
-            # at the original source position (not at flush time).
+            call_text = "%s(%s)" % (disp, args)
+            # Deferred effect: if the result is never consumed,
+            # flush_leftovers emits "Call name(args)" at its origin.
             self.push(call_text, is_call=True,
                       effects=[(self._source_order, va, call_text)])
 
     def _byref_call(self, name, spec, va):
         """Handle a ByRef runtime function (e.g. rtcVarStrFromVar).
 
-        These functions take input args plus a ByRef output slot (pushed
-        via FLdRfVar).  The function writes its result to the output slot.
-        We record a temp alias so subsequent FLdRfVar loads of that slot
+        Inputs plus a ByRef output slot (pushed via FLdRfVar); the result is
+        written to that slot.  Record an alias so later loads of the slot
         resolve to the VB expression (e.g. CStr(input)).
         """
         nargs = spec["nargs"]
         out_index = spec["out_index"]
         renderer = spec["renderer"]
-        # Pop args (TOS first).  These use VB internal convention
-        # (left-to-right push), so we reverse to get source order.
-        if not self.stack:
+        # Check the output slot is present BEFORE popping: a malformed operand
+        # must not drain the eval stack and then bail out.  Surface the call
+        # as a diagnostic so a truncated stack does not silently drop it.
+        if len(self.stack) <= out_index:
+            self.emit(va, 0, "# %s <stack underflow>" % renderer)
             return
         count = min(nargs, len(self.stack))
         items = [self.pop() for _ in range(count)]
-        items.reverse()  # source order: [arg0, arg1, ..., argN-1]
-        # The output slot is at out_index.
-        if out_index >= len(items):
-            return
+        # Pad a short stack with <missing> so out_index/input_map stay total;
+        # the call still surfaces rather than being silently dropped.
+        while len(items) < nargs:
+            items.append(Expr("<missing>"))
         out_item = items[out_index]
         out_slot = strip(out_item.text)
-        # Build input args (all except the ByRef output).
+        # Input args = everything except the ByRef output.
         input_items = [items[i] for i in range(len(items)) if i != out_index]
-        # Resolve any aliases in input items.
+        # Resolve any aliases in the input items (consuming them).
         resolved = []
         for item in input_items:
             t = strip(item.text)
             alias = self.temp_aliases.get(t)
             if alias is not None:
                 resolved.append(alias)
-                # Consumed alias — invalidate.
-                if t in self.temp_aliases:
-                    del self.temp_aliases[t]
+                del self.temp_aliases[t]
                 self._alias_effects.pop(t, None)
+                self._pending_byref.pop(t, None)
             else:
                 resolved.append(t)
-        # Reorder inputs to VB source order using input_map.
+        # Reorder to VB source order; the bounds check keeps a malformed spec
+        # from raising IndexError.
         input_map = spec.get("input_map")
         if input_map:
-            input_texts = [resolved[i] for i in input_map]
+            input_texts = [resolved[i] if i < len(resolved) else "<missing>"
+                           for i in input_map]
         else:
             input_texts = resolved
         # Build the VB expression.
         if renderer in ("CStr", "LTrim"):
-            # Unary string functions.
             expr = "%s(%s)" % (renderer, input_texts[0])
         elif renderer == "Left":
-            # Left$(source, length) — 2 input args.
             expr = "Left(%s, %s)" % (input_texts[0], input_texts[1])
         elif renderer == "Mid":
-            # Mid$(source, start, length) — 3 input args.
             expr = "Mid(%s, %s, %s)" % (
                 input_texts[0], input_texts[1], input_texts[2])
         else:
             expr = "%s(%s)" % (renderer, ", ".join(input_texts))
-        # Collect any deferred effects from input items.
         all_effects = []
         for item in items:
             all_effects.extend(item.effects)
-        # Record the alias for the output slot.
-        self.temp_aliases[out_slot] = expr
-        # Record the side effects alongside the alias so FLdRfVar can
-        # propagate them when resolving.  We do NOT push a stack marker —
-        # the alias will be resolved by the subsequent FLdRfVar load.
-        if all_effects:
-            self._alias_effects[out_slot] = all_effects
+        # An absent/malformed output slot can never be resolved by a later
+        # load, so surface the call as a discarded Call instead.
+        if out_slot and not out_slot.startswith("<"):
+            self.temp_aliases[out_slot] = expr
+            if all_effects:
+                self._alias_effects[out_slot] = all_effects
+            # Keep the call pending until its output slot is loaded; a reused
+            # slot flushes its previous call first so it is not lost.
+            self._flush_pending_byref(out_slot)
+            self._pending_byref[out_slot] = (
+                self._source_order, va, expr, list(all_effects))
+        else:
+            self._realise_effects(items)
+            self._insert_stmt(self._source_order, va, 0, "Call %s" % expr)
 
     def _vcall(self, label, operand, va):
         slot = parse_vcall_slot(operand) or "0"
         method = "method_%s" % slot
-        args = self._collect_args()  # VCall arg counts unknown; drain all.
-        # All VCall variants return a value (HRESULT, I2, I4, R4, R8, Ad).
-        # Push the call result; when not consumed, flush_leftovers emits it
-        # as a "Call" statement (discarded Sub-style return).
+        # VCall is COM late dispatch with no static arg count, so it drains
+        # the whole eval stack.  Unlike ImpAdCall it pushes args left-to-right
+        # with the receiver last (TOS), so reverse=True restores source order.
+        args = self._collect_args(reverse=True)
+        # All VCall variants return a value; an unconsumed one flushes as a
+        # discarded "Call" statement.
         call_text = "Me.%s(%s)" % (method, args)
         self.push(call_text, is_call=True,
                   effects=[(self._source_order, va, call_text)])
 
-    def _collect_args(self, nargs=None, reverse=True):
+    def _collect_args(self, nargs=None, reverse=False, strict=False):
         """Collect argument list (oldest first).
 
-        If nargs is known, pop exactly that many items (leaving accumulators
-        and other pre-call stack values for subsequent operations).
-        Otherwise drain the whole stack.
+        With nargs known, pop exactly that many (leaving accumulators and
+        other pre-call values); otherwise drain the whole stack.  With strict,
+        a known nargs larger than the stack raises instead of truncating.
 
-        The p-code evaluates a call's arguments onto its eval stack and
-        the runtime maps the *last* pushed value (the TOS) to the
-        callee's first parameter (ARG1).  Popping TOS-first therefore
-        already gives source order, so callers pass reverse=False.  The
-        parameter is kept for the few call shapes whose argument order
-        still needs an explicit reversal.
+        TOS is ARG1, so popping TOS-first already gives source order; only
+        VCall passes reverse=True (it pushes args left-to-right).
         """
         if not self.stack:
             return ""
         if nargs is None:
             count = len(self.stack)
         else:
+            if strict and nargs > len(self.stack):
+                raise ValueError(
+                    "call needs %d args but the eval stack holds %d"
+                    % (nargs, len(self.stack)))
             count = min(nargs, len(self.stack))
         items = [self.pop() for _ in range(count)]
         if reverse:
             items.reverse()
-        return ", ".join(strip(x.text) for x in items if x.text != "<missing>")
-
-    def _cond_branch(self, label, operand, va):
-        cond = self.pop()
-        # Any values left under the condition are discarded call results.
-        self.flush_leftovers(va)
-        tgt = parse_target(operand)
-        # Backward branch: BranchT/BranchF jumping to an earlier address
-        # is a loop-back, not a forward If.  Emit as a self-contained
-        # If...GoTo...End If so _convert_loops can detect and rewrite it.
-        if tgt is not None and tgt <= va and self.proc_start <= tgt < self.proc_end:
-            if label in ("BranchF", "BranchFVar", "BranchFVarFree"):
-                self.emit(va, +1, "If Not (%s) Then" % strip(cond.text))
-            else:
-                self.emit(va, +1, "If %s Then" % strip(cond.text))
-            self.emit(va, 0, "GoTo L_%08X" % tgt)
-            self.emit(va, -1, "End If")
-            self._after_goto = True
-            return
-        if tgt is not None:
-            is_cross = not (self.proc_start <= tgt < self.proc_end)
-            if is_cross:
-                # Cross-proc If: before opening, close any pending cross-proc
-                # Ifs whose target < tgt (strictly less = sequential).
-                # Keep target == tgt (nested: both jump to same exit point)
-                # and target > tgt (outer/nested).
-                #
-                # Exception 1: if we're inside a For loop, don't close a
-                # cross-proc If that was opened *before* the loop started.
-                # That If encloses the loop, so its End If must come after
-                # Next, not before.  The If will be closed at loop end or
-                # at the next control-flow boundary outside the loop.
-                #
-                # Exception 2: if a For loop has already completed and a
-                # pending cross-proc If was opened *before* that loop started,
-                # the If encloses the loop and all code after it.  Don't
-                # close it via "strictly less" — its End If is at proc end.
-                loop_start_va = self.loop_starts[-1] if self.loop_starts else None
-                while self.pending_ifs:
-                    ptgt, pcross, pova = self.pending_ifs[-1]
-                    if pcross and ptgt < tgt:
-                        if loop_start_va is not None and pova < loop_start_va:
-                            # Exception 1: If encloses current loop.
-                            break
-                        # Exception 2: check completed loops
-                        encloses_completed = any(
-                            pova < cls for cls in self.completed_loop_starts
-                        )
-                        if encloses_completed:
-                            # If encloses a completed loop; don't close.
-                            break
-                        self.pending_ifs.pop()
-                        # Keep the parallel If-depth stack synchronized when
-                        # this cross-proc If is closed early.
-                        if self.if_stack_depths:
-                            if_depth = self.if_stack_depths.pop()
-                            if len(self.stack) > if_depth:
-                                self._flush_to_depth(va, if_depth)
-                        self.emit(va, -1, "End If")
-                    else:
-                        break
-        else:
-            is_cross = False
-        if label in ("BranchF", "BranchFVar", "BranchFVarFree"):
-            self.emit(va, +1, "If %s Then" % strip(cond.text))
-        else:
-            self.emit(va, +1, "If Not (%s) Then" % strip(cond.text))
-        if tgt is not None:
-            self.pending_ifs.append((tgt, is_cross, va))
-            self.if_stack_depths.append(len(self.stack))
-
-    def _uncond_branch(self, label, operand, va):
-        tgt = parse_target(operand)
-        if label == "Gosub":
-            self.emit(va, 0, "GoSub L_%08X" % (tgt or 0))
-        else:
-            # Flush any discarded call results before emitting GoTo,
-            # so they appear inside the If body (before the GoTo) rather
-            # than after the End If.
-            self.flush_leftovers(va)
-            self.emit(va, 0, "GoTo L_%08X" % (tgt or 0))
-            self._after_goto = True
+        texts = [strip(x.text) for x in items]
+        # Drop trailing <missing> (omitted optional args) but keep a <missing>
+        # between real args as an empty placeholder (foo(a, , c)).
+        while texts and texts[-1] == "<missing>":
+            texts.pop()
+        return ", ".join("" if t == "<missing>" else t for t in texts)
 
     def _terminator(self, label, va):
         self.flush_leftovers(va)
-        # Emit the terminator first, then close any open cross-proc Ifs.
-        # This places Exit Sub / End inside the If body rather than after
-        # the End If, matching VB semantics (Exit Sub is an early return
-        # guarded by the condition).
         if label.startswith("ExitProc"):
             self.emit(va, 0, self.exit_keyword)
         elif label == "End":
             self.emit(va, 0, "End")
-        self.close_crossproc_ifs()
 
-    def _loop_start(self, label, operand, va):
+    def _loop_start(self, label, _operand, va):
         loop_var = "?"
-        exit_tgt = parse_target(operand)
-        # ForI2/NextI2 操作数首字是逐循环隐藏控制槽（见 word_disasm 的 ctl= 注释），
-        # 不是循环变量，故不再从操作数回退取名；循环变量一律取自栈上
-        # start 与 end 之间的 FLdRfVar（下方 var_ref），它总是覆盖 "?"。
-        # Flush any unconsumed call results BEFORE popping loop setup
-        # values, so calls made before the loop appear before the loop,
-        # not inside it. The step/end/var_ref/start values are on top and
-        # will be popped next; flush only drains values underneath.
-        # BUT: we must not flush the loop setup values themselves. Since
-        # they are plain stack references, flush_leftovers skips them via
-        # _is_plumbing_temp. However, call results underneath should be
-        # emitted first.
-        # Actually, we need to pop the loop values first, then flush, then
-        # emit. Let's pop first, then flush.
+        # The loop variable always comes from the FLdRfVar pushed between
+        # start and end, never from the operand (ForI2's first word is a hidden
+        # per-loop control slot).
         #
-        # Stack layout (bottom to top):
-        #   ForI2/ForI4:      [start, var_ref, end]
-        #   ForStepI2/ForI4:  [start, var_ref, end, step]
-        # Pop order (top to bottom): step, end, var_ref, start.
+        # Stack (bottom to top): [start, var_ref, end(, step)]; pop order is
+        # step, end, var_ref, start.
+        step = None
         if "Step" in label:
             step = self.pop()
         end_val = self.pop()
-        # FLdRfVar/FMemLdRf pushed the loop-variable reference between start
-        # and end. VM contract: the var_ref IS the loop variable — the same
-        # expression the loop body reads and NextI2 writes back to. Accept it
-        # whatever its rendered form: local slots render as 'stack-134',
-        # members/globals as their mapped names (e.g. 'battle_enemy_idx').
-        # (Remap.py later renames 'stack-XXX' via the mapping, so both forms
-        # end up readable.) The ForI2 operand's ctl slot must NOT be used:
-        # it's a hidden per-loop control temp, unrelated to the user variable.
+        # var_ref is the same expression the loop body reads and NextI2 writes
+        # back to; accept whatever it renders as (slot or mapped member name).
         var_ref = self.pop()
         ref_text = strip(var_ref.text).lstrip('&')
+        # Reject empty/<missing> and bare numbers (would emit "For 5 = ...").
         if ref_text and ref_text != "<missing>" and not ref_text.lstrip('-').isdigit():
             loop_var = ref_text
         start_val = self.pop()
-        # Now flush any unconsumed call results that were on the stack
-        # before the loop setup values. This ensures calls made before
-        # the loop are emitted before the For statement.
+        # Flush unconsumed calls made before the loop, so they precede the For.
         self.flush_leftovers(va)
         if "Step" in label:
             self.emit(va, +1, "For %s = %s To %s Step %s" % (
@@ -1250,47 +1219,34 @@ class StackMachine(object):
         else:
             self.emit(va, +1, "For %s = %s To %s" % (
                 loop_var, start_val.text, end_val.text))
-        self.pending_loops.append((exit_tgt, var_ref.text))
-        self.loop_starts.append(va)
+        self.pending_loops.append(var_ref.text)
 
-    def _loop_end(self, label, operand, va):
-        tgt = parse_target(operand)
-        # Before emitting Next, close any If whose target falls at or before
-        # the loop's exit point (the If's false-branch skips to Next/after).
+    def _loop_end(self, _label, _operand, va):
         if self.pending_loops:
-            # VM write-back: right before NextI2 the code re-pushes the loop
-            # variable reference (same expression as at ForI2); NextI2 stores
-            # the incremented control value into it. Consume that push FIRST
-            # (before flush_leftovers drains the whole stack and would emit
-            # it as an orphan statement like a bare 'Me.f0312' line).
-            exit_tgt, var_text = self.pending_loops[-1]
+            # VM write-back: right before NextI2 the loop-var reference is
+            # re-pushed for NextI2 to store into.  Consume it first, before
+            # flush_leftovers would emit it as an orphan statement.
+            var_text = self.pending_loops[-1]
             if var_text is not None and self.stack and self.stack[-1].text == var_text:
                 self.pop()
-            # Flush any unconsumed call results BEFORE closing Ifs and
-            # emitting Next, so they appear inside the If body and inside
-            # the loop body rather than after the loop.
+            # Flush discarded calls before Next so they stay inside the loop body.
             self.flush_leftovers(va)
-            if exit_tgt is not None:
-                self.close_ifs_before_loop_end(exit_tgt)
             self.pending_loops.pop()
-            completed_start = self.loop_starts.pop()
-            if completed_start is not None:
-                self.completed_loop_starts.append(completed_start)
         self.emit(va, -1, "Next")
-        if tgt is not None:
-            self.close_ifs(tgt)
 
     def _stmt(self, label, operand, va):
-        self.emit(va, 0, "%s %s" % (label, operand if operand != "-" else ""))
+        self.emit(va, 0, _render_label(label, operand))
 
     def _stmt_pop(self, label, operand, va):
-        """Statement ops that consume values from the eval stack.
+        """Statement ops that pop eval-stack values.
 
-        Close: pop 1 (file number)
-        Erase: pop 1 (array reference)
-        CopyBytes: pop 2 (dest=stack-top, source=next)
-        Open: pop 3 (reclen, filenum, filename — top to bottom)
-        GetRecOwner3: pop 2 (array_ref, file_number)
+        Close: pop 1 (file number); Erase: pop 1 (array ref);
+        CopyBytes: pop 2 (dest=top, source=next); Open: pop 3
+        (reclen, filenum, filename top-to-bottom); GetRecOwner3: pop 2
+        (array_ref=top, file_number=next), rendered as `Get #n, var`.
+
+        The operand texts are embedded in the statement, so their deferred
+        effects are already realised (no _realise_effects call here).
         """
         npop = STMT_POP_LABELS[label]
         if npop == 1:
@@ -1300,47 +1256,45 @@ class StackMachine(object):
             top = self.pop()
             nxt = self.pop()
             if label == "CopyBytes":
-                self.emit(va, 0, "CopyBytes %s, %s, %s" % (top.text, nxt.text, operand))
+                # Operand carries the byte count (len=N); append it only when
+                # present so the no-operand form never renders ", -".
+                extra_op = (operand or "").strip()
+                extra = ("" if not extra_op or extra_op == "-"
+                         else ", " + extra_op)
+                self.emit(va, 0, "CopyBytes %s, %s%s"
+                          % (top.text, nxt.text, extra))
             elif label == "GetRecOwner3":
                 self.emit(va, 0, "Get %s, %s" % (nxt.text, top.text))
         elif npop == 3:
-            # Open: stack bottom→top = [filename, filenum, reclen]
+            # Open: stack bottom->top = [filename, filenum, reclen]
             reclen = self.pop()
             filenum = self.pop()
             filename = self.pop()
             self.emit(va, 0, "Open %s, %s, %s" % (filename.text, filenum.text, reclen.text))
 
     def _redim(self, label, operand, va):
-        """Redim consumes 1 + dims*2 eval stack values.
+        """Redim consumes 1 + dims*2 eval-stack values.
 
-        Confirmed by handler disassembly:
-          - Handler pushes 5 args (20 bytes), calls helper (cdecl, ret only),
-            then add esp, 0x18 (24 bytes).  The extra 4 bytes = 1 eval
-            stack value (array ref at top of stack).
-          - Then add esp, edi*8 (edi=dims) cleans dims*2 more values
-            (lbound + ubound per dimension).
-          - RedimVar variant: 4 pushes + ret 0x14 (20 bytes, callee cleanup)
-            = same 1 extra eval stack value + add esp, edi*8.
-        For dims=1, pop order (TOS first): array_ref, ubound, lbound.
-        Empirical proof (pub_055 read_rng_subfile @00404D78):
-          LitI4 0; FMemLdStr f0000 (tmp_file_size); FMemLdRf f01F8
-          (rng_anim_data); Redim dims=1 — stack bottom→top = [0(lbound),
-          tmp_file_size(ubound), rng_anim_data(array_ref)].
-        Rendered in VB source style: 'Redim arr(ubound)' when lbound is
-        the literal 0, else 'Redim arr(lbound To ubound)'.  Multi-dim
-        (dims>=2) order is inferred (only dims=1 occurs in this binary):
-        pop sequence is array_ref, then per-dim bounds in reverse push
-        order, i.e. bounds pushed dim1 first, dim2 last (TOS side).
+        Pop order (TOS first) is array_ref, then per-dim bounds in reverse
+        push order.  Verified by pub_055 read_rng_subfile @00404D78 (dims=1):
+        stack bottom->top = [0(lbound), ubound, array_ref].  Rendered as
+        'Redim arr(ubound)' when lbound is the literal 0, else 'Redim
+        arr(lbound To ubound)'.
         """
         dims = 0
         if operand and operand.startswith("dims="):
-            dims = int(operand[5:].split()[0])
+            token = operand[5:].split()
+            if token:
+                try:
+                    dims = int(token[0])
+                except ValueError:
+                    dims = 0
+        if dims > _REDIM_MAX_DIMS:
+            # Malformed/truncated operand: don't pop millions of values.
+            dims = 0  # routes to the raw-operand fallback below
         npop = 1 + dims * 2
         pops = [self.pop() for _ in range(npop)]
-        # pops[0] = array_ref (TOS); remaining = bounds in reverse push order.
-        # Per-dim push order (dim1 first): after popping array_ref, the next
-        # pops are dimN bounds backwards, so reverse to get dim1..dimN pairs
-        # of (lbound, ubound).
+        # pops[0] = array_ref; reverse the rest to get dim1..dimN (lbound, ubound).
         bounds = list(reversed(pops[1:]))
         if dims >= 1 and bounds:
             ary = strip(pops[0].text)
@@ -1355,8 +1309,11 @@ class StackMachine(object):
                                                strip(ubound.text)))
             self.emit(va, 0, "Redim %s(%s)" % (ary, ", ".join(parts)))
         else:
+            # The emitted "Redim <operand>" drops every popped text, so its
+            # deferred effects must be surfaced explicitly.
+            self._realise_effects(pops)
             self.emit(va, 0, "%s %s" % (label,
                                         operand if operand != "-" else ""))
 
     def _opaque(self, label, operand, va):
-        self.emit(va, 0, "# %s %s" % (label, operand if operand != "-" else ""))
+        self.emit(va, 0, "# " + _render_label(label, operand))

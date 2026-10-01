@@ -158,7 +158,7 @@ class UnaryMinusTest(unittest.TestCase):
 
 
 class UnaryOtherTest(unittest.TestCase):
-    """Non-minus unary ops render "op (x)"."""
+    """Not renders "Not (x)"; function-style ops render "Fn(x)"."""
 
     def test_not_simple(self):
         self.assertEqual(run([ld(0, 12), op(1, "NotI2"), store()]),
@@ -172,7 +172,15 @@ class UnaryOtherTest(unittest.TestCase):
 
     def test_fn_abs(self):
         self.assertEqual(run([ld(0, 12), op(1, "FnAbsI2"), store()]),
-                         ["stack-100 = Abs (a0)"])
+                         ["stack-100 = Abs(a0)"])
+
+    def test_fn_len_no_space(self):
+        self.assertEqual(run([ld(0, 12), op(1, "FnLenStr"), store()]),
+                         ["stack-100 = Len(a0)"])
+
+    def test_fn_csng_no_space(self):
+        self.assertEqual(run([ld(0, 12), op(1, "FnCSngI2"), store()]),
+                         ["stack-100 = CSng(a0)"])
 
 
 class BinaryOpTest(unittest.TestCase):
