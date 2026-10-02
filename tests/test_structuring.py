@@ -181,6 +181,94 @@ class LoopTest(unittest.TestCase):
             "Exit Sub",
         ])
 
+    def test_while_restart_renders_continue_while(self):
+        # pub_186-style dispatch leg: a back edge to the innermost
+        # While header is that loop's next iteration -- VB4 spells it
+        # "label + GoTo"; the modern output renders Continue While
+        # (a While header IS the test, so the jump re-tests exactly
+        # like the Continue would).  The loop has two back edges:
+        # the structural latch (highest address, consumed by the
+        # Wend) and this leg's restart.  The in-loop Exit Sub keeps
+        # the leg's join off the header (no join==header collapse);
+        # the default leg's forward cross-leg jump keeps its GoTo.
+        instrs = [
+            I(0x1000, "FMemLdI2", "mem=stack+8.f0004", size=6),
+            I(0x1006, "LitI2", "val=1", size=2),
+            I(0x1008, "EqI2", size=2),
+            I(0x100A, "BranchF", "to=0000103E", size=4),  # false -> exit
+            I(0x100E, "FLdI2", "mem=stack-102", size=4),  # dispatch
+            I(0x1012, "LitI2", "val=1", size=2),
+            I(0x1014, "EqI2", size=2),
+            I(0x1016, "BranchF", "to=00001024", size=4),  # false -> leg2
+            I(0x101A, "Branch", "to=00001000", size=4),   # leg1: restart
+            I(0x1024, "FLdI2", "mem=stack-102", size=4),  # leg2: = 9?
+            I(0x1028, "LitI2", "val=9", size=2),
+            I(0x102A, "EqI2", size=2),
+            I(0x102C, "BranchF", "to=00001034", size=4),  # false -> join
+            I(0x1030, "ExitProcStr", size=2),              # leg2: Exit Sub
+            I(0x1034, "LitI2", "val=7", size=2),          # join body
+            I(0x1036, "FStI2", "mem=stack-104", size=4),
+            I(0x103A, "Branch", "to=00001000", size=4),   # latch
+            I(0x103E, "ExitProcStr", size=2),
+        ]
+        texts, labels, stats, _m = run(instrs, 0x1000, 0x1040)
+        self.assertEqual(texts, [
+            "While Me.f0004 = 1",
+            "If stack-102 = 1 Then",
+            "Continue While",
+            "ElseIf stack-102 = 9 Then",
+            "Exit Sub",
+            "Else",
+            "GoTo L_00001034",
+            "End If",
+            "stack-104 = 7",
+            "Wend",
+            "Exit Sub",
+        ])
+        # the only label left marks the cross-leg join target
+        self.assertEqual(labels, {8: [0x1034]})
+        self.assertEqual(stats["continues"], 1)
+        self.assertEqual(stats["gotos"], 1)
+
+    def test_bottom_tested_restart_keeps_goto(self):
+        # In a bottom-tested Do (latch-pred shape, rendered Loop
+        # Until), a branch back to the HEADER skips the closing test:
+        # Continue Do would re-evaluate it and could exit a loop the
+        # p-code keeps running.  The restart keeps its GoTo (the
+        # for-kind gate below is defensive: from inside a For, both a
+        # header jump and a latch jump are structurally consumed as a
+        # nested loop / stop fall, so only Do/While restarts reach
+        # the Continue gate -- pub_196's "GoTo <For line>" re-entry
+        # jumps from a sibling leg OUTSIDE the For, where the
+        # innermost ctx is the enclosing Do and nothing matches).
+        instrs = [
+            I(0x2000, "LitI2", "val=5", size=2),          # H (plain)
+            I(0x2002, "FStI2", "mem=stack-108", size=4),
+            I(0x2008, "FLdI2", "mem=stack-102", size=4),  # closing test
+            I(0x200C, "LitI2", "val=0", size=2),
+            I(0x200E, "LtI2", size=2),
+            I(0x2010, "BranchF", "to=00002020", size=4),  # false -> latch
+            I(0x2014, "LitI2", "val=9", size=2),          # true -> restart
+            I(0x2016, "FStI2", "mem=stack-10C", size=4),
+            I(0x201A, "Branch", "to=00002000", size=4),  # restart -> H
+            I(0x2020, "Branch", "to=00002000", size=4),   # latch
+        ]
+        texts, labels, stats, _m = run(instrs, 0x2000, 0x2024)
+        self.assertEqual(texts, [
+            "Do",
+            "stack-108 = 5",
+            "Loop Until stack-102 < 0",
+            "stack-10C = 9",
+            "GoTo L_00002000",
+        ])
+        # The restart labels the loop opener (jumping straight to the
+        # header, past the closing test).  The second label marks the
+        # orphan-pass render of the post-loop block (nothing jumps
+        # there; the real pipeline prunes it).
+        self.assertEqual(labels, {0: [0x2000], 3: [0x2014]})
+        self.assertEqual(stats["continues"], 0)
+        self.assertEqual(stats["gotos"], 1)
+
     def test_for_next(self):
         # ForI2/NextI2 with the loop variable reference pushes.
         instrs = [
@@ -461,6 +549,200 @@ class SelectCaseRewriteTest(unittest.TestCase):
         self.assertNotIn(0x4056, labels)
         i = texts.index("Loop")
         self.assertEqual(texts[i + 1:], ["stack-114 = stack-110", "Exit Sub"])
+
+    def test_uncond_latch_shared_epilogue_renders_exit_do(self):
+        # select_battle_action / pub_179: an infinite Do (uncond latch,
+        # no fall-out exit) whose >= 2 in-body departures all converge
+        # on ONE shared return epilogue outside the loop.  The epilogue
+        # used to be structured inside the first leaving arm with a
+        # label glued mid-block and the other edges GoTo-ing into that
+        # arm.  The shared epilogue is the loop's real exit: every
+        # departure renders as Exit Do and the epilogue renders once
+        # after Loop.  Body must exceed _LATCH_PRED_MAX_BODY so the
+        # generic latch path (not the closing-test path) runs.
+        instrs = [
+            I(0x4000, "LitI2", "val=1", size=2),
+            I(0x4002, "FStI2", "mem=stack-100", size=4),
+            # loop header 0x4006: a PLAIN block (unlike pub_156's menu
+            # If/Else header, a cond whose taken edge leaves the body
+            # would take the Do While path and bypass _emit_do)
+            I(0x4006, "LitI2", "val=5", size=2),
+            I(0x4008, "FStI2", "mem=stack-108", size=4),
+            # test1 0x400C: v >= 0, BranchF to exitA 0x4044
+            I(0x400C, "FLdI2", "mem=stack-102", size=4),
+            I(0x4010, "LitI2", "val=0", size=2),
+            I(0x4012, "GeI2", size=2),
+            I(0x4014, "BranchF", "to=00004044", size=4),
+            # filler If/Else (keeps the body above the latch-pred cap)
+            I(0x4018, "FLdI2", "mem=stack-104", size=4),
+            I(0x401C, "LitI2", "val=0", size=2),
+            I(0x401E, "EqI2", size=2),
+            I(0x4020, "BranchF", "to=0000402E", size=4),
+            I(0x4024, "LitI2", "val=1", size=2),
+            I(0x4026, "FStI2", "mem=stack-106", size=4),
+            I(0x402A, "Branch", "to=00004032", size=4),
+            I(0x402E, "LitI2", "val=2", size=2),
+            I(0x4030, "FStI2", "mem=stack-106", size=4),
+            # test2 0x4032: result = -2 ?  taken -> exitB 0x4058
+            I(0x4032, "FLdI2", "mem=stack-100", size=4),
+            I(0x4036, "LitI2", "val=2", size=2),
+            I(0x4038, "UMiI2", size=2),
+            I(0x403A, "EqI2", size=2),
+            I(0x403C, "BranchF", "to=00004058", size=4),
+            I(0x4040, "Branch", "to=00004006", size=4),  # uncond latch
+            # exitA 0x4044: result = -2, falls into the shared epilogue
+            I(0x4044, "LitI2", "val=2", size=2),
+            I(0x4046, "UMiI2", size=2),
+            I(0x4048, "FStI2", "mem=stack-100", size=4),
+            # shared epilogue 0x404C: ret = result; ExitProc
+            I(0x404C, "FLdI2", "mem=stack-100", size=4),
+            I(0x4050, "FStI2", "mem=stack-114", size=4),
+            I(0x4054, "ExitProcI2", size=2),
+            # exitB 0x4058: store, then Branch to the shared epilogue
+            I(0x4058, "LitI2", "val=7", size=2),
+            I(0x405A, "FStI2", "mem=stack-110", size=4),
+            I(0x405C, "Branch", "to=0000404C", size=4),
+        ]
+        texts, labels, _stats, _m = run(instrs, 0x4000, 0x405E,
+                                        exit_addrs=set())
+        self.assertEqual(texts, [
+            "stack-100 = 1",
+            "Do",
+            "stack-108 = 5",
+            "If stack-102 < 0 Then",
+            "stack-100 = -2",
+            "Exit Do",
+            "End If",
+            "If stack-104 = 0 Then",
+            "stack-106 = 1",
+            "Else",
+            "stack-106 = 2",
+            "End If",
+            "If stack-100 <> -2 Then",
+            "stack-110 = 7",
+            "Exit Do",
+            "End If",
+            "Loop",
+            "stack-114 = stack-100",
+            "Exit Sub",
+        ])
+        # No label, no GoTo: the epilogue rendered once, after Loop.
+        self.assertEqual(labels, {})
+        self.assertNotIn("GoTo", " ".join(texts))
+
+    def test_ret_move_epilogue_folds_to_return(self):
+        # pub_093/pub_101: `T = expr` directly before a Branch to the
+        # bare return-move epilogue {FLdI2 T; FStI2 <result slot>;
+        # ExitProc} folds to one `Return expr` statement.  A plain Exit
+        # Function would be WRONG here -- it skips the epilogue's
+        # result-slot store; folding the temp store in is exact because
+        # the epilogue does nothing else and T is dead past the branch.
+        instrs = [
+            I(0x6000, "FLdI2", "mem=stack-102", size=4),
+            I(0x6004, "LitI2", "val=0", size=2),
+            I(0x6006, "LtI2", size=2),
+            I(0x6008, "BranchF", "to=00006018", size=4),
+            # then arm: T = 7; Branch to the return-move epilogue
+            I(0x600C, "LitI2", "val=7", size=2),
+            I(0x600E, "FStI2", "mem=stack-100", size=4),
+            I(0x6012, "Branch", "to=00006020", size=4),
+            # else arm: T = 0; falls into the epilogue
+            I(0x6018, "LitI2", "val=0", size=2),
+            I(0x601A, "FStI2", "mem=stack-100", size=4),
+            # epilogue: result slot = T; ExitProc
+            I(0x6020, "FLdI2", "mem=stack-100", size=4),
+            I(0x6024, "FStI2", "mem=stack-104", size=4),
+            I(0x6028, "ExitProcI2", size=2),
+        ]
+        machine = stack_ir.StackMachine()
+        machine.exit_keyword = "Exit Function"
+        machine.result_slot = -104
+        machine.result_name = "f_test"
+        stmts, labels, _stats = structuring.structure_proc(
+            instrs, 0x6000, 0x602A, machine, set(), "Exit Function")[0:3]
+        texts = [s.text for s in stmts]
+        self.assertEqual(texts, [
+            "If stack-102 < 0 Then",
+            "Return 7",
+            "Else",
+            "stack-100 = 0",
+            "End If",
+            "f_test = stack-100",
+            "Exit Function",
+        ])
+        self.assertEqual(labels, {})
+        self.assertNotIn("GoTo", " ".join(texts))
+
+    def test_ret_move_fold_leaving_side(self):
+        # pub_165 produce_screen_map: the same fold inside a loop's
+        # leaving side (side_stmt's real-code uncond path), not just on
+        # a plain walk.  The loop has ONE departure (no Exit Do
+        # upgrade: _shared_loop_exit needs >= 2) and the epilogue is
+        # the block after the latch, so it renders post-Loop.
+        instrs = [
+            I(0x8000, "LitI2", "val=1", size=2),
+            I(0x8002, "FStI2", "mem=stack-100", size=4),
+            # loop header 0x8006: plain block
+            I(0x8006, "LitI2", "val=5", size=2),
+            I(0x8008, "FStI2", "mem=stack-108", size=4),
+            # test: v < 0 -> leaving arm 0x8048
+            I(0x800C, "FLdI2", "mem=stack-102", size=4),
+            I(0x8010, "LitI2", "val=0", size=2),
+            I(0x8012, "LtI2", size=2),
+            I(0x8014, "BranchF", "to=00008048", size=4),
+            # filler If/Else (keeps the body above the latch-pred cap)
+            I(0x8018, "FLdI2", "mem=stack-104", size=4),
+            I(0x801C, "LitI2", "val=0", size=2),
+            I(0x801E, "EqI2", size=2),
+            I(0x8020, "BranchF", "to=0000802E", size=4),
+            I(0x8024, "LitI2", "val=1", size=2),
+            I(0x8026, "FStI2", "mem=stack-106", size=4),
+            I(0x802A, "Branch", "to=00008032", size=4),
+            I(0x802E, "LitI2", "val=2", size=2),
+            I(0x8030, "FStI2", "mem=stack-106", size=4),
+            I(0x8032, "LitI2", "val=3", size=2),
+            I(0x8034, "FStI2", "mem=stack-10A", size=4),
+            I(0x803A, "Branch", "to=00008006", size=4),  # uncond latch
+            # epilogue 0x803E: result slot = T; ExitProc
+            I(0x803E, "FLdI2", "mem=stack-100", size=4),
+            I(0x8042, "FStI2", "mem=stack-104", size=4),
+            I(0x8046, "ExitProcI2", size=2),
+            # leaving arm: T = 7; Branch to the epilogue
+            I(0x8048, "LitI2", "val=7", size=2),
+            I(0x804A, "FStI2", "mem=stack-100", size=4),
+            I(0x804E, "Branch", "to=0000803E", size=4),
+        ]
+        machine = stack_ir.StackMachine()
+        machine.exit_keyword = "Exit Function"
+        machine.result_slot = -104
+        machine.result_name = "f_test"
+        stmts, labels, _stats = structuring.structure_proc(
+            instrs, 0x8000, 0x8050, machine, set(), "Exit Function")[0:3]
+        texts = [s.text for s in stmts]
+        self.assertEqual(texts, [
+            "stack-100 = 1",
+            "Do",
+            "stack-108 = 5",
+            # The leaving side sits on the BranchF-taken (condition
+            # FALSE) side: the one-sided guard inverts the comparison
+            # so the side lands on Then.
+            "If stack-102 >= 0 Then",
+            "Return 7",
+            "End If",
+            # A result-slot load reads the function's accumulated
+            # value: FLdI2 stack-104 renders as the function name.
+            "If f_test = 0 Then",
+            "stack-106 = 1",
+            "Else",
+            "stack-106 = 2",
+            "End If",
+            "stack-10A = 3",
+            "Loop",
+            "f_test = stack-100",
+            "Exit Function",
+        ])
+        self.assertEqual(labels, {})
+        self.assertNotIn("GoTo", " ".join(texts))
 
     def test_join_arms_render_uniform_exit_statements(self):
         # query_midi_status: both If arms store the result slot then
@@ -772,6 +1054,278 @@ class SelectCaseRewriteTest(unittest.TestCase):
 class RegressionFixTest(unittest.TestCase):
     """Regression guards for the pub_186 / pub_196 / pub_197 fixes."""
 
+    def test_postlatch_tramp_run_resolves_shared_exit(self):
+        # pub_167 process_AutoScript: the block after the latch is a
+        # bare-trampoline run to the loop's REAL exit (the shared
+        # advance-and-return tail).  The tramp head has no predecessors
+        # (unreachable), so the default exit_block dead-ends and the
+        # tail gets absorbed into an arm with GoTos jumping into it.
+        # The resolution points exit_block at the tail: edges to it
+        # render Exit Do, it renders once after the Loop.
+        instrs = [
+            I(0x6000, "LitI2", "val=1", size=2),
+            I(0x6002, "FStI2", "mem=stack-100", size=4),
+            I(0x6006, "FLdI2", "mem=stack-102", size=4),
+            I(0x600A, "LitI2", "val=0", size=2),
+            I(0x600C, "EqI2", size=2),
+            I(0x600E, "BranchF", "to=00006020", size=4),  # false -> tail
+            I(0x6012, "LitI2", "val=2", size=2),
+            I(0x6014, "FStI2", "mem=stack-104", size=4),
+            I(0x6018, "Branch", "to=00006000", size=4),   # latch
+            I(0x601C, "Branch", "to=00006020", size=4),   # post-latch
+            # tramp (NO preds -> unreachable)
+            # shared tail: real code falling into the bare exit
+            I(0x6020, "LitI2", "val=3", size=2),
+            I(0x6022, "FStI2", "mem=stack-108", size=4),
+            I(0x6026, "ExitProcStr", size=2),
+        ]
+        texts, labels, stats, _m = run(instrs, 0x6000, 0x6028)
+        self.assertEqual(texts, [
+            "Do",
+            "stack-100 = 1",
+            "If stack-102 <> 0 Then",
+            "Exit Do",
+            "End If",
+            "stack-104 = 2",
+            "Loop",
+            "stack-108 = 3",
+            "Exit Sub",
+            "' ---- unreachable p-code ----",
+        ])
+        self.assertEqual(labels, {})
+        self.assertEqual(stats["gotos"], 0)
+
+    def test_nested_loop_shared_exit_renders_exit_do_at_depth0(self):
+        # pub_186 inventory_use_menu: BOTH nested loops resolve their
+        # post-latch tramp runs to the same shared tail.  The inner
+        # loop's emit returns ("next", tail); the OUTER loop's spine
+        # walk receives it at depth 0 (walk's loops-branch continues
+        # without the fall-exits-loop raise) -- the shared_exit flag
+        # then renders Exit Do instead of absorbing the tail inline.
+        # B1's edge to the outer latch keeps its GoTo (multi-level
+        # restart, VB has no Continue Outer).
+        instrs = [
+            I(0x6000, "LitI2", "val=1", size=2),
+            I(0x6002, "FStI2", "mem=stack-100", size=4),   # outer H
+            I(0x6006, "LitI2", "val=2", size=2),
+            I(0x6008, "FStI2", "mem=stack-104", size=4),   # inner H
+            I(0x600C, "FLdI2", "mem=stack-116", size=4),
+            I(0x6010, "LitI2", "val=0", size=2),
+            I(0x6012, "EqI2", size=2),
+            I(0x6014, "BranchF", "to=0000601E", size=4),   # body cond
+            I(0x6018, "LitI2", "val=7", size=2),
+            I(0x601A, "FStI2", "mem=stack-118", size=4),
+            I(0x601E, "FLdI2", "mem=stack-102", size=4),
+            I(0x6022, "LitI2", "val=0", size=2),
+            I(0x6024, "EqI2", size=2),
+            I(0x6026, "BranchF", "to=0000603E", size=4),   # B1: restart outer
+            I(0x602A, "FLdI2", "mem=stack-106", size=4),
+            I(0x602E, "LitI2", "val=0", size=2),
+            I(0x6030, "EqI2", size=2),
+            I(0x6032, "BranchF", "to=00006046", size=4),   # B2: exit to tail
+            I(0x6036, "Branch", "to=00006006", size=4),    # inner latch
+            I(0x603A, "Branch", "to=00006046", size=4),    # inner tramp
+            I(0x603E, "Branch", "to=00006000", size=4),    # outer latch
+            I(0x6042, "Branch", "to=00006046", size=4),    # outer tramp
+            # shared tail: real code falling into the bare exit
+            I(0x6046, "LitI2", "val=3", size=2),
+            I(0x6048, "FStI2", "mem=stack-108", size=4),
+            I(0x604C, "ExitProcStr", size=2),
+        ]
+        texts, labels, stats, _m = run(instrs, 0x6000, 0x604E)
+        self.assertEqual(texts, [
+            "Do",
+            "stack-100 = 1",
+            "Do",
+            "stack-104 = 2",
+            "If stack-116 = 0 Then",
+            "stack-118 = 7",
+            "End If",
+            "If stack-102 <> 0 Then",
+            "GoTo L_00006000",       # multi-level restart keeps GoTo
+            "End If",
+            "If stack-106 <> 0 Then",
+            "Exit Do",               # edge to inner exit_block
+            "End If",
+            "Loop",
+            "Exit Do",               # <- shared_exit fires at depth 0
+            "Loop",
+            "stack-108 = 3",         # the tail, once, after the loops
+            "Exit Sub",
+            "' ---- unreachable p-code ----",
+        ])
+        # The restart GoTo labels the outer Do line.
+        self.assertEqual(labels, {0: [0x6000]})
+        self.assertEqual(stats["gotos"], 1)
+        self.assertEqual(stats["exits"], 2)
+        self.assertEqual(stats["loops"], 2)
+
+    def test_resolve_natural_exit_refuses_non_exit_bound_target(self):
+        # pub_196 protection: the tramp target is a plain block whose
+        # fall continuation runs into a COND (not a bare exit) -- a
+        # shared BODY continuation, not a loop exit.  The resolution
+        # must refuse; the side renders inline (leaving-side walk),
+        # the loop keeps its default exit (nothing after Loop).
+        instrs = [
+            I(0x6000, "LitI2", "val=1", size=2),
+            I(0x6002, "FStI2", "mem=stack-100", size=4),
+            I(0x6006, "FLdI2", "mem=stack-102", size=4),
+            I(0x600A, "LitI2", "val=0", size=2),
+            I(0x600C, "EqI2", size=2),
+            I(0x600E, "BranchF", "to=00006020", size=4),   # false -> cont.
+            I(0x6012, "LitI2", "val=2", size=2),
+            I(0x6014, "FStI2", "mem=stack-104", size=4),
+            I(0x6018, "Branch", "to=00006000", size=4),    # latch
+            I(0x601C, "Branch", "to=00006020", size=4),    # post-latch tramp
+            # continuation: NOT exit-bound (falls into a cond)
+            I(0x6020, "LitI2", "val=3", size=2),
+            I(0x6022, "FStI2", "mem=stack-108", size=4),
+            I(0x6026, "FLdI2", "mem=stack-110", size=4),
+            I(0x602A, "LitI2", "val=0", size=2),
+            I(0x602C, "EqI2", size=2),
+            I(0x602E, "BranchF", "to=00006034", size=4),
+            I(0x6032, "ExitProcStr", size=2),
+            I(0x6034, "ExitProcStr", size=2),
+        ]
+        texts, _labels, stats, _m = run(instrs, 0x6000, 0x6036,
+                                        {0x6032, 0x6034})
+        self.assertEqual(texts, [
+            "Do",
+            "stack-100 = 1",
+            "If stack-102 <> 0 Then",
+            "stack-108 = 3",        # the continuation renders inline
+            "If stack-110 <> 0 Then",
+            "Exit Sub",
+            "Else",
+            "Exit Sub",
+            "End If",
+            "End If",
+            "stack-104 = 2",
+            "Loop",
+            "' ---- unreachable p-code ----",
+        ])
+        self.assertNotIn("Exit Do", texts)
+        self.assertEqual(stats["exits"], 2)
+        self.assertEqual(stats["gotos"], 0)
+
+    def test_resolve_natural_exit_refuses_bare_exit_target(self):
+        # The tramp run ends at a BARE ExitProc: the uniform-exit rule
+        # renders it inline (Exit Sub) -- hoisting it after the Loop
+        # would be a dead copy.  Resolution must refuse.
+        instrs = [
+            I(0x6000, "LitI2", "val=1", size=2),
+            I(0x6002, "FStI2", "mem=stack-100", size=4),
+            I(0x6006, "FLdI2", "mem=stack-102", size=4),
+            I(0x600A, "LitI2", "val=0", size=2),
+            I(0x600C, "EqI2", size=2),
+            I(0x600E, "BranchF", "to=0000601C", size=4),   # false -> tramp
+            I(0x6012, "LitI2", "val=2", size=2),
+            I(0x6014, "FStI2", "mem=stack-104", size=4),
+            I(0x6018, "Branch", "to=00006000", size=4),    # latch
+            I(0x601C, "Branch", "to=00006020", size=4),    # tramp -> bare exit
+            I(0x6020, "ExitProcStr", size=2),
+        ]
+        texts, labels, stats, _m = run(instrs, 0x6000, 0x6022, {0x6020})
+        self.assertEqual(texts, [
+            "Do",
+            "stack-100 = 1",
+            "If stack-102 <> 0 Then",
+            "Exit Sub",             # uniform-exit inline, not Exit Do
+            "End If",
+            "stack-104 = 2",
+            "Loop",
+        ])
+        self.assertEqual(labels, {})
+        self.assertEqual(stats["exits"], 1)
+        self.assertEqual(stats["gotos"], 0)
+
+    def test_resolve_natural_exit_refuses_body_reentering_tramp(self):
+        # The post-latch tramp targets a block INSIDE the loop body:
+        # not a loop exit at all (the penetration barrier `taken not
+        # in body` stops the run).  The edge renders through the local
+        # diamond join (empty Else falls to the shared continuation).
+        instrs = [
+            I(0x6000, "LitI2", "val=1", size=2),
+            I(0x6002, "FStI2", "mem=stack-100", size=4),
+            I(0x6006, "FLdI2", "mem=stack-102", size=4),
+            I(0x600A, "LitI2", "val=0", size=2),
+            I(0x600C, "EqI2", size=2),
+            I(0x600E, "BranchF", "to=00006022", size=4),   # false -> tramp
+            I(0x6012, "LitI2", "val=2", size=2),
+            I(0x6014, "FStI2", "mem=stack-104", size=4),
+            I(0x6018, "LitI2", "val=5", size=2),
+            I(0x601A, "FStI2", "mem=stack-106", size=4),
+            I(0x601E, "Branch", "to=00006000", size=4),    # latch
+            I(0x6022, "Branch", "to=00006018", size=4),    # tramp -> mid-body
+            I(0x6026, "ExitProcStr", size=2),
+        ]
+        texts, _labels, stats, _m = run(instrs, 0x6000, 0x6028, {0x6026})
+        self.assertEqual(texts, [
+            "Do",
+            "stack-100 = 1",
+            "If stack-102 = 0 Then",
+            "stack-104 = 2",
+            "Else",
+            "End If",
+            "stack-106 = 5",
+            "Loop",
+            "' ---- unreachable p-code ----",
+            "Exit Sub",
+        ])
+        self.assertNotIn("Exit Do", texts)
+        self.assertEqual(stats["exits"], 0)
+        self.assertEqual(stats["gotos"], 0)
+
+    def test_shared_return_tail_renders_once_after_end_if(self):
+        # pub_184 enemy_attack_role: an If/Else whose merge the global
+        # postdominator pass cannot see (an early Exit Sub in the Then
+        # arm bypasses it) used to absorb the shared return tail into
+        # the Else arm -- the Then tail then rendered a forward GoTo
+        # into that arm's middle.  The second local-diamond family
+        # (one side's own postdominator is a fresh REAL-CODE term
+        # block the other side also reaches) makes the tail the join:
+        # both arms stop at it, it renders once after the End If.
+        instrs = [
+            I(0x5000, "FLdI2", "mem=stack-100", size=4),
+            I(0x5004, "LitI2", "val=0", size=2),
+            I(0x5006, "LeI2", size=2),
+            I(0x5008, "BranchF", "to=00005030", size=4),  # false -> Else
+            # Then arm: real code, an early-exit guard, then the tail.
+            I(0x500C, "LitI2", "val=1", size=2),
+            I(0x500E, "FStI2", "mem=stack-104", size=4),
+            I(0x5012, "FLdI2", "mem=stack-102", size=4),
+            I(0x5016, "LitI2", "val=0", size=2),
+            I(0x5018, "EqI2", size=2),
+            I(0x501A, "BranchF", "to=00005028", size=4),  # <> 0 -> Exit
+            I(0x501E, "LitI2", "val=2", size=2),
+            I(0x5020, "FStI2", "mem=stack-108", size=4),
+            I(0x5024, "Branch", "to=00005036", size=4),   # tail -> shared
+            I(0x5028, "ExitProcStr", size=2),               # early Exit Sub
+            # Else arm: real code falling into the shared tail.
+            I(0x5030, "LitI2", "val=3", size=2),
+            I(0x5032, "FStI2", "mem=stack-10C", size=4),
+            # Shared return tail: real code + ExitProc (NOT a bare one).
+            I(0x5036, "LitI2", "val=4", size=2),
+            I(0x5038, "FStI2", "mem=stack-110", size=4),
+            I(0x503C, "ExitProcStr", size=2),
+        ]
+        texts, labels, stats, _m = run(instrs, 0x5000, 0x503E)
+        self.assertEqual(texts, [
+            "If stack-100 <= 0 Then",
+            "stack-104 = 1",
+            "If stack-102 <> 0 Then",
+            "Exit Sub",
+            "End If",
+            "stack-108 = 2",
+            "Else",
+            "stack-10C = 3",
+            "End If",
+            "stack-110 = 4",
+            "Exit Sub",
+        ])
+        self.assertEqual(labels, {})
+        self.assertEqual(stats["gotos"], 0)
+
     def test_flush_calls_above_emits_stranded_void_call_at_block_tail(self):
         # pub_196 finding 2: a discarded void call left on the stack at a
         # plain fall-through boundary used to be deferred and inserted
@@ -955,7 +1509,7 @@ class StructuralChainTest(unittest.TestCase):
             "If Me.f0004 = 5 Then",
             "Exit Do",
             "End If",
-            "GoTo L_00001000",
+            "Continue Do",
             "ElseIf Me.f0004 = 2 Then",
             "stack-100 = 20",
             "End If",
@@ -1005,7 +1559,7 @@ class StructuralChainTest(unittest.TestCase):
             "If Me.f0004 = 5 Then",
             "Exit Do",
             "End If",
-            "GoTo L_00001000",
+            "Continue Do",
             "ElseIf Me.f0004 = 2 Then",
             "stack-100 = 20",
             "Else",
@@ -1064,13 +1618,13 @@ class StructuralChainTest(unittest.TestCase):
             "If Me.f0004 = 5 Then",
             "Exit Do",
             "End If",
-            "GoTo L_00001000",
+            "Continue Do",
             "ElseIf Me.f0004 = 2 Then",
             "stack-100 = 20",
             "If Me.f0004 = 5 Then",
             "Exit Do",
             "End If",
-            "GoTo L_00001000",
+            "Continue Do",
             "Else",
             "stack-102 = 30",
             "End If",
@@ -1127,7 +1681,7 @@ class StructuralChainTest(unittest.TestCase):
             "If Me.f0004 = 5 Then",
             "Exit Do",
             "End If",
-            "GoTo L_00001000",
+            "Continue Do",
             "ElseIf Me.f0004 = 2 Then",
             "stack-100 = 20",
             "If Me.f0004 = 5 Then",

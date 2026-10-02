@@ -111,10 +111,16 @@ class GoldenFixTest(unittest.TestCase):
         # the fall-through Branch->004102DC (ExitProcStr) exits when it
         # is TRUE.  The fold's Then arm is the BranchF-taken side, so it
         # must carry Not(...) — the old code inverted the two arms.
+        # (The 004102CE edge now renders Exit Do — the post-latch
+        # tramp-chain resolution hoists the shared advance-and-return
+        # tail after the Loop; the polarity guard is unchanged.)
         flat = " ".join(text.split())
         self.assertIn("If Me.f07DC(a0).f001E >= stack-140 Then "
-                      "Me.f07DC(a0).f001E = 0 GoTo L_004102CE End If "
+                      "Me.f07DC(a0).f001E = 0 Exit Do End If "
                       "Exit Sub", flat)
+        # the shared tail renders once after the Loop, label-free
+        self.assertIn("Loop a1 = pub_009_0040345C(a1) Exit Sub", flat)
+        self.assertNotIn("L_004102CE", flat)
 
     # ---- pub_137: local diamond join folds after the End If --------
     def test_pub137_local_diamond_join_not_absorbed_into_else(self):
@@ -132,11 +138,14 @@ class GoldenFixTest(unittest.TestCase):
         text = self._proc("pub_137_0040AF48")
         self.assertNotIn("L_0040B020", text)
         self.assertNotIn("GoTo L_0040B020", text)
+        # The restart back edge renders as Continue Do (single-level
+        # jump to the bare-latch Do's header): its label is gone too.
+        self.assertNotIn("L_0040AF7C", text)
         flat = " ".join(text.split())
         self.assertIn(
             "If stack-144 = 0 Then "
             "stack-146 = pub_131_0040A344() "
-            "If stack-146 < 0 Then GoTo L_0040AF7C End If "
+            "If stack-146 < 0 Then Continue Do End If "
             "Else "
             "stack-146 = stack-136 "
             "End If "

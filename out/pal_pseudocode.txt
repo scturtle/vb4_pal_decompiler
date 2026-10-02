@@ -1311,7 +1311,7 @@ Function pub_093_00406F08_hot(ByRef a0) As Integer
     stack-136 = stack-136 And (Me.f079C(Me.f04AC(a0).f0000, 9).f0000 > 0)
     If stack-136 Then
         If Me.f05CC(a0).f000C = 1 Then
-            stack-136 = 1
+            Return 1
         Else
             stack-136 = 2
         End If
@@ -1438,7 +1438,7 @@ End Sub
 
 Function pub_101_00407818() As Integer
     If Me.f02DA <= 0 Then
-        stack-136 = 0
+        Return 0
     Else
         Me.f02C4 = 0
         stack-136 = -2
@@ -2275,7 +2275,6 @@ Sub pub_137_0040AF48()
     If stack-134 < 0 Then
         Exit Sub
     End If
-L_0040AF7C:
     Do
         stack-136 = Me.f04AC(stack-134).f0000
         stack-138 = pub_188_0041678C(stack-136, stack-140, 1)
@@ -2287,7 +2286,7 @@ L_0040AF7C:
         If stack-144 = 0 Then
             stack-146 = pub_131_0040A344()
             If stack-146 < 0 Then
-                GoTo L_0040AF7C
+                Continue Do
             End If
         Else
             stack-146 = stack-136
@@ -2892,8 +2891,7 @@ Function pub_156_0040DE24(ByRef a0) As Integer
         Call pub_064_004053DC()
         If stack-140 < 0 Then
             stack-136 = -2
-L_0040E088:
-            Return stack-136
+            Exit Do
         End If
         stack-142 = 0
         stack-152 = a0
@@ -2933,9 +2931,10 @@ L_0040E088:
             Me.f059C(Me.f02C2).f0004 = stack-140
             Me.f059C(Me.f02C2).f0006 = Me.f02F0
             Me.f075C(Me.f02F0).f0004 = Me.f075C(Me.f02F0).f0004 + 1
-            GoTo L_0040E088
+            Exit Do
         End If
     Loop
+    Return stack-136
 End Function
 
 Sub pub_157_0040E0BC(ByRef a0, ByRef a1, ByRef a2)
@@ -3308,14 +3307,12 @@ Function pub_165_0040F8D4(ByRef a0, ByRef a1, ByRef a2) As Integer
                     stack-154 = Me.f07DC(stack-142).f0004
                     Call Pal.exrij(stack-156, stack-152, stack-154)
                     If ((stack-156 = Me.f04F4(stack-150)) And (stack-152 = Me.f0554(stack-150))) And (stack-154 = Me.f056C(stack-150)) Then
-                        stack-148 = stack-142
-                        GoTo L_0040FBF8
+                        Return stack-142
                     End If
                 End If
             End If
         Next
     Next
-L_0040FBF8:
     Return stack-148
 End Function
 
@@ -3374,7 +3371,6 @@ Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
 End Sub
 
 Sub pub_167_0040FF88(ByRef a0, ByRef a1)
-L_0040FF88:
     Do
         stack-136 = 0
         Call Pal.copymen(stack-136, a1, 2)
@@ -3396,7 +3392,7 @@ L_0040FF88:
                     a1 = stack-140
                 Else
                     Me.f07DC(a0).f001E = 0
-                    GoTo L_004102CE
+                    Exit Do
                 End If
                 Exit Sub
             End If
@@ -3406,33 +3402,33 @@ L_0040FF88:
             Case 3
                 If stack-142 = 0 Then
                     a1 = stack-140
-                    GoTo L_0040FF88
+                    Continue Do
                 Else
                     Me.f07DC(a0).f001E = Me.f07DC(a0).f001E + 1
                     If Me.f07DC(a0).f001E >= stack-142 Then
                         Me.f07DC(a0).f001E = 0
-                        GoTo L_004102CE
+                        Exit Do
                     End If
                     a1 = stack-140
-                    GoTo L_0040FF88
+                    Continue Do
                 End If
             Case 4
                 If stack-142 <= 0 Then
                     Call pub_189_00417834_hot(a0, stack-140)
-                    GoTo L_004102CE
+                    Exit Do
                 Else
                     stack-146 = stack-142 - Me.f038C(Me.f0268).f0006
                     If Not ((stack-146 > 0) And (stack-146 <= Me.f0296)) Then
-                        GoTo L_004102CE
+                        Exit Do
                     Else
                         Call pub_189_00417834_hot(stack-146, stack-140)
-                        GoTo L_004102CE
+                        Exit Do
                     End If
                 End If
             Case 6
                 stack-168 = VB40032.rtcRandomNext()
                 If CSng(stack-140) >= (stack-168 * CSng(100)) Then
-                    GoTo L_004102CE
+                    Exit Do
                 End If
                 If stack-142 = 0 Then
                     Exit Sub
@@ -3441,19 +3437,19 @@ L_0040FF88:
                 Me.f07DC(a0).f001E = Me.f07DC(a0).f001E + 1
                 If Me.f07DC(a0).f001E >= stack-140 Then
                     Me.f07DC(a0).f001E = 0
-                    GoTo L_004102CE
+                    Exit Do
                 End If
                 Exit Sub
             Case Is > 10
                 Call pub_197_00420FC0(a0, a1, stack-138, stack-140, stack-142, stack-144)
-L_004102CE:
-                a1 = pub_009_0040345C(a1)
-                Exit Sub
+                Exit Do
             Case Else
-                GoTo L_004102CE
+                Exit Do
         End Select
         a1 = stack-142
     Loop
+    a1 = pub_009_0040345C(a1)
+    Exit Sub
     ' ---- unreachable p-code ----
 End Sub
 
@@ -3988,7 +3984,6 @@ Sub pub_179_0041342C(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call Pal.putp(a1 + 8, a2 + 79, Me.f01C8(Me.f01C8(70)), Me.f02A4, 0, 0)
     Call Pal.copymen(Me.f00D8(0), Me.f01B0(0), 64000)
     stack-134 = -1
-L_004135B4:
     Do
         Call Pal.copymen(Me.f01B0(0), Me.f00D8(0), 64000)
         Call pub_151_0040CF2C(a1 + 84, a2 + 12, Me.f04AC(a0).f0000, -1)
@@ -4015,7 +4010,7 @@ L_004135B4:
         Call Pal.popscr(Me.f01B0(0))
         If stack-144 <= 0 Then
             Call pub_014_00403630_hot(150)
-            GoTo L_00413902
+            Exit Do
         End If
         stack-142 = pub_010_004034B4_hot()
         stack-164 = stack-142
@@ -4025,15 +4020,15 @@ L_004135B4:
                 If a0 < 0 Then
                     a0 = Me.f0266
                 End If
-                GoTo L_004135B4
+                Continue Do
             Case 4
                 a0 = a0 + 1
                 If a0 > Me.f0266 Then
                     a0 = 0
                 End If
-                GoTo L_004135B4
+                Continue Do
             Case Is > 4
-                GoTo L_004135B4
+                Continue Do
             Case 2
                 Call pub_189_00417834_hot(a0, Me.f0744(stack-146).f0004)
                 If Me.f0302 Then
@@ -4045,13 +4040,13 @@ L_004135B4:
             Case 1
                 Call Pal.popscr(Me.f01B0(64000))
                 a0 = -1
-L_00413902:
-                Me.f02A4 = 0
-                Exit Sub
+                Exit Do
             Case Else
-                GoTo L_00413902
+                Exit Do
         End Select
     Loop
+    Me.f02A4 = 0
+    Exit Sub
     ' ---- unreachable p-code ----
 End Sub
 
@@ -4437,16 +4432,14 @@ Sub pub_184_00414F18(ByRef a0, a1, a2)
         ElseIf stack-140 >= 0 Then
             Call pub_189_00417834_hot(stack-140, Me.f0744(Me.f079C(Me.f04AC(stack-140).f0000, 3).f0000).f0006)
         End If
-        GoTo L_004154DC
     Else
         stack-146 = pub_022_00403A18()
         If stack-146 <> a0 Then
             Call pub_170_00410DFC(a0, stack-146)
         End If
-L_004154DC:
-        Me.f031C = 0
-        Exit Sub
     End If
+    Me.f031C = 0
+    Exit Sub
 End Sub
 
 Sub pub_185_00415514(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
@@ -4540,7 +4533,6 @@ L_00415BA6:
                 Me.f04DC(stack-140) = Me.f079C(Me.f04AC(stack-140).f0000, 3).f0000
                 Call Pal.getbin(Me.f04DC(100 + stack-140), stack-138, Me.f04AC(stack-140).f0000)
             Next
-L_00415C46:
             Do
                 Call Pal.copymen(Me.f01B0(0), Me.f00D8(0), 64000)
                 Call pub_048_004048A4(Me.f0744(stack-134).f0000)
@@ -4585,7 +4577,7 @@ L_00415C46:
                 Call Pal.popscr(Me.f01B0(0))
                 stack-152 = pub_010_004034B4_hot()
                 If stack-134 <= 0 Then
-                    GoTo L_004160F6
+                    Exit Do
                 End If
                 stack-198 = stack-152
                 Select Case stack-198
@@ -4594,13 +4586,13 @@ L_00415C46:
                         If stack-136 < 0 Then
                             stack-136 = Me.f0266
                         End If
-                        GoTo L_00415C46
+                        Continue Do
                     Case 4
                         stack-136 = stack-136 + 1
                         If stack-136 > Me.f0266 Then
                             stack-136 = 0
                         End If
-                        GoTo L_00415C46
+                        Continue Do
                     Case 2
                         If Me.f04DC(stack-136 + 100) Then
                             stack-154 = Me.f079C(stack-156, 65).f0000
@@ -4613,19 +4605,20 @@ L_00415C46:
                                 GoTo L_00415BA6
                             End If
                         End If
-                        GoTo L_00415C46
+                        Continue Do
                     Case Is > 4
                     Case Else
                         GoTo L_004160E6
                 End Select
             Loop
+            Exit Do
         Loop
+L_004160F6:
+        stack-158 = pub_125_004098C4()
+        Me.f02A4 = 0
+        Exit Sub
 L_004160F2:
     Loop
-L_004160F6:
-    stack-158 = pub_125_004098C4()
-    Me.f02A4 = 0
-    Exit Sub
 L_004160E6:
     If stack-198 <> 1 Then
         GoTo L_004160F6
@@ -4877,7 +4870,6 @@ Sub pub_189_00417834_hot(ByRef a0, ByRef a1)
     Me.f0202 = 8
     Me.f0224 = 44
     Me.f0226 = 26
-L_004178B2:
     Do
         Call Pal.cvlong(a1)
         If (stack-168 > Me.f0290) Or (a1 = 0) Then
@@ -4959,12 +4951,12 @@ L_004178B2:
             Case 3
                 If stack-146 = 0 Then
                     a1 = stack-144
-                    GoTo L_004178B2
+                    Continue Do
                 Else
                     Me.f07DC(a0).f0018 = Me.f07DC(a0).f0018 + 1
                     If Me.f07DC(a0).f0018 < stack-146 Then
                         a1 = stack-144
-                        GoTo L_004178B2
+                        Continue Do
                     Else
                         Me.f07DC(a0).f0018 = 0
                     End If
@@ -4998,7 +4990,7 @@ L_004178B2:
                 If CSng(stack-144) < (stack-192 * CSng(100)) Then
                     If stack-146 <> 0 Then
                         a1 = stack-146
-                        GoTo L_004178B2
+                        Continue Do
                     Else
                         stack-138 = -1
                     End If
@@ -5015,7 +5007,7 @@ L_004178B2:
                 If (stack-148 <> 0) And (stack-156 = 2) Then
                     a1 = stack-148
                 End If
-                GoTo L_004178B2
+                Continue Do
             Case 8
                 stack-140 = pub_009_0040345C(a1)
             Case 9
@@ -5040,7 +5032,7 @@ L_004178B2:
                 Wend
                 If stack-158 = 0 Then
                     a1 = stack-144
-                    GoTo L_004178B2
+                    Continue Do
                 End If
             Case Is > 10
                 Call pub_019_004038AC()
@@ -6838,7 +6830,6 @@ L_0041DECC:
                     End If
                 End If
             Case 1
-L_0041DFF8:
                 Do
                     If Me.f06C4(Me.f02C2, 3).f0000 Then
                         stack-184 = 0
@@ -6864,7 +6855,7 @@ L_0041DFF8:
                             Me.f059C(Me.f02C2).f0000 = stack-192
                             GoTo L_0041E134
                         End If
-                        GoTo L_0041DFF8
+                        Continue Do
                     ElseIf stack-190 Then
                         Me.f059C(Me.f02C2).f0000 = Me.f02C2
                         Exit Do

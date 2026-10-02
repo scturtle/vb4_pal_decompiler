@@ -628,7 +628,8 @@ def _postprocess_stmts(stmts, label_at_stmt, start, end, keyword,
                 or text.startswith('Case ')
                 or text.startswith('Loop ')
                 or text.startswith('ElseIf '))
-    terminators = ('GoTo ', 'Exit Sub', 'Exit For', 'Exit Do', 'Return')
+    terminators = ('GoTo ', 'Exit Sub', 'Exit For', 'Exit Do',
+                   'Continue ', 'Return')
     label_indices = set(label_at_stmt.keys())
     dead = set()
     in_dead_zone = False

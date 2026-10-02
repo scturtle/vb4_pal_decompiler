@@ -1305,7 +1305,7 @@ Function check_player_alive(ByRef roleIdx) As Integer
     i = i And (playerRoles(party(roleIdx).role, 9) > 0)
     If i Then
         If player_battle_sprite(roleIdx).direction = 1 Then
-            i = 1
+            Return 1
         Else
             i = 2
         End If
@@ -1432,7 +1432,7 @@ End Sub
 
 Function select_battle_target() As Integer
     If enemy_pos_count <= 0 Then
-        i = 0
+        Return 0
     Else
         battle_target_cursor = 0
         i = -2
@@ -2269,7 +2269,6 @@ Sub use_item_menu()
     If i < 0 Then
         Exit Sub
     End If
-L_0040AF7C:
     Do
         j = party(i).role
         itemID = select_theurgy(j, cursorIdx, 1)
@@ -2281,7 +2280,7 @@ L_0040AF7C:
         If cursorPos = 0 Then
             selection = select_party_member()
             If selection < 0 Then
-                GoTo L_0040AF7C
+                Continue Do
             End If
         Else
             selection = j
@@ -2886,8 +2885,7 @@ Function select_battle_action(ByRef menuType) As Integer
         Call draw_battle_status_bar()
         If result < 0 Then
             actionResult = -2
-L_0040E088:
-            Return actionResult
+            Exit Do
         End If
         tmp = 0
         tmp5 = menuType
@@ -2927,9 +2925,10 @@ L_0040E088:
             battle_role_action(battle_curr_role_idx).itemID = result
             battle_role_action(battle_curr_role_idx).invIndex = magic_select_tmp
             inventory(magic_select_tmp).amountInUse = inventory(magic_select_tmp).amountInUse + 1
-            GoTo L_0040E088
+            Exit Do
         End If
     Loop
+    Return actionResult
 End Function
 
 Sub increase_player_attr(ByRef roleID, ByRef attrType, ByRef amount)
@@ -3302,14 +3301,12 @@ Function produce_screen_map(ByRef x, ByRef y, ByRef viewportIdx) As Integer
                     mapY = npc_display_data(baseIdx).y
                     Call PAL_ExRij(tileData, mapX, mapY)
                     If ((tileData = save_temp_buf(j)) And (mapX = battle_sprite_data(j))) And (mapY = battle_sprite_data_ext(j)) Then
-                        npcIdx = baseIdx
-                        GoTo L_0040FBF8
+                        Return baseIdx
                     End If
                 End If
             End If
         Next
     Next
-L_0040FBF8:
     Return npcIdx
 End Function
 
@@ -3368,7 +3365,6 @@ Sub render_dialog_control(ByRef x, ByRef y)
 End Sub
 
 Sub process_AutoScript(ByRef npcIdx, ByRef scriptEntry)
-L_0040FF88:
     Do
         tmp = 0
         Call PAL_CopyMem(tmp, scriptEntry, 2)
@@ -3390,7 +3386,7 @@ L_0040FF88:
                     scriptEntry = operand1
                 Else
                     npc_display_data(npcIdx).scriptIdleFrameAuto = 0
-                    GoTo L_004102CE
+                    Exit Do
                 End If
                 Exit Sub
             End If
@@ -3400,33 +3396,33 @@ L_0040FF88:
             Case 3
                 If operand2 = 0 Then
                     scriptEntry = operand1
-                    GoTo L_0040FF88
+                    Continue Do
                 Else
                     npc_display_data(npcIdx).scriptIdleFrameAuto = npc_display_data(npcIdx).scriptIdleFrameAuto + 1
                     If npc_display_data(npcIdx).scriptIdleFrameAuto >= operand2 Then
                         npc_display_data(npcIdx).scriptIdleFrameAuto = 0
-                        GoTo L_004102CE
+                        Exit Do
                     End If
                     scriptEntry = operand1
-                    GoTo L_0040FF88
+                    Continue Do
                 End If
             Case 4
                 If operand2 <= 0 Then
                     Call process_Script(npcIdx, operand1)
-                    GoTo L_004102CE
+                    Exit Do
                 Else
                     tmp2 = operand2 - scenes(RPG_curr_scene).eventObjectIndex
                     If Not ((tmp2 > 0) And (tmp2 <= curr_scene_event_count)) Then
-                        GoTo L_004102CE
+                        Exit Do
                     Else
                         Call process_Script(tmp2, operand1)
-                        GoTo L_004102CE
+                        Exit Do
                     End If
                 End If
             Case 6
                 rng = VB40032.rtcRandomNext()
                 If CSng(operand1) >= (rng * CSng(100)) Then
-                    GoTo L_004102CE
+                    Exit Do
                 End If
                 If operand2 = 0 Then
                     Exit Sub
@@ -3435,19 +3431,19 @@ L_0040FF88:
                 npc_display_data(npcIdx).scriptIdleFrameAuto = npc_display_data(npcIdx).scriptIdleFrameAuto + 1
                 If npc_display_data(npcIdx).scriptIdleFrameAuto >= operand1 Then
                     npc_display_data(npcIdx).scriptIdleFrameAuto = 0
-                    GoTo L_004102CE
+                    Exit Do
                 End If
                 Exit Sub
             Case Is > 10
                 Call process_scripts(npcIdx, scriptEntry, opcode, operand1, operand2, operand3)
-L_004102CE:
-                scriptEntry = increment_script_ip(scriptEntry)
-                Exit Sub
+                Exit Do
             Case Else
-                GoTo L_004102CE
+                Exit Do
         End Select
         scriptEntry = operand2
     Loop
+    scriptEntry = increment_script_ip(scriptEntry)
+    Exit Sub
     ' ---- unreachable p-code ----
 End Sub
 
@@ -3982,7 +3978,6 @@ Sub show_item_description(ByRef roleIdx, ByRef labelIdx, ByRef rowTop, ByRef inv
     Call PAL_PutP(labelIdx + 8, rowTop + 79, global_buf_2(global_buf_2(70)), screen_buffer_ptr, 0, 0)
     Call PAL_CopyMem(bg_buf(0), global_buf_1(0), 64000)
     i = -1
-L_004135B4:
     Do
         Call PAL_CopyMem(global_buf_1(0), bg_buf(0), 64000)
         Call show_role_attributes(labelIdx + 84, rowTop + 12, party(roleIdx).role, -1)
@@ -4009,7 +4004,7 @@ L_004135B4:
         Call PAL_PopScreen(global_buf_1(0))
         If amount <= 0 Then
             Call wait_frame(150)
-            GoTo L_00413902
+            Exit Do
         End If
         colorNum = read_key()
         cursorPos = colorNum
@@ -4019,15 +4014,15 @@ L_004135B4:
                 If roleIdx < 0 Then
                     roleIdx = RPG_team_number
                 End If
-                GoTo L_004135B4
+                Continue Do
             Case 4
                 roleIdx = roleIdx + 1
                 If roleIdx > RPG_team_number Then
                     roleIdx = 0
                 End If
-                GoTo L_004135B4
+                Continue Do
             Case Is > 4
-                GoTo L_004135B4
+                Continue Do
             Case 2
                 Call process_Script(roleIdx, objects(itemID).data2)
                 If redraw_hp_mp_flag Then
@@ -4039,13 +4034,13 @@ L_004135B4:
             Case 1
                 Call PAL_PopScreen(global_buf_1(64000))
                 roleIdx = -1
-L_00413902:
-                screen_buffer_ptr = 0
-                Exit Sub
+                Exit Do
             Case Else
-                GoTo L_00413902
+                Exit Do
         End Select
     Loop
+    screen_buffer_ptr = 0
+    Exit Sub
     ' ---- unreachable p-code ----
 End Sub
 
@@ -4431,16 +4426,14 @@ Sub enemy_attack_role(ByRef enemyIdx, targetRole, itemID)
         ElseIf targetFound >= 0 Then
             Call process_Script(targetFound, objects(playerRoles(party(targetFound).role, 3)).data3)
         End If
-        GoTo L_004154DC
     Else
         k = random_enemy_id()
         If k <> enemyIdx Then
             Call enemy_attack_enemy(enemyIdx, k)
         End If
-L_004154DC:
-        in_battle_action = 0
-        Exit Sub
     End If
+    in_battle_action = 0
+    Exit Sub
 End Sub
 
 Sub role_physical_attack(ByRef attackerIdx, ByRef targetIdx, ByRef targetRole, ByRef isCritical)
@@ -4534,7 +4527,6 @@ L_00415BA6:
                 battle_order_array(i) = playerRoles(party(i).role, 3)
                 Call PAL_GetBin(battle_order_array(100 + i), itemType, party(i).role)
             Next
-L_00415C46:
             Do
                 Call PAL_CopyMem(global_buf_1(0), bg_buf(0), 64000)
                 Call read_ball_mkf_index(objects(itemObj).data0)
@@ -4579,7 +4571,7 @@ L_00415C46:
                 Call PAL_PopScreen(global_buf_1(0))
                 k = read_key()
                 If itemObj <= 0 Then
-                    GoTo L_004160F6
+                    Exit Do
                 End If
                 m = k
                 Select Case m
@@ -4588,13 +4580,13 @@ L_00415C46:
                         If j < 0 Then
                             j = RPG_team_number
                         End If
-                        GoTo L_00415C46
+                        Continue Do
                     Case 4
                         j = j + 1
                         If j > RPG_team_number Then
                             j = 0
                         End If
-                        GoTo L_00415C46
+                        Continue Do
                     Case 2
                         If battle_order_array(j + 100) Then
                             maxHP = playerRoles(roleID_uninit, 65)
@@ -4607,19 +4599,20 @@ L_00415C46:
                                 GoTo L_00415BA6
                             End If
                         End If
-                        GoTo L_00415C46
+                        Continue Do
                     Case Is > 4
                     Case Else
                         GoTo L_004160E6
                 End Select
             Loop
+            Exit Do
         Loop
+L_004160F6:
+        invResult = compact_inventory()
+        screen_buffer_ptr = 0
+        Exit Sub
 L_004160F2:
     Loop
-L_004160F6:
-    invResult = compact_inventory()
-    screen_buffer_ptr = 0
-    Exit Sub
 L_004160E6:
     If m <> 1 Then
         GoTo L_004160F6
@@ -4871,7 +4864,6 @@ Sub process_Script(ByRef eventObjID, ByRef scriptEntry)
     dialog_text_y = 8
     dialog_width = 44
     dialog_height = 26
-L_004178B2:
     Do
         Call PAL_CvLong(scriptEntry)
         If (subfileIdx > sss_subfile_count) Or (scriptEntry = 0) Then
@@ -4953,12 +4945,12 @@ L_004178B2:
             Case 3
                 If operand2 = 0 Then
                     scriptEntry = operand1
-                    GoTo L_004178B2
+                    Continue Do
                 Else
                     npc_display_data(eventObjID).scriptIdleFrame = npc_display_data(eventObjID).scriptIdleFrame + 1
                     If npc_display_data(eventObjID).scriptIdleFrame < operand2 Then
                         scriptEntry = operand1
-                        GoTo L_004178B2
+                        Continue Do
                     Else
                         npc_display_data(eventObjID).scriptIdleFrame = 0
                     End If
@@ -4992,7 +4984,7 @@ L_004178B2:
                 If CSng(operand1) < (rng * CSng(100)) Then
                     If operand2 <> 0 Then
                         scriptEntry = operand2
-                        GoTo L_004178B2
+                        Continue Do
                     Else
                         continueFlag = -1
                     End If
@@ -5009,7 +5001,7 @@ L_004178B2:
                 If (operand3 <> 0) And (battleResult = 2) Then
                     scriptEntry = operand3
                 End If
-                GoTo L_004178B2
+                Continue Do
             Case 8
                 savedEntry = increment_script_ip(scriptEntry)
             Case 9
@@ -5034,7 +5026,7 @@ L_004178B2:
                 Wend
                 If i = 0 Then
                     scriptEntry = operand1
-                    GoTo L_004178B2
+                    Continue Do
                 End If
             Case Is > 10
                 Call check_trigger_flag()
@@ -6832,7 +6824,6 @@ L_0041DECC:
                     End If
                 End If
             Case 1
-L_0041DFF8:
                 Do
                     If player_status(battle_curr_role_idx, 3) Then
                         theurgyType = 0
@@ -6858,7 +6849,7 @@ L_0041DFF8:
                             battle_role_action(battle_curr_role_idx).target = enemyTarget
                             GoTo L_0041E134
                         End If
-                        GoTo L_0041DFF8
+                        Continue Do
                     ElseIf isTargeted Then
                         battle_role_action(battle_curr_role_idx).target = battle_curr_role_idx
                         Exit Do

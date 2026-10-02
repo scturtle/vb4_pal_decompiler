@@ -503,7 +503,8 @@ def analyze_loops(blocks, entry, reachable, idom):
 # ----------------------------------------------------------------------
 
 class LoopCtx(object):
-    __slots__ = ("kind", "header", "body", "latch", "exit_block", "depth")
+    __slots__ = ("kind", "header", "body", "latch", "exit_block", "depth",
+                 "shared_exit")
 
     def __init__(self, kind, header, body, latch, exit_block, depth):
         self.kind = kind          # "while" | "dowhile" | "do" | "for"
@@ -512,6 +513,11 @@ class LoopCtx(object):
         self.latch = latch
         self.exit_block = exit_block
         self.depth = depth
+        # True when exit_block is a hoisted shared epilogue (the Exit
+        # Do upgrade): falling into it from ANY walk inside the loop
+        # renders the exit statement, never the epilogue inline (the
+        # natural path renders it once after Loop).
+        self.shared_exit = False
 
 
 class Structurer(object):
@@ -546,6 +552,9 @@ class Structurer(object):
             "blocks": len(self.blocks),
             "loops": 0,
             "gotos": 0,
+            # Back edges rendered as Continue Do/For/While (VB4 spells
+            # them "label + GoTo").
+            "continues": 0,
             # Out-of-proc GoTos never resolve; counted for probes
             # (zero probed).
             "cross_proc_gotos": 0,
@@ -848,6 +857,38 @@ class Structurer(object):
                     self.stats["gotos"] += 1
                 self.stats["exits"] += 1
                 return
+            # A back edge to the INNERMOST loop's restart point is that
+            # loop's next iteration: VB4 spells it "label + GoTo";
+            # render the modern Continue statement instead (the label
+            # disappears when no other edge needs it).  The match must
+            # run the same code the Continue would:
+            #   * Do/While: to the header -- a While/Do While header
+            #     IS the test (re-test = Continue) and a bare-latch
+            #     infinite Do...Loop has no test to skip; a bottom-
+            #     tested restart (Loop While/Until) would skip the
+            #     test and keeps its GoTo (_loop_bottom_tested);
+            #   * For: to the latch (the Next line: increment + test).
+            #     A jump to the ForI2 preheader RE-INITIALIZES the loop
+            #     and a jump to the body start skips the increment --
+            #     both keep their GoTo.
+            # Outer loops never match (VB has no labeled Continue):
+            # multi-level restarts (pub_070 / pub_186 / pub_196 shapes)
+            # and re-entries from OUTSIDE a closed loop (pub_197 Case
+            # 122/123 jumping back into the walk Do) keep their GoTo.
+            if inner.kind == "for":
+                is_cont = (inner.latch is not None
+                           and va == inner.latch.start)
+            else:
+                is_cont = (va == inner.header.start
+                           and not self._loop_bottom_tested(inner))
+            if is_cont:
+                self.machine.flush_leftovers(at_va)
+                self.emit(at_va, 0,
+                          "Continue While" if inner.kind == "while"
+                          else "Continue For" if inner.kind == "for"
+                          else "Continue Do")
+                self.stats["continues"] += 1
+                return
         if va in self.exit_addrs:
             self.machine.flush_leftovers(at_va)
             self.emit(at_va, 0, self.exit_stmt)
@@ -941,12 +982,16 @@ class Structurer(object):
         while b is not None:
             if b.start in stop:
                 return ("stop", b)
-            if self._leaving_side_depth > 0 and ctx \
-                    and ctx[-1].exit_block is not None \
-                    and b is ctx[-1].exit_block:
-                # A leaving-side walk reaching the loop's own exit
-                # renders the exit statement, not the post-loop region
-                # (the natural path renders that).
+            if ctx and ctx[-1].exit_block is not None \
+                    and b is ctx[-1].exit_block \
+                    and (self._leaving_side_depth > 0
+                         or ctx[-1].shared_exit):
+                # A walk reaching the loop's own exit renders the exit
+                # statement, not the post-loop region (the natural path
+                # renders that).  Leaving-side walks always; spine/arm
+                # walks when the exit is a hoisted shared epilogue
+                # (a fall into it -- e.g. pub_167's last Select Case
+                # leg -- is an Exit Do, never an inline epilogue).
                 self._exit_stmt_for_target(b.start, ctx, b.start, stop)
                 return ("term",)
             if b in self.visited:
@@ -990,6 +1035,48 @@ class Structurer(object):
 
     # -- block processing ---------------------------------------------------
 
+    @staticmethod
+    def _frame_slot(operand):
+        """Frame-slot offset of a plain mem=stack-N operand, else None.
+        (mem=stack+8.fXXXX module fields parse to None.)"""
+        if not operand.startswith("mem=stack"):
+            return None
+        try:
+            return int(operand[len("mem=stack"):])
+        except ValueError:
+            return None
+
+    def _ret_move_fold(self, b, i, ins):
+        """True when *ins* (index *i*) is the `T = expr` store directly
+        before an unconditional Branch to the bare return-move epilogue
+        {FLdI2 T; FStI2 <result slot>; ExitProc}: the pair folds to one
+        `Return expr` statement.
+
+        A plain Exit Function is NOT equivalent here: the epilogue's
+        result-slot store (`name = T`) must run, and folding it into the
+        exit is safe only when the epilogue does nothing else.  T is
+        dead past the branch (the epilogue only moves it into the
+        result slot), so skipping the temp store is exact."""
+        if i != len(b.instrs) - 2 or b.taken is None:
+            return False
+        if b.instrs[-1].label != "Branch":
+            return False
+        ep = b.taken
+        if ep.kind != "term" or len(ep.instrs) != 3:
+            return False
+        if not (self.proc_start <= ep.start < self.proc_end):
+            return False
+        e0, e1, e2 = ep.instrs
+        if e0.label != "FLdI2" or e1.label != "FStI2" \
+                or not e2.label.startswith("ExitProc"):
+            return False
+        if self.machine.result_slot is None:
+            return False
+        src = self._frame_slot(ins.operand)
+        if src is None or self._frame_slot(e0.operand) != src:
+            return False
+        return self._frame_slot(e1.operand) == self.machine.result_slot
+
     def process_block(self, b, stop, ctx):
         """Process one block's instructions and its control transfer."""
         depth0 = len(self.machine.stack)
@@ -1005,6 +1092,15 @@ class Structurer(object):
                     "stray Next at 0x%08X" % ins.pos)
             if lab in stack_ir.TERMINATOR_LABELS or lab == "Return":
                 self.machine.process(ins)
+                return ("term",)
+            if lab == "FStI2" and self._ret_move_fold(b, i, ins):
+                # `T = expr` + Branch to the bare return-move epilogue:
+                # pop the expr before the store consumes it and emit the
+                # folded return (the Branch's sole effect is that jump).
+                expr = self.machine.pop()
+                self.machine.flush_leftovers(ins.pos)
+                self.emit(ins.pos, 0, "Return %s" % strip(expr.text))
+                self.stats["exits"] += 1
                 return ("term",)
             self.machine.process(ins)
         if b.fall is None:
@@ -1347,6 +1443,22 @@ class Structurer(object):
                 # the statements inline, then follow the branch -- even
                 # back inside the loop (label-pass resolved).
                 self._begin_block(blk)
+                if len(blk.instrs) >= 2 \
+                        and blk.instrs[-2].label == "FStI2" \
+                        and self._ret_move_fold(blk, len(blk.instrs) - 2,
+                                                 blk.instrs[-2]):
+                    # `... ; T = expr` + Branch to the bare return-move
+                    # epilogue folds to `... ; Return expr` (the temp
+                    # store and the epilogue's result move cancel out;
+                    # an Exit Function alone would skip that move).
+                    for j in blk.instrs[:-2]:
+                        self.machine.process(j)
+                    expr = self.machine.pop()
+                    self.machine.flush_leftovers(blk.instrs[-2].pos)
+                    self.emit(blk.instrs[-2].pos, 0,
+                              "Return %s" % strip(expr.text))
+                    self.stats["exits"] += 1
+                    return
                 for j in blk.instrs[:-1]:
                     self.machine.process(j)
                 self.machine.flush_leftovers(blk.term.pos)
@@ -1814,7 +1926,17 @@ class Structurer(object):
         the End If, instead of absorbing the merge into one arm.
         Rejected joins: stop members, visited, loop headers/latches,
         irreducible entries, terminators, backward targets; in a loop
-        the join must stay inside the innermost body."""
+        the join must stay inside the innermost body.
+
+        Second family -- a shared RETURN TAIL: one side's own
+        postdominator is a fresh REAL-CODE term block (a bare ExitProc
+        stays rejected: it renders inline in each arm -- the uniform-
+        exit rule) that the other side's subtree also reaches.  The
+        term block then plays the join: both arms stop at it, it
+        renders once after the End If (pub_184 enemy_attack_role: the
+        If-Then tail branched into the Else arm's tail -- a forward
+        GoTo into the arm's middle; the early in-Then Exit Sub hides
+        the merge from the global pass)."""
         inner = ctx[-1] if ctx else None
         for mine, other in ((taken, fall), (fall, taken)):
             J = mine.fall if (mine is not None and mine.kind is None) \
@@ -1823,6 +1945,18 @@ class Structurer(object):
                     or J in self.visited or J in self.loops \
                     or J in self._latches or J in self.irreducible \
                     or J.kind == "term" or J.index < b.index \
+                    or (inner is not None and J not in inner.body):
+                continue
+            if self._side_reaches_join(other, J, stop, ctx):
+                return J
+        for side, other in ((fall, taken), (taken, fall)):
+            J = self.ipost.get(side) if side is not None else None
+            if J is None or J is b or J.start in stop \
+                    or J in self.visited or J in self.loops \
+                    or J in self._latches or J in self.irreducible \
+                    or J.index < b.index \
+                    or J.kind != "term" or len(J.instrs) == 1 \
+                    or J.start in self.exit_addrs \
                     or (inner is not None and J not in inner.body):
                 continue
             if self._side_reaches_join(other, J, stop, ctx):
@@ -1984,16 +2118,178 @@ class Structurer(object):
             return ("term",)
         return ("next", exit_block)
 
+    def _cond_latch_shape(self, h, latch):
+        """True when the header's own closing test drives a bare uncond
+        latch (the Loop While/Until shape _close_cond_loop renders)."""
+        term_h = h.term
+        return (term_h is not None
+                and term_h.label in stack_ir.COND_BRANCH
+                and latch.kind == "uncond" and latch.taken is h
+                and len(latch.instrs) == 1
+                and (h.taken is latch or h.fall is latch))
+
+    def _latch_pred_candidate(self, h, body, latch):
+        """The closing test block driving a bare-branch latch (a
+        separate test whose sole successor-set feeds the latch), or
+        None.  Trusted only for tiny loops; bigger "tests" may be
+        state-machine legs."""
+        if not (latch.kind == "uncond" and latch.taken is h
+                and len(latch.instrs) == 1
+                and len(latch.preds) == 1
+                and len(body) <= _LATCH_PRED_MAX_BODY):
+            return None
+        cand = latch.preds[0]
+        if cand is not h and cand.kind == "cond" \
+                and cand in body and (cand.fall is latch
+                                      or cand.taken is latch):
+            return cand
+        return None
+
+    def _loop_bottom_tested(self, lc):
+        """True when a kind="do" loop evaluates its condition at the
+        Loop line (cond-latch or latch-pred shape).  Restarting such a
+        loop at its header would skip that test -- not a Continue."""
+        if lc.kind != "do" or lc.latch is None:
+            return False
+        if self._cond_latch_shape(lc.header, lc.latch):
+            return True
+        return (self._latch_pred_candidate(lc.header, lc.body, lc.latch)
+                is not None)
+
+    def _shared_loop_exit(self, body):
+        """The single shared epilogue every loop-leaving edge converges
+        on -- the Exit Do upgrade for uncond-latch Do loops (None when
+        absent or unsafe to take).
+
+        A Do closed by an unconditional latch has no fall-out exit:
+        every departure is an in-body branch.  When >= 2 such edges
+        (through bare skip-over trampolines, resolved the way
+        _exit_stmt_for_target resolves them) meet at ONE term block
+        outside the loop that is not itself a bare ExitProc address
+        (those already render inline as Exit Sub / Return; a post-Loop
+        copy would be dead) and not on any cycle (a restart target
+        keeps its GoTo), that block is the loop's real exit: edges to
+        it render as Exit Do and the epilogue renders once after
+        Loop -- no label anchored mid-block inside one arm, no GoTo
+        jumping into that arm."""
+        targets = set()
+        for n in body:
+            for succ in (n.fall, n.taken):
+                if succ is not None and succ not in body:
+                    targets.add(succ)
+        resolved = set()
+        for t in targets:
+            # Penetrate bare skip trampolines; a tramp re-entering the
+            # body (or leaving the proc) stays as-is and fails the
+            # term gate below -- conservative, never a wrong exit.
+            seen = set()
+            while self._bare_tramp(t) and t.start not in seen \
+                    and t.taken not in body \
+                    and self.proc_start <= t.taken.start < self.proc_end:
+                seen.add(t.start)
+                t = t.taken
+            resolved.add(t)
+        if len(resolved) < 2:
+            return None     # a lone departure renders inline already
+        chains = []
+        for t in resolved:
+            chain, cur, seen = [], t, set()
+            while cur is not None and cur not in seen:
+                seen.add(cur)
+                chain.append(cur)
+                cur = self.ipost.get(cur)
+            chains.append(chain)
+        x = None
+        for cand in chains[0]:
+            if all(cand in c for c in chains[1:]):
+                x = cand
+                break
+        if x is None or x in body or x in self._cyclic_blocks:
+            return None
+        if x.kind != "term" or x.start in self.exit_addrs:
+            return None
+        return x
+
+    def _resolve_natural_exit(self, t, body):
+        """The loop's real exit when the block after the latch is a
+        bare-trampoline run (pub_167 process_AutoScript: the post-latch
+        tramp chain ends at the shared advance-and-return tail, which
+        only arm GoTos ever reach -- the tramp head itself has no
+        predecessors, so the default exit_block is unreachable and the
+        tail gets absorbed into an arm with 7 GoTos jumping into it).
+
+        The resolved block -- it must differ from the tramp head, be
+        reachable, outside the body, off every cycle, and exit-bound
+        (a real-code term block, or a plain block whose branch-free
+        fall continuation runs straight to a bare ExitProc without
+        re-entering the loop; a shared BODY continuation keeps the
+        default) -- plays exit_block: in-loop edges to it render Exit
+        Do, it renders once after Loop, and an arm's fall into it is
+        an Exit Do (LoopCtx.shared_exit).  None keeps the default."""
+        head = t
+        seen = set()
+        while self._bare_tramp(t) and t.start not in seen \
+                and t.taken not in body \
+                and self.proc_start <= t.taken.start < self.proc_end:
+            seen.add(t.start)
+            t = t.taken
+        if t is head:
+            return None     # no tramp run: default behavior
+        if t in body or t in self._cyclic_blocks \
+                or t not in self.reachable or t in self.loops \
+                or t in self.irreducible:
+            return None
+        if t.kind == "term":
+            return t if len(t.instrs) > 1 else None
+        cur, hops = t, 0
+        while cur is not None and hops < 4:
+            if cur.kind == "term":
+                return t if (len(cur.instrs) == 1
+                             and cur.start in self.exit_addrs) else None
+            if cur.taken is not None or cur in body:
+                return None
+            cur = cur.fall
+            hops += 1
+        return None
+
     def _emit_do(self, h, body, latches, stop, ctx):
         latch = self._latch_for(body, latches, h)
         self.emit(h.start, +1, "Do")
         depth = len(self.machine.stack)
         exit_block = latch.fall
         if exit_block is None:
-            # An uncond latch never falls through; the exit is still
-            # the physically following block.
+            # An uncond latch never falls through; the exit is usually
+            # the physically following block.  Exception (generic tail
+            # only -- the closing-test shapes take their own exits):
+            # every in-body departure converges on one shared
+            # epilogue outside the loop; that block is then the real
+            # exit (in-loop edges render as Exit Do, the epilogue
+            # renders once after Loop).
             exit_block = self._block_after(latch)
+            if latch is not h and not self._cond_latch_shape(h, latch) \
+                    and self._latch_pred_candidate(h, body, latch) is None:
+                shared = self._shared_loop_exit(body)
+                if shared is not None:
+                    exit_block = shared
+                elif exit_block is not None:
+                    # The post-latch block may be a bare-tramp run to
+                    # the loop's real exit (pub_167): resolve so its
+                    # edges render Exit Do and it renders post-Loop.
+                    resolved = self._resolve_natural_exit(exit_block,
+                                                          body)
+                    if resolved is not None:
+                        exit_block = resolved
         ctx2 = ctx + [LoopCtx("do", h, body, latch, exit_block, depth)]
+        # A hoisted/resolved exit (not the plain block-after-latch):
+        # any walk inside the loop that lands on it renders the exit
+        # statement.  Depth-0 landings happen when a NESTED loop's
+        # emit returns ("next", <this exit_block>) -- the walk's
+        # loops-branch continues without the fall-exits-loop raise
+        # (pub_186: the middle loop's spine receives the inner loop's
+        # exit and must render Exit Do, not the epilogue inline).
+        ctx2[-1].shared_exit = exit_block is not None \
+            and latch.fall is None \
+            and exit_block is not self._block_after(latch)
         if latch is h:
             # Single-block loop: the header is also the latch.
             for j in h.instrs[:-1]:
@@ -2003,33 +2299,19 @@ class Structurer(object):
             # edge is a separate bare branch block (the len==1 guard
             # enforces "bare"; real-code latches take the generic
             # tail below, which emits them).
-            term_h = h.term
-            if term_h is not None \
-                    and term_h.label in stack_ir.COND_BRANCH \
-                    and latch.kind == "uncond" and latch.taken is h \
-                    and len(latch.instrs) == 1 \
-                    and (h.taken is latch or h.fall is latch):
+            if self._cond_latch_shape(h, latch):
                 for j in h.instrs[:-1]:
                     self.machine.process(j)
                 # _close_cond_loop pops the condition and does
                 # _begin_block right before the Loop line (a GoTo to
                 # the latch then labels the back edge).
-                return self._close_cond_loop(term_h, h, latch, body, depth)
+                return self._close_cond_loop(h.term, h, latch, body, depth)
             # The header is ordinary body code: process_block directly
             # (walk() would reject it as already-visited).  Latch_pred
             # special case: a bare-branch latch whose sole pred is the
             # closing test (Loop While/Until), trusted only for tiny
             # loops; bigger "tests" may be state-machine legs.
-            latch_pred = None
-            if latch.kind == "uncond" and latch.taken is h \
-                    and len(latch.instrs) == 1 \
-                    and len(latch.preds) == 1 \
-                    and len(body) <= _LATCH_PRED_MAX_BODY:
-                cand = latch.preds[0]
-                if cand is not h and cand.kind == "cond" \
-                        and cand in body and (cand.fall is latch
-                                              or cand.taken is latch):
-                    latch_pred = cand
+            latch_pred = self._latch_pred_candidate(h, body, latch)
             if latch_pred is not None:
                 walk_stop = stop | {latch.start, latch_pred.start}
                 res = self.process_block(h, walk_stop, ctx2)
