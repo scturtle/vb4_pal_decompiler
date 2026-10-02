@@ -252,25 +252,52 @@ def format_operand(opcode, label, raw, branch_base, call_names, declares,
 #   FLdI2 (0x03A2): mov ax,[eax+ebp]                    -> direct load
 #   FStI2 (0x03C2): mov [eax+ebp],bx                    -> direct store
 #   FLdRfVar (0x03B8): push ebp+off                     -> push address
-_INDIRECT_PREFIXES = ("ILd", "ISt",)
-_REF_OPS = frozenset({
-    "FLdRfVar", "FLdRf", "CVarRef", "FLdZeroAd",
-    "PopTmpLdAd2", "PopTmpLdAd4", "PopTmpLdAdStr", "PopTmpLdAd1",
-    "ImpAdLdRf", "ImpAdLdPr", "FMemLdRf", "FMemLdRfVar",
-})
+# Kept for reference in the handler comments above; the old ByRef/ByVal
+# classification built on these is retired (style review #9: callee-side
+# I*/F* usage cannot determine modifiers under the all-reference ABI).
 _PARAM_SLOT = re.compile(r"mem=stack\+(\d+)")
 
 
+# CodeView label display aliases (style review #13).  "FMemLdStr" is
+# Microsoft's own NB09 label for handler 0x0F79F138 (shared by opcodes
+# 0x584/0x586/0x58E/0x590; the ImpAd twin 0x0F79E344 by 0x524/0x526/
+# 0x52E/0x530), but the handler is a GENERIC 4-byte module-field load:
+#   movsx edi,[esi]; movzx eax,[esi+2]; mov edx,[edi+ebp]  ; edx = Me
+#   or edx,edx; jz slow; add eax,edx; push [eax]           ; push [Me+off]
+# with no BSTR logic on the fast path, and VB4 has no FMemLdI4 -- every
+# module-level Long/pointer/object-reference load goes through it.
+# PAL's 126 sites have ZERO string consumers (LitI4/CR8I4/GtI2 numeric
+# use, Declare handles, form property ops), so the "Str" name misleads;
+# display the neutral FMemLd4/ImpAdLd4 instead.  Safe by construction:
+# the aliases keep the FMem/ImpAdLd operand-format prefixes, and the
+# scalar-evidence suffix tables match no "...4" suffix.
+LABEL_ALIASES = {
+    "FMemLdStr": "FMemLd4",
+    "ImpAdLdStr": "ImpAdLd4",
+}
+
+
+def strip_label(raw):
+    """CodeView label -> display label (lblEX_ prefix + #13 aliases)."""
+    if raw.startswith("lblEX_"):
+        raw = raw[len("lblEX_"):]
+    return LABEL_ALIASES.get(raw, raw)
+
+
 def classify_params(ops):
-    """Classify a procedure's parameter slots as ByRef/ByVal.
+    """Count a procedure's parameter slots (arity detection only).
 
     ``ops`` is an iterable of ``(label, operand)`` pairs decoded from the
-    procedure body.  Returns ``(nargs, kinds)`` where ``nargs`` is the number
-    of parameters and ``kinds`` is a list of ``"ByRef"``/``"ByVal"`` strings
+    procedure body.  Returns ``(nargs, kinds)`` where ``nargs`` is the
+    number of parameters and ``kinds`` is a list of ``"ByRef"`` strings
     indexed by parameter position (kinds[0] corresponds to a0 / stack+12).
 
-    A slot is ByRef when any indirect (I*) or reference-pushing op touches
-    it; otherwise (only direct F* frame access / untouched) it is ByVal.
+    Style review #9: under the all-reference call ABI a param slot always
+    holds a pointer, so the callee's own I*/F* usage only distinguishes
+    "dereference for the value" from "forward the pointer" and CANNOT
+    determine ByRef/ByVal.  Modifier detection moved to the call-site
+    push-idiom voting in pseudo_code.collect_param_votes; this function
+    now only recovers the arity (kinds are all ByRef, the VB4 default).
     """
     slots = {}
     for label, operand in ops:
@@ -281,13 +308,7 @@ def classify_params(ops):
         if n >= 12 and (n - 8) % 4 == 0:
             slots.setdefault(n, set()).add(label)
     maxarg = max(((n - 12) // 4 + 1 for n in slots), default=0)
-    kinds = []
-    for i in range(maxarg):
-        labels = slots.get(12 + 4 * i, set())
-        indirect = any(lb.startswith(_INDIRECT_PREFIXES) for lb in labels)
-        referenced = bool(labels & _REF_OPS)
-        kinds.append("ByRef" if (indirect or referenced) else "ByVal")
-    return maxarg, kinds
+    return maxarg, ["ByRef"] * maxarg
 
 
 def format_proc(pal, analysis, index, name):
@@ -313,8 +334,7 @@ def format_proc(pal, analysis, index, name):
         raw = pal.bytes_at(pos, size)
         target = entries.get(opcode, 0)
         label = labels.get(target, "<no CodeView label>")
-        if label.startswith("lblEX_"):
-            label = label[len("lblEX_"):]
+        label = strip_label(label)
         display_label = "LitI2" if label == "LitI2_10" else label
         operand = special_operand(opcode, raw)
         if operand is None:
@@ -324,8 +344,13 @@ def format_proc(pal, analysis, index, name):
         byte_hex = raw.hex(" ").upper()
         decoded.append((pos, byte_hex, display_label, operand))
 
-    nargs, kinds = classify_params([(d[2], d[3]) for d in decoded])
+    nargs, _auto_kinds = classify_params([(d[2], d[3]) for d in decoded])
     if nargs:
+        # Modifiers come from the #9 call-site vote table when present
+        # (main.py runs collect_param_votes before rendering); without it
+        # every param defaults to ByRef (VB4 source default).
+        voted = (analysis.get("param_kinds") or {}).get(name) or []
+        kinds = (list(voted) + ["ByRef"] * nargs)[:nargs]
         out.append("; params (%d): %s" % (
             nargs, ", ".join("%s a%d" % (k, i)
                               for i, k in enumerate(kinds))))

@@ -1,5 +1,9 @@
 ' --------------------------------------------------------------------------
 ' 模块级声明（VB4 声明流 @ 0x00401A7C，74 条记录，实例数据区 0x878 字节）
+' 标量槽位：声明流不为简单标量发记录，此处由代码引用扫描补出（src/decl_stream.py scan_scalar_usage）：
+' 未被数组/对象记录足迹覆盖的引用槽位，按 FMemLd/St、ImpAdLd/St 后缀推类型（I2=Integer、I4=Long、R4=Single…）；
+' 冲突时多数表决，ImpAd 证据（5 条零初始化，后缀偏宽）输平局；
+' 0x878 起的窗体控件 COM 槽位区不在此列。
 ' 数组边界来自 EXE 内嵌 SAFEARRAY 描述符模板（src/decl_stream.py）；
 ' kind=0x0005 固定数组 / 0x0105 动态数组（运行期 ReDim）/ 0x0004 对象引用。
 ' 描述符 bounds[0] 对应源码最后一个下标（ExDerefAry 列主序），此处已按源码顺序还原。
@@ -8,6 +12,150 @@
 ' （I2=Integer、UI1=Byte、R4=Single…），无证据字段默认 Integer，
 ' 与元素大小的空洞补 fXXXX 占位；重映射后为帕斯卡结构体名与语义字段名。
 ' --------------------------------------------------------------------------
+Dim Me.f0000 As Long
+Dim Me.f0004 As Long
+Dim Me.f0008 As Long
+Dim Me.f000C As Long
+Dim Me.f0010 As Long
+Dim Me.f0014 As Long
+Dim Me.f01FC As Long
+Dim Me.f0200 As Integer
+Dim Me.f0202 As Integer
+Dim Me.f0204 As Integer
+Dim Me.f0206 As Integer
+Dim Me.f0208 As Integer
+Dim Me.f020A As Integer
+Dim Me.f0224 As Integer
+Dim Me.f0226 As Integer
+Dim Me.f0228 As Integer
+Dim Me.f022A As Integer
+Dim Me.f022C As Integer
+Dim Me.f022E As Integer
+Dim Me.f0230 As Integer
+Dim Me.f0232 As Integer
+Dim Me.f0234 As Integer
+Dim Me.f0236 As Integer
+Dim Me.f0238 As Integer
+Dim Me.f023A As Integer
+Dim Me.f023C As Integer
+Dim Me.f023E As Integer
+Dim Me.f0240 As Integer
+Dim Me.f0242 As Integer
+Dim Me.f0244 As Integer
+Dim Me.f0246 As Integer
+Dim Me.f0248 As Integer
+Dim Me.f024A As Integer
+Dim Me.f024C As Integer
+Dim Me.f024E As Integer
+Dim Me.f0250 As Integer
+Dim Me.f0254 As Long
+Dim Me.f0258 As Integer
+Dim Me.f025A As Integer
+Dim Me.f025C As Integer
+Dim Me.f025E As Integer
+Dim Me.f0260 As Integer
+Dim Me.f0262 As Integer
+Dim Me.f0264 As Integer
+Dim Me.f0266 As Integer
+Dim Me.f0268 As Integer
+Dim Me.f026A As Integer
+Dim Me.f026C As Integer
+Dim Me.f026E As Integer
+Dim Me.f0270 As Integer
+Dim Me.f0272 As Integer
+Dim Me.f0274 As Integer
+Dim Me.f0276 As Integer
+Dim Me.f0278 As Integer
+Dim Me.f027A As Integer
+Dim Me.f027C As Integer
+Dim Me.f027E As Integer
+Dim Me.f0280 As Integer
+Dim Me.f0282 As Integer
+Dim Me.f0284 As Integer
+Dim Me.f0286 As Integer
+Dim Me.f0288 As Integer
+Dim Me.f028A As Integer
+Dim Me.f028C As Integer
+Dim Me.f0290 As Long
+Dim Me.f0294 As Integer
+Dim Me.f0296 As Integer
+Dim Me.f0298 As Integer
+Dim Me.f029A As Integer
+Dim Me.f029C As Integer
+Dim Me.f029E As Integer
+Dim Me.f02A0 As Integer
+Dim Me.f02A2 As Integer
+Dim Me.f02A4 As Long
+Dim Me.f02A8 As Integer
+Dim Me.f02AA As Integer
+Dim Me.f02AC As Integer
+Dim Me.f02B0 As Long
+Dim Me.f02B4 As Long
+Dim Me.f02B8 As Integer
+Dim Me.f02BA As Integer
+Dim Me.f02BC As Integer
+Dim Me.f02BE As Integer
+Dim Me.f02C0 As Integer
+Dim Me.f02C2 As Integer
+Dim Me.f02C4 As Integer
+Dim Me.f02C6 As Integer
+Dim Me.f02C8 As Integer
+Dim Me.f02CA As Integer
+Dim Me.f02CC As Integer
+Dim Me.f02CE As Integer
+Dim Me.f02D0 As Integer
+Dim Me.f02D2 As Integer
+Dim Me.f02D4 As Integer
+Dim Me.f02D8 As Integer
+Dim Me.f02DA As Integer
+Dim Me.f02DC As Integer
+Dim Me.f02DE As Integer
+Dim Me.f02E0 As Integer
+Dim Me.f02E2 As Integer
+Dim Me.f02E4 As Integer
+Dim Me.f02E6 As Integer
+Dim Me.f02E8 As Integer
+Dim Me.f02EA As Integer
+Dim Me.f02EC As Integer
+Dim Me.f02EE As Integer
+Dim Me.f02F0 As Integer
+Dim Me.f02F2 As Integer
+Dim Me.f02F4 As Integer
+Dim Me.f02F6 As Integer
+Dim Me.f02F8 As Integer
+Dim Me.f02FA As Integer
+Dim Me.f02FC As Long
+Dim Me.f0300 As Integer
+Dim Me.f0302 As Integer
+Dim Me.f0304 As Integer
+Dim Me.f0306 As Integer
+Dim Me.f0308 As Integer
+Dim Me.f030A As Integer
+Dim Me.f030C As Integer
+Dim Me.f030E As Integer
+Dim Me.f0310 As Integer
+Dim Me.f0312 As Integer
+Dim Me.f0314 As Integer
+Dim Me.f0318 As Long
+Dim Me.f031C As Integer
+Dim Me.f031E As Integer
+Dim Me.f0322 As Integer
+Dim Me.f0324 As Integer
+Dim Me.f0326 As Integer
+Dim Me.f0328 As Integer
+Dim Me.f032A As Integer
+Dim Me.f032C As Integer
+Dim Me.f032E As Integer
+Dim Me.f0330 As Integer
+Dim Me.f0332 As Integer
+Dim Me.f0334 As Integer
+Dim Me.f0336 As Integer
+Dim Me.f0338 As Integer
+Dim Me.f033A As Integer
+Dim Me.f033C As Integer
+Dim Me.f0340 As Integer
+Dim Me.f0342 As Integer
+
 Dim Me.f0018(0 To 1023) As Byte
 Dim Me.f0030(0 To 1023) As Byte
 Dim Me.f0048(0 To 4095) As Byte
@@ -309,62 +457,136 @@ Dim Me.f083C(0 To 4) As Integer
 Dim Me.f0854(0 To 7) As Byte
 Dim Me.f086C ' 对象引用（kind=0x0004，payload=000000008000）
 
+' ---- Declare table (0x004106A0, 77 entries) ----
+' Return width is compiled into each call site (ImpAdCall* variant);
+' no static signature blob exists in the binary (sig_off = runtime
+' API-slot offset, handler-verified).
+Declare Sub Pal.GetKeyDefine Lib "Pal" Alias "GetKeyDefine" (ByRef a0 As Any)
+Declare Sub user32.StopApp Lib "user32" Alias "StopApp" (ByVal a0 As Integer)
+Declare Function Pal.GetActiveWindow Lib "Pal" Alias "GetActiveWindow" () As Long
+Declare Sub Pal.cvlong Lib "Pal" Alias "cvlong" (ByVal a0 As Integer)
+Declare Sub Pal.PlayAvi Lib "Pal" Alias "PlayAvi" (ByVal a0 As Long, ByVal a1 As Integer, ByVal a2 As Integer)
+Declare Function Pal.CKey Lib "Pal" Alias "CKey" (ByRef a0 As Any) As Long
+Declare Sub Pal.ReadKey Lib "Pal" Alias "ReadKey" (ByRef a0 As Any)
+Declare Sub Pal.ShutDownInput Lib "Pal" Alias "ShutDownInput" ()
+Declare Function Pal.InitCD Lib "Pal" Alias "InitCD" () As Long
+Declare Function Pal.InitInput Lib "Pal" Alias "InitInput" (ByVal a0 As Long, ByVal a1 As Long) As Long
+Declare Sub Pal.delay1 Lib "Pal" Alias "delay1" (ByVal a0 As Integer)
+Declare Sub Pal.wtime Lib "Pal" Alias "wtime" (ByVal a0 As Integer)
+Declare Sub Pal.killtimer Lib "Pal" Alias "killtimer" ()
+Declare Sub Pal.settimer Lib "Pal" Alias "settimer" ()
+Declare Sub Pal.DrawString Lib "Pal" Alias "DrawString" (ByRef a0 As Any, ByVal a1 As Any, ByVal a2 As Any, ByVal a3 As Integer, ByVal a4 As Integer, ByVal a5 As Integer)
+Declare Sub Pal.rngput Lib "Pal" Alias "rngput" (ByRef a0 As Any)
+Declare Sub Pal.popscr6a Lib "Pal" Alias "popscr6a" (ByVal a0 As Any, ByVal a1 As Any, ByVal a2 As Any)
+Declare Sub Pal.popscr6 Lib "Pal" Alias "popscr6" (ByRef a0 As Any, ByVal a1 As Long)
+Declare Sub Pal.adpic Lib "Pal" Alias "adpic" (ByRef a0 As Any, ByVal a1 As Long, ByRef a2 As Any, ByVal a3 As Long)
+Declare Sub Pal.adpic0 Lib "Pal" Alias "adpic0" (ByRef a0 As Any, ByVal a1 As Long, ByRef a2 As Any, ByVal a3 As Long)
+Declare Sub Pal.rblk Lib "Pal" Alias "rblk" (ByVal a0 As Integer, ByVal a1 As Integer, ByVal a2 As Integer, ByVal a3 As Integer, ByVal a4 As Integer)
+Declare Sub Pal.rripafreeze Lib "Pal" Alias "rripafreeze" ()
+Declare Sub Pal.rripa Lib "Pal" Alias "rripa" (ByVal a0 As Integer, ByVal a1 As Integer, ByRef a2 As Any)
+Declare Sub Pal.nipwseg Lib "Pal" Alias "nipwseg" (ByVal a0 As Long)
+Declare Sub Pal.nipwb Lib "Pal" Alias "nipwb" (ByVal a0 As Integer, ByVal a1 As Integer, ByRef a2 As Any)
+Declare Sub Pal.nipwa Lib "Pal" Alias "nipwa" (ByVal a0 As Integer, ByVal a1 As Integer, ByRef a2 As Any)
+Declare Sub Pal.putipna Lib "Pal" Alias "putipna" (ByVal a0 As Any, ByVal a1 As Any, ByVal a2 As Any, ByVal a3 As Any, ByVal a4 As Any, ByVal a5 As Any)
+Declare Sub Pal.clripna Lib "Pal" Alias "clripna" (ByVal a0 As Integer, ByVal a1 As Integer, ByVal a2 As Integer, ByVal a3 As Integer, ByVal a4 As Integer, ByVal a5 As Long, ByRef a6 As Any)
+Declare Sub Pal.extf Lib "Pal" Alias "extf" (ByRef a0 As Any, ByVal a1 As Integer, ByVal a2 As Integer)
+Declare Sub Pal.rhrff Lib "Pal" Alias "rhrff" (ByRef a0 As Any)
+Declare Sub Pal.vmap Lib "Pal" Alias "vmap" (ByVal a0 As Integer, ByVal a1 As Integer, ByVal a2 As Integer, ByRef a3 As Any, ByVal a4 As Long, ByRef a5 As Any)
+Declare Sub Pal.exmyll Lib "Pal" Alias "exmyll" (ByVal a0 As Integer)
+Declare Sub Pal.cleartre Lib "Pal" Alias "cleartre" ()
+Declare Sub Pal.ntre Lib "Pal" Alias "ntre" (ByVal a0 As Integer, ByRef a1 As Any)
+Declare Sub Pal.addtre Lib "Pal" Alias "addtre" (ByVal a0 As Integer, ByVal a1 As Integer, ByVal a2 As Integer, ByRef a3 As Any)
+Declare Sub Pal.ffxy Lib "Pal" Alias "ffxy" (ByRef a0 As Any, ByRef a1 As Any, ByVal a2 As Integer, ByVal a3 As Integer)
+Declare Sub Pal.exmap Lib "Pal" Alias "exmap" (ByVal a0 As Integer, ByVal a1 As Integer, ByRef a2 As Any, ByVal a3 As Long, ByRef a4 As Any)
+Declare Sub Pal.exbb Lib "Pal" Alias "exbb" (ByVal a0 As Integer, ByVal a1 As Integer, ByVal a2 As Integer, ByVal a3 As Integer, ByRef a4 As Any, ByVal a5 As Long)
+Declare Sub Pal.exrij Lib "Pal" Alias "exrij" (ByRef a0 As Any, ByVal a1 As Any, ByRef a2 As Any)
+Declare Sub Pal.exgm2 Lib "Pal" Alias "exgm2" (ByVal a0 As Integer, ByVal a1 As Integer, ByVal a2 As Integer, ByVal a3 As Integer, ByRef a4 As Any, ByVal a5 As Long)
+Declare Sub Pal.exgm1 Lib "Pal" Alias "exgm1" (ByVal a0 As Integer, ByVal a1 As Integer, ByRef a2 As Any, ByVal a3 As Long)
+Declare Sub Pal.exgop Lib "Pal" Alias "exgop" (ByRef a0 As Any, ByVal a1 As Long, ByVal a2 As Integer, ByVal a3 As Integer, ByVal a4 As Integer, ByRef a5 As Any)
+Declare Sub Pal.corpate Lib "Pal" Alias "corpate" (ByVal a0 As Integer, ByRef a1 As Any)
+Declare Sub Pal.fupate Lib "Pal" Alias "fupate" (ByVal a0 As Integer, ByRef a1 As Any, ByVal a2 As Long)
+Declare Sub Pal.cvpate Lib "Pal" Alias "cvpate" (ByRef a0 As Any, ByVal a1 As Any)
+Declare Sub Pal.expate Lib "Pal" Alias "expate" (ByRef a0 As Any, ByVal a1 As Long, ByRef a2 As Any, ByVal a3 As Any)
+Declare Sub Pal.intpate Lib "Pal" Alias "intpate" (ByRef a0 As Any)
+Declare Sub Pal.getbin Lib "Pal" Alias "getbin" (ByVal a0 As Any, ByVal a1 As Any, ByVal a2 As Any)
+Declare Sub Pal.pushscr Lib "Pal" Alias "pushscr" (ByRef a0 As Any)
+Declare Sub Pal.popscr Lib "Pal" Alias "popscr" (ByRef a0 As Any)
+Declare Sub Pal.popscrb Lib "Pal" Alias "popscrb" (ByRef a0 As Any, ByVal a1 As Long)
+Declare Sub Pal.putp Lib "Pal" Alias "putp" (ByVal a0 As Integer, ByVal a1 As Integer, ByRef a2 As Any, ByVal a3 As Any, ByVal a4 As Long, ByVal a5 As Long)
+Declare Sub Pal.vwindow Lib "Pal" Alias "vwindow" (ByVal a0 As Any, ByVal a1 As Any, ByVal a2 As Any, ByVal a3 As Any)
+Declare Function Pal.arrayptr Lib "Pal" Alias "arrayptr" (ByRef a0 As Any) As Long
+Declare Sub Pal.clsmen Lib "Pal" Alias "clsmen" (ByRef a0 As Any, ByVal a1 As Long)
+Declare Sub Pal.copymen Lib "Pal" Alias "copymen" (ByRef a0 As Any, ByVal a1 As Any, ByVal a2 As Any)
+Declare Function Pal.paksize Lib "Pal" Alias "paksize" (ByRef a0 As Any) As Long
+Declare Sub Pal.unpak Lib "Pal" Alias "unpak" (ByRef a0 As Any, ByVal a1 As Long)
+Declare Sub Pal.FlushDSound Lib "Pal" Alias "FlushDSound" ()
+Declare Sub Pal.PlayDSound Lib "Pal" Alias "PlayDSound" (ByVal a0 As Integer, ByVal a1 As Integer)
+Declare Sub Pal.LoadDSound Lib "Pal" Alias "LoadDSound" (ByVal a0 As Long, ByVal a1 As Long)
+Declare Sub Pal.ShutdownDSound Lib "Pal" Alias "ShutdownDSound" ()
+Declare Function Pal.InitDSound Lib "Pal" Alias "InitDSound" (ByVal a0 As Long) As Long
+Declare Sub Pal.ClrScr Lib "Pal" Alias "ClrScr" ()
+Declare Sub Pal.ResetMode Lib "Pal" Alias "ResetMode" ()
+Declare Function user32.SetMode Lib "user32" Alias "SetMode" (ByVal a0 As Long) As Long
+Declare Sub winmm.ShowCursor Lib "winmm" Alias "ShowCursor" (ByVal a0 As Long)
+Declare Function kernel32.mciSendStringA Lib "kernel32" Alias "mciSendStringA" (ByVal a0 As Any, ByVal a1 As Any, ByVal a2 As Any, ByVal a3 As Any) As Long
+Declare Sub kernel32._hwrite Lib "kernel32" Alias "_hwrite" (ByVal a0 As Long, ByRef a1 As Any, ByVal a2 As Long)
+Declare Sub kernel32._hread Lib "kernel32" Alias "_hread" (ByVal a0 As Long, ByRef a1 As Any, ByVal a2 As Long)
+Declare Sub kernel32._lclose Lib "kernel32" Alias "_lclose" (ByVal a0 As Long)
+Declare Function kernel32._llseek Lib "kernel32" Alias "_llseek" (ByVal a0 As Any, ByVal a1 As Any, ByVal a2 As Any) As Long
+Declare Function kernel32._lcreat Lib "kernel32" Alias "_lcreat" (ByVal a0 As String, ByVal a1 As Long) As Long
+Declare Function kernel32._lopen Lib "kernel32" Alias "_lopen" (ByVal a0 As String, ByVal a1 As Long) As Long
+
 VB4 p-code decompilation (VB-style pseudocode)
 Procedures: 198
 
 Sub pub_000_00403190()
     Call pub_045_004046B0()
-    Exit Sub
 End Sub
 
 Sub pub_001_004031F4()
     Call pub_045_004046B0()
     Call pub_064_004053DC()
-    Exit Sub
 End Sub
 
 Sub pub_002_00403264()
     Do
         Call VB40032.rtcDoEvents()
     Loop While Me.f0870 = 1
-    Exit Sub
 End Sub
 
 Sub priv_003_004032A4()  ' MethCallEngine entry
     If Me.f0870 = 1 Then
         Call pub_135_0040AB1C()
     End If
-    Exit Sub
 End Sub
 
 Sub pub_004_004032E4()
     Me.f059C(Me.f02C2).f0002 = 5
-    Exit Sub
 End Sub
 
-Sub pub_005_00403324_hot(ByRef a0, ByRef a1)
+Sub pub_005_00403324_hot(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
     stack-134 = a0
     a0 = a1
     a1 = stack-134
-    Exit Sub
 End Sub
 
-Function pub_006_00403368_hot(ByRef a0, ByRef a1) As Integer
+Function pub_006_00403368_hot(ByRef a0 As Integer, ByRef a1 As Integer) As Integer
     Return (Me.f068C(a0).f001C + 6) * a1
 End Function
 
 Sub pub_007_004033B4()
     Call Pal.copymen(Me.f0168(0), Me.f00A8(0), Me.f0318)
-    Exit Sub
 End Sub
 
 Function pub_008_00403408() As Integer
+    Dim stack-136 As Integer
     Call pub_002_00403264()
     stack-136 = Pal.CKey(Me.f03A4(0))
     Return stack-136
 End Function
 
-Function pub_009_0040345C(ByRef a0) As Integer
+Function pub_009_0040345C(ByRef a0 As Integer) As Integer
     If a0 = 32767 Then
         Return -32768
     Else
@@ -380,28 +602,28 @@ Function pub_010_004034B4_hot() As Integer
     Return Me.f033C
 End Function
 
-Sub pub_011_00403510_hot(ByRef a0, ByRef a1)
+Sub pub_011_00403510_hot(ByRef a0 As Integer, ByRef a1 As Integer)
     If Me.f0238 <> 0 Then
         If Me.f023A And (a0 > 0) Then
             Call Pal.PlayDSound(a0, a1)
         End If
     End If
-    Exit Sub
 End Sub
 
 Sub pub_012_00403570()
+    Dim stack-134 As Integer
     For stack-134 = Me.f02C2 To Me.f02DA
         Me.f059C(stack-134).f0002 = 8
     Next
-    Exit Sub
 End Sub
 
-Sub pub_013_004035D0_hot(ByRef a0)
+Sub pub_013_004035D0_hot(ByRef a0 As Integer)
     Call Pal.copymen(Me.f0824(0).f0000, Me.f0048(a0 * 32), 32)
-    Exit Sub
 End Sub
 
-Sub pub_014_00403630_hot(ByRef a0)
+Sub pub_014_00403630_hot(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     For stack-134 = 1 To a0
         stack-136 = pub_008_00403408()
         If stack-136 Then
@@ -409,28 +631,24 @@ Sub pub_014_00403630_hot(ByRef a0)
         End If
         Call Pal.wtime(1)
     Next
-    Exit Sub
 End Sub
 
-Sub pub_015_00403694(a0)
+Sub pub_015_00403694(ByRef a0 As Integer)
     Me.f0000 = pub_061_00405194(Me.f0008, a0)
     Call kernel32._hread(Me.f0008, Me.f01C8(0), Me.f0000)
-    Exit Sub
 End Sub
 
-Sub pub_016_0040375C_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4)
+Sub pub_016_0040375C_hot(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As String, ByRef a3 As Integer, ByRef a4 As Integer)
     Call Pal.DrawString(a2, a0, a1, a3, a4, Me.f02A4)
-    Exit Sub
 End Sub
 
-Sub pub_017_004037C4(ByRef a0, ByRef a1)
+Sub pub_017_004037C4(ByRef a0 As Integer, ByRef a1 As Integer)
     If Me.f059C(Me.f02C2).f0002 = 8 Then
         Me.f02C2 = Me.f02DA
     End If
     Me.f02C2 = Me.f02C2 + 1
     a0 = 0
     a1 = 0
-    Exit Sub
 End Sub
 
 Sub pub_018_00403834()
@@ -454,15 +672,15 @@ Sub pub_019_004038AC()
     End If
     Me.f0234 = 0
     Me.f0236 = 0
-    Exit Sub
 End Sub
 
-Sub pub_020_00403924_hot(a0, a1, ByRef a2, a3)
+Sub pub_020_00403924_hot(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
     Call pub_016_0040375C_hot(a0, a1, Me.f0344(a2), 0, a3)
-    Exit Sub
 End Sub
 
 Function pub_021_0040399C_hot() As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-138 = 0
     For stack-136 = 0 To Me.f02DE
         If Me.f05B4(stack-136).f0012 > 0 Then
@@ -473,6 +691,7 @@ Function pub_021_0040399C_hot() As Integer
 End Function
 
 Function pub_022_00403A18() As Integer
+    Dim stack-136 As Integer
     stack-136 = 0
     While Me.f05B4(stack-136).f0012 <= 0
         stack-136 = Int(VB40032.rtcRandomNext() * CSng(Me.f02DC))
@@ -480,42 +699,44 @@ Function pub_022_00403A18() As Integer
     Return stack-136
 End Function
 
-Sub pub_023_00403A94(ByRef a0)
+Sub pub_023_00403A94(ByRef a0 As Integer)
+    Dim stack-134 As Integer
     For stack-134 = 0 To 15
         Me.f0724(a0, stack-134).f0000 = 0
         Me.f06E4(a0, stack-134).f0000 = 0
     Next
-    Exit Sub
 End Sub
 
 Sub pub_024_00403B10()
     Call Pal.copymen(Me.f0138(Me.f038C(Me.f0268).f0006 * 32), Me.f07DC(1).f0000, Me.f0296 * 32)
-    Exit Sub
 End Sub
 
-Sub pub_025_00403B8C_hot(a0, a1)
+Sub pub_025_00403B8C_hot(ByRef a0 As String, ByRef a1 As Integer)
+    Dim stack-136 As Long
     stack-136 = pub_056_00404DFC_hot(a0, 0)
     Me.f0000 = pub_061_00405194(stack-136, a1)
     Call kernel32._hread(stack-136, Me.f01C8(0), Me.f0000)
     Call kernel32._lclose(stack-136)
-    Exit Sub
 End Sub
 
-Sub pub_026_00403C0C(a0)
+Sub pub_026_00403C0C(ByRef a0 As Integer)
+    Dim stack-136 As String
     stack-136 = 'FBP.MKF'
     Call pub_025_00403B8C_hot(stack-136, a0)
     Call Pal.unpak(Me.f01C8(0), Me.f01B0(0))
-    Exit Sub
 End Sub
 
 Sub pub_027_00403C8C()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     stack-134 = Me.f0198(Me.f02EC)
     stack-136 = Me.f02E8 - (Me.f0198(stack-134) \ 2)
     Call Pal.addtre(stack-136, Me.f02EA, 0, Me.f0198(stack-134))
-    Exit Sub
 End Sub
 
-Function pub_028_00403D0C(a0) As Integer
+Function pub_028_00403D0C(ByRef a0 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-136 = pub_036_00404160(a0)
     If stack-136 >= 0 Then
         stack-138 = Me.f075C(stack-136).f0002
@@ -526,11 +747,11 @@ Function pub_028_00403D0C(a0) As Integer
     Return stack-138
 End Function
 
-Sub pub_029_00403D8C(a0)
+Sub pub_029_00403D8C(ByRef a0 As Integer)
+    Dim stack-136 As String
     stack-136 = 'PAT.MKF'
     Call pub_025_00403B8C_hot(stack-136, a0)
     Call Pal.copymen(Me.f0150(0), Me.f01C8(0), 1536)
-    Exit Sub
 End Sub
 
 Sub pub_030_00403E14()
@@ -541,10 +762,12 @@ Sub pub_030_00403E14()
     End If
     Me.f02C8 = 0
     Me.f02CA = 0
-    Exit Sub
 End Sub
 
 Sub pub_031_00403E9C()
+    Dim stack-134 As Integer
+    Dim stack-136
+    Dim stack-148 As Integer
     stack-134 = pub_041_00404448(stack-136, 30, 60, 22, 2, 2)
     stack-148 = stack-134
     Select Case stack-148
@@ -557,7 +780,8 @@ Sub pub_031_00403E9C()
     End Select
 End Sub
 
-Function pub_032_00403F28(ByRef a0, ByRef a1, ByRef a2) As Integer
+Function pub_032_00403F28(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer) As Integer
+    Dim stack-136 As Integer
     Call Pal.exgm1(a0, a1, Me.f0180(0), stack-136)
     If stack-136 Then
         Call Pal.exgm2(Me.f0296, a2, a0, a1, Me.f07DC(1).f0000, stack-136)
@@ -570,10 +794,11 @@ Sub pub_033_00403FB4()
     Me.f04C4(0).f0004 = Me.f026E
     Me.f04C4(0).f0000 = Me.f0274
     Me.f04C4(0).f0002 = Me.f0276
-    Exit Sub
 End Sub
 
 Function pub_034_00404040() As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-136 = 0
     For stack-138 = 0 To Me.f02DA
         If Me.f079C(Me.f04AC(stack-138).f0000, 9).f0000 > 0 Then
@@ -583,7 +808,9 @@ Function pub_034_00404040() As Integer
     Return stack-136
 End Function
 
-Function pub_035_004040D0(ByRef a0, ByRef a1) As Integer
+Function pub_035_004040D0(ByRef a0 As Integer, ByRef a1 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-136 = 0
     For stack-138 = 32 To 63
         If Me.f079C(Me.f04AC(a0).f0000, stack-138).f0000 = a1 Then
@@ -593,7 +820,9 @@ Function pub_035_004040D0(ByRef a0, ByRef a1) As Integer
     Return stack-136
 End Function
 
-Function pub_036_00404160(ByRef a0) As Integer
+Function pub_036_00404160(ByRef a0 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-136 = -1
     For stack-138 = 0 To 255
         If (Me.f075C(stack-138).f0002 > 0) And (Me.f075C(stack-138).f0000 = a0) Then
@@ -603,15 +832,16 @@ Function pub_036_00404160(ByRef a0) As Integer
     Return stack-136
 End Function
 
-Sub pub_037_004041F0(ByRef a0)
+Sub pub_037_004041F0(ByRef a0 As Integer)
+    Dim stack-136 As String
     Call pub_026_00403C0C(a0)
     stack-136 = 'FBP.MKF'
     Call pub_025_00403B8C_hot(stack-136, a0 + 1)
     Call Pal.unpak(Me.f01C8(0), Me.f01B0(64000))
-    Exit Sub
 End Sub
 
 Sub pub_038_00404284()
+    Dim stack-134 As Integer
     If Me.f029E Then
         Exit Sub
     End If
@@ -622,10 +852,11 @@ Sub pub_038_00404284()
         End If
         stack-134 = (Me.f029C And 1) * Me.f02A0
     End If
-    Exit Sub
 End Sub
 
 Function pub_039_00404318() As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-138 = pub_022_00403A18()
     For stack-136 = Me.f02C2 To Me.f02DA
         Me.f059C(stack-136).f0002 = 6
@@ -636,7 +867,9 @@ Function pub_039_00404318() As Integer
     Return stack-138
 End Function
 
-Function pub_040_004043B0_hot(ByRef a0, ByRef a1) As Integer
+Function pub_040_004043B0_hot(ByRef a0 As Integer, ByRef a1 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-136 = Me.f079C(a0, a1).f0000
     For stack-138 = 11 To 17
         stack-136 = stack-136 + Me.f0774(a0, stack-138, a1).f0000
@@ -644,7 +877,8 @@ Function pub_040_004043B0_hot(ByRef a0, ByRef a1) As Integer
     Return stack-136
 End Function
 
-Function pub_041_00404448(a0, a1, a2, ByRef a3, a4, ByRef a5) As Integer
+Function pub_041_00404448(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer, ByRef a4 As Integer, ByRef a5 As Integer) As Integer
+    Dim stack-136 As Integer
     For stack-136 = 0 To (a5 - 1)
         Me.f04DC(stack-136) = a3 + stack-136
         Me.f04DC(stack-136 + 100) = -1
@@ -653,23 +887,23 @@ Function pub_041_00404448(a0, a1, a2, ByRef a3, a4, ByRef a5) As Integer
 End Function
 
 Sub pub_042_004044E0()
+    Dim stack-134 As Integer
     Me.f020A = 0
     If Me.f0228 <> 0 Then
         Call Pal.putp(Me.f0204, Me.f0206, Me.f035C(Me.f035C(Me.f0208)), Me.f02A4, 0, 0)
     End If
     stack-134 = pub_010_004034B4_hot()
     Me.f0234 = 0
-    Exit Sub
 End Sub
 
 Sub pub_043_00404578()
+    Dim stack-134 As Integer
     For stack-134 = 0 To (Me.f0266 + Me.f0260)
         Call pub_171_004111BC(Me.f04AC(stack-134).f0002, Me.f04AC(stack-134).f0004, Me.f028A, stack-134, Me.f04AC(stack-134).f0006, 0)
     Next
-    Exit Sub
 End Sub
 
-Sub pub_044_00404614_hot(a0)
+Sub pub_044_00404614_hot(ByRef a0 As Integer)
     Me.f024E = Me.f024E Xor 1
     Call Pal.cleartre()
     If Me.f0304 Then
@@ -686,6 +920,7 @@ Sub pub_044_00404614_hot(a0)
 End Sub
 
 Sub pub_045_004046B0()
+    Dim stack-134 As Integer
     stack-134 = 0
     While (stack-134 >= 0) And (stack-134 <= Me.f0266)
         Call pub_187_00416138(stack-134)
@@ -698,7 +933,6 @@ Sub pub_045_004046B0()
             stack-134 = -1
         End If
     Wend
-    Exit Sub
 End Sub
 
 Sub pub_046_00404754()
@@ -712,7 +946,6 @@ Sub pub_046_00404754()
         Me.f028C = (Me.f028C And 2) Xor 2
     End If
     Call pub_172_00411580()
-    Exit Sub
 End Sub
 
 Sub pub_047_004047FC()
@@ -725,34 +958,34 @@ Sub pub_047_004047FC()
         Me.f0272 = 3 - Me.f0270
     End If
     Call Pal.rhrff(Me.f04C4(0).f0000)
-    Exit Sub
 End Sub
 
-Sub pub_048_004048A4(ByRef a0)
+Sub pub_048_004048A4(ByRef a0 As Integer)
     Call Pal.copymen(Me.f080C(0), Me.f0120(a0 * 4), 8)
     Call Pal.copymen(Me.f01C8(0), Me.f0120(Me.f080C(0)), Me.f080C(1) - Me.f080C(0))
-    Exit Sub
 End Sub
 
-Function pub_049_0040494C(ByRef a0, ByRef a1) As Integer
+Function pub_049_0040494C(ByRef a0 As Integer, ByRef a1 As Integer) As Integer
+    Dim stack-136 As Integer
     Call Pal.copymen(Me.f04F4(0), Me.f0018(12 * Me.f0280), 12)
     stack-136 = a0
     If (a1 > 0) And (a1 <= 5) Then
-        stack-136 = CSng(a0 * (10 + Me.f04F4(a1))) / CSng(10)
+        stack-136 = CSng(a0 * (10 + Me.f04F4(a1))) / 10
     End If
     Return stack-136
 End Function
 
-Sub pub_050_004049F4(a0, ByRef a1)
+Sub pub_050_004049F4(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
     Me.f0000 = pub_061_00405194(Me.f000C, a0)
     Call kernel32._hread(Me.f000C, Me.f01C8(0), Me.f0000)
     Call Pal.unpak(Me.f01C8(0), Me.f0198(a1))
     stack-134 = Pal.paksize(Me.f01C8(0))
     Me.f02E2 = stack-134
-    Exit Sub
 End Sub
 
 Function pub_051_00404AA0() As Integer
+    Dim stack-136 As Integer
     stack-136 = Int(VB40032.rtcRandomNext() * CSng(Me.f02D8))
     While Me.f079C(Me.f04AC(stack-136).f0000, 9).f0000 <= 0
         stack-136 = Int(VB40032.rtcRandomNext() * CSng(Me.f02D8))
@@ -760,25 +993,25 @@ Function pub_051_00404AA0() As Integer
     Return stack-136
 End Function
 
-Sub pub_052_00404B4C(ByRef a0)
+Sub pub_052_00404B4C(ByRef a0 As Integer)
     Me.f05CC(a0).f0002 = Me.f05CC(a0).f0008
     Me.f05CC(a0).f0004 = Me.f05CC(a0).f000A
     Me.f05CC(a0).f000C = Me.f05CC(a0).f000E
     Me.f05CC(a0).f0006 = 0
-    Exit Sub
 End Sub
 
-Sub pub_053_00404BF8_hot(ByRef a0, ByRef a1)
+Sub pub_053_00404BF8_hot(ByRef a0 As Integer, ByRef a1)
+    Dim stack-136 As Long
+    Dim stack-140 As Long
     stack-140 = kernel32._llseek(Me.f0254, Me.f080C(a0), 0)
     stack-136 = stack-140
     Me.f0000 = Me.f080C(a0 + 1) - Me.f080C(a0)
-    AryLock mem=stack-144
     Call kernel32._hread(Me.f0254, a1(0), Me.f0000)
-    AryUnlock mem=stack-144
-    Exit Sub
 End Sub
 
 Sub pub_054_00404CA4()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     Me.f02DA = Me.f0266
     Me.f02D8 = Me.f02DA + 1
     stack-134 = 0
@@ -787,22 +1020,21 @@ Sub pub_054_00404CA4()
         Call pub_050_004049F4(Me.f05CC(stack-136).f0000, stack-134)
         stack-134 = stack-134 + Me.f02E2
     Next
-    Exit Sub
 End Sub
 
-Sub pub_055_00404D50(a0)
+Sub pub_055_00404D50(ByRef a0 As Integer)
     Me.f0000 = pub_061_00405194(Me.f0014, a0)
     If Me.f0000 > Me.f01FC Then
         Redim Me.f01F8(Me.f0000)
         Me.f01FC = Me.f0000
     End If
-    AryLock mem=stack-136
     Call kernel32._hread(Me.f0014, Me.f01F8(0), Me.f0000)
-    AryUnlock mem=stack-136
-    Exit Sub
 End Sub
 
-Sub pub_056_00404DFC_hot(ByRef a0, ByRef a1)
+Sub pub_056_00404DFC_hot(ByRef a0 As String, ByRef a1 As Integer)
+    Dim stack-136 As Long
+    Dim stack-140 As Long
+    Dim stack-148 As Long
     If a1 Then
         stack-148 = kernel32._lcreat(a0, 0)
         stack-140 = stack-148
@@ -811,7 +1043,6 @@ Sub pub_056_00404DFC_hot(ByRef a0, ByRef a1)
         stack-140 = stack-148
     End If
     stack-136 = stack-140
-    Exit Sub
 End Sub
 
 Sub pub_057_00404EAC()
@@ -822,20 +1053,24 @@ Sub pub_057_00404EAC()
     Call Pal.LoadDSound(45, 1)
     Call Pal.LoadDSound(212, 1)
     Call Pal.LoadDSound(47, 1)
-    Exit Sub
 End Sub
 
-Sub pub_058_00404F64(ByRef a0)
+Sub pub_058_00404F64(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-140 As String
     Call Pal.copymen(stack-134, Me.f0048(a0 * 32), 2)
     If stack-134 < 55 Then
         stack-140 = 'FIRE.MKF'
         Call pub_025_00403B8C_hot(stack-140, stack-134)
         Call Pal.unpak(Me.f01C8(0), Me.f0168(0))
     End If
-    Exit Sub
 End Sub
 
-Function pub_059_0040501C(ByRef a0) As Integer
+Function pub_059_0040501C(ByRef a0 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
     stack-136 = 0
     For stack-138 = 0 To Me.f0266
         stack-140 = Me.f04AC(stack-138).f0000
@@ -848,11 +1083,14 @@ Function pub_059_0040501C(ByRef a0) As Integer
     Return stack-136
 End Function
 
-Function pub_060_004050D4(ByRef a0, ByRef a1) As Integer
+Function pub_060_004050D4(ByVal a0 As Integer, ByVal a1 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     stack-136 = 0
     If a0 > 0 Then
         stack-138 = a0 - a1
-        stack-140 = (CSng(a1) / CSng(5)) * CSng(3)
+        stack-140 = (CSng(a1) / 5) * 3
         If a0 > stack-140 Then
             stack-136 = a0 - stack-140
             If stack-138 > 0 Then
@@ -867,17 +1105,20 @@ Function pub_060_004050D4(ByRef a0, ByRef a1) As Integer
     Return stack-136
 End Function
 
-Sub pub_061_00405194(ByRef a0, ByRef a1)
+Sub pub_061_00405194(ByRef a0, ByRef a1 As Integer)
+    Dim stack-136 As Long
+    Dim stack-140 As Long
+    Dim stack-144 As Long
     stack-144 = kernel32._llseek(a0, a1 * 4, 0)
     stack-140 = stack-144
     Call kernel32._hread(a0, Me.f080C(0), 8)
     stack-144 = kernel32._llseek(a0, Me.f080C(0), 0)
     stack-140 = stack-144
     stack-136 = Me.f080C(1) - Me.f080C(0)
-    Exit Sub
 End Sub
 
-Sub pub_062_00405254_hot(a0, a1, ByRef a2, a3)
+Sub pub_062_00405254_hot(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
     Call Pal.copymen(Me.f01C8(0), Me.f0090(0), Me.f02B0)
     Me.f04F4(0) = 44
     For stack-134 = 1 To a2
@@ -885,19 +1126,18 @@ Sub pub_062_00405254_hot(a0, a1, ByRef a2, a3)
     Next
     Me.f04F4(stack-134) = 46
     Call pub_088_004069B0(a0, a1, a2 + 1, a3)
-    Exit Sub
 End Sub
 
-Sub pub_063_00405318(ByRef a0)
+Sub pub_063_00405318(ByRef a0 As Integer)
     Me.f0296 = Me.f038C(a0 + 1).f0006 - Me.f038C(a0).f0006
     If Me.f0296 > 160 Then
         Me.f0296 = 160
     End If
     Call Pal.copymen(Me.f07DC(1).f0000, Me.f0138(Me.f038C(a0).f0006 * 32), Me.f0296 * 32)
-    Exit Sub
 End Sub
 
 Sub pub_064_004053DC()
+    Dim stack-134 As Integer
     Me.f02A8 = 200
     Call pub_164_0040F58C_hot(1, -4)
     Me.f02A8 = 140
@@ -905,10 +1145,10 @@ Sub pub_064_004053DC()
         Call Pal.putp(Me.f065C(stack-134), Me.f0674(stack-134), Me.f01E0(Me.f01E0(40 + stack-134)), Me.f02A4, 4, 2)
     Next
     Call pub_174_00411DBC()
-    Exit Sub
 End Sub
 
-Sub pub_065_004054A4(ByRef a0)
+Sub pub_065_004054A4(ByRef a0 As Integer)
+    Dim stack-134 As Integer
     If Me.f0250 Then
         Me.f0250 = 0
         If a0 > 0 Then
@@ -920,14 +1160,12 @@ Sub pub_065_004054A4(ByRef a0)
         End If
         Call Pal.intpate(Me.f0150(Me.f026C))
     End If
-    Exit Sub
 End Sub
 
-Sub pub_066_00405570(ByRef a0, ByRef a1, ByRef a2, a3, a4)
+Sub pub_066_00405570(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3, ByRef a4 As Integer)
     Call pub_062_00405254_hot(a1, a2, 5, a4)
     Call pub_016_0040375C_hot(a1 + 10, a2 + 10, Me.f0344(a0), 3, 0)
     Call pub_100_004076F0(a1 + 48, a2 + 15, a3, 6)
-    Exit Sub
 End Sub
 
 Sub pub_067_0040563C()
@@ -943,30 +1181,33 @@ Sub pub_067_0040563C()
     Call Pal.killtimer()
     Call Pal.ShutDownInput()
     Call Pal.ResetMode()
-    Call Me.method_002C(Me.f0878.f0000, Me.f087C.f0000)
+    Call Me.f087C.f0000.method_002C()
     End
-    ' ---- unreachable p-code ----
-    Exit Sub
 End Sub
 
-Sub pub_068_0040570C(ByRef a0)
+Sub pub_068_0040570C(ByRef a0 As String)
+    Dim stack-136 As String
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     stack-140 = Len(a0)
     Do
-        stack-138 = VB40032.rtcAnsiValueBstr(Mid(a0, stack-140, 1))
+        stack-138 = Asc(Mid(a0, stack-140, 1))
         stack-140 = stack-140 - 1
     Loop While (stack-138 = 0) Or (stack-138 = 32)
     stack-136 = Left(a0, stack-140 + 1)
-    Exit Sub
 End Sub
 
-Sub pub_069_004057E4(ByRef a0, ByRef a1)
+Sub pub_069_004057E4(ByRef a0 As Integer, ByRef a1 As Integer)
     Call Pal.copymen(Me.f01C8(0), Me.f0090(0), Me.f02B0)
     Call Pal.putp(a0 + 3, a1 + 2, Me.f01C8(Me.f01C8(69)), Me.f02A4, 0, 3)
     Call Pal.putp(a0, a1, Me.f01C8(Me.f01C8(69)), Me.f02A4, 0, 0)
-    Exit Sub
 End Sub
 
-Sub pub_070_004058BC(ByRef a0, ByRef a1)
+Sub pub_070_004058BC(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     For stack-134 = 1 To a1
         For stack-136 = 0 To Me.f0266
             stack-138 = Me.f04AC(stack-136).f0000
@@ -979,10 +1220,10 @@ Sub pub_070_004058BC(ByRef a0, ByRef a1)
         Next
 L_0040595E:
     Next
-    Exit Sub
 End Sub
 
-Sub pub_071_00405994(ByRef a0)
+Sub pub_071_00405994(ByRef a0 As Integer)
+    Dim stack-134 As Integer
     Call Pal.fupate(a0, Me.f0150(1152), Me.f0150(Me.f026C))
     Call Pal.copymen(Me.f0150(768), Me.f0150(Me.f026C), 768)
     For stack-134 = 1 To 25
@@ -990,20 +1231,25 @@ Sub pub_071_00405994(ByRef a0)
         Call Pal.intpate(Me.f0150(768))
         Call Pal.wtime(8)
     Next
-    Exit Sub
 End Sub
 
-Sub pub_072_00405A74(ByRef a0, ByRef a1, a2)
+Sub pub_072_00405A74(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-144 As String
     stack-144 = 'RGM.MKF'
     Call pub_025_00403B8C_hot(stack-144, a2)
     stack-134 = Me.f01C8(0)
     stack-136 = a0 - (Me.f01C8(stack-134) \ 2)
     stack-138 = a1 - (Me.f01C8(stack-134 + 1) \ 2)
     Call Pal.putp(stack-136, stack-138, Me.f01C8(stack-134), Me.f02A4, 0, 0)
-    Exit Sub
 End Sub
 
 Sub pub_073_00405B54()
+    Dim stack-134 As Integer
+    Dim stack-136
+    Dim stack-148 As Integer
     Call pub_066_00405570(21, 0, 0, Me.f02B4, -1)
     stack-134 = pub_041_00404448(stack-136, 3, 37, 3, 3, 4)
     stack-148 = stack-134
@@ -1018,10 +1264,12 @@ Sub pub_073_00405B54()
             Call pub_130_0040A178()
     End Select
     Call pub_074_00405C38_hot()
-    Exit Sub
 End Sub
 
 Sub pub_074_00405C38_hot()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     Call Pal.exmyll(Me.f0334)
     Call Pal.vwindow(0, 0, 319, 199)
     Me.f0328 = 0
@@ -1032,10 +1280,11 @@ Sub pub_074_00405C38_hot()
     stack-138 = Me.f0264
     Call Pal.exrij(stack-134, stack-136, stack-138)
     Call Pal.vmap(stack-136, stack-138, stack-134, Me.f0180(0), Me.f0198(0), Me.f01B0(0))
-    Exit Sub
 End Sub
 
-Sub pub_075_00405D20(ByRef a0)
+Sub pub_075_00405D20(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     stack-134 = (Me.f068C(a0).f0000 + Me.f068C(a0).f0002) - 1
     If Me.f068C(a0).f0002 > 0 Then
         For stack-136 = Me.f068C(a0).f0000 To stack-134
@@ -1049,7 +1298,7 @@ Sub pub_075_00405D20(ByRef a0)
     End If
 End Sub
 
-Sub pub_076_00405E08(ByRef a0, ByRef a1)
+Sub pub_076_00405E08(ByRef a0 As Integer, ByRef a1 As Integer)
     Call Pal.copymen(Me.f00D8(0), Me.f01B0(0), 64000)
     If a0 >= 0 Then
         Call pub_026_00403C0C(a0)
@@ -1062,10 +1311,13 @@ Sub pub_076_00405E08(ByRef a0, ByRef a1)
         Call Pal.popscr(Me.f01B0(0))
     End If
     Call Pal.copymen(Me.f01B0(0), Me.f00D8(0), 64000)
-    Exit Sub
 End Sub
 
-Sub pub_077_00405EF8(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_077_00405EF8(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     If a2 < 0 Then
         Exit Sub
     End If
@@ -1086,10 +1338,12 @@ Sub pub_077_00405EF8(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         Call Pal.addtre(stack-136, a1 + 999, 999, Me.f01E0(Me.f01E0(stack-140 + stack-134)))
         stack-136 = stack-136 - 6
     Wend
-    Exit Sub
 End Sub
 
 Sub pub_078_00405FE8()
+    Dim stack-196 As String * 32
+    Dim stack-200 As Long
+    Dim stack-220 As Long
     If (Me.f023C = 2) And (Me.f0244 <> 0) Then
         Me.f0246 = 0
         Me.f0244 = 0
@@ -1097,10 +1351,11 @@ Sub pub_078_00405FE8()
         stack-220 = kernel32.mciSendStringA('stop cdtrack', stack-196, 30, 0)
         stack-200 = stack-220
     End If
-    Exit Sub
 End Sub
 
 Sub pub_079_004060D8()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     For stack-134 = 1 To 9
         For stack-136 = 0 To Me.f02DA
             If pub_093_00406F08_hot(stack-136) > 1 Then
@@ -1110,10 +1365,12 @@ Sub pub_079_004060D8()
         Next
         Call pub_164_0040F58C_hot(1, 0)
     Next
-    Exit Sub
 End Sub
 
-Sub pub_080_004061CC(ByRef a0)
+Sub pub_080_004061CC(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     Me.f0250 = 0
     stack-134 = 0
     stack-136 = 64
@@ -1130,10 +1387,12 @@ Sub pub_080_004061CC(ByRef a0)
         Call pub_044_00404614_hot(0)
     Next
     Me.f0250 = a0 < 0
-    Exit Sub
 End Sub
 
-Sub pub_081_004062C4(ByRef a0)
+Sub pub_081_004062C4(ByRef a0 As Integer)
+    Dim stack-136 As Long
+    Dim stack-140 As Long
+    Dim stack-144 As Long
     Call Pal.copymen(Me.f080C(0), Me.f00F0(a0 * 4), 8)
     stack-136 = Me.f080C(1) - Me.f080C(0)
     Me.f020C(0) = stack-136
@@ -1141,10 +1400,13 @@ Sub pub_081_004062C4(ByRef a0)
     stack-140 = stack-144
     Call kernel32._hread(Me.f0004, Me.f020C(1), stack-136)
     Me.f020C(stack-136 + 1) = 0
-    Exit Sub
 End Sub
 
 Sub pub_082_004063BC()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     stack-136 = 0
     stack-140 = 0
     Do
@@ -1162,18 +1424,20 @@ Sub pub_082_004063BC()
         Call pub_030_00403E14()
     Loop
     Call pub_074_00405C38_hot()
-    Exit Sub
 End Sub
 
-Sub pub_083_004064B4(ByRef a0, ByRef a1)
+Sub pub_083_004064B4(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-134 = Me.f0198(Me.f05CC(a0).f0010 + Me.f05CC(a0).f000C) + Me.f05CC(a0).f0010
     stack-136 = Me.f05CC(a0).f0002 - (Me.f0198(stack-134) \ 2)
     stack-138 = Me.f05CC(a0).f0004 - Me.f0198(stack-134 + 1)
     Call Pal.putp(stack-136, stack-138, Me.f0198(stack-134), Me.f02A4, a1, 1)
-    Exit Sub
 End Sub
 
-Sub pub_084_004065B0(ByRef a0)
+Sub pub_084_004065B0(ByRef a0 As Integer)
+    Dim stack-134 As Integer
     If Me.f0250 = 0 Then
         Me.f0250 = 1
         If a0 > 0 Then
@@ -1186,10 +1450,10 @@ Sub pub_084_004065B0(ByRef a0)
         Call Pal.expate(Me.f0150(768), Me.f0150(Me.f026C), 768, 0)
         Call Pal.intpate(Me.f0150(768))
     End If
-    Exit Sub
 End Sub
 
 Sub pub_085_004066AC()
+    Dim stack-134 As Integer
     For stack-134 = 0 To 11
         If Me.f0374(stack-134).f0008 > 0 Then
             Call pub_077_00405EF8(Me.f0374(stack-134).f0000, Me.f0374(stack-134).f0002, Me.f0374(stack-134).f0004, Me.f0374(stack-134).f0006)
@@ -1197,10 +1461,10 @@ Sub pub_085_004066AC()
             Me.f0374(stack-134).f0002 = Me.f0374(stack-134).f0002 - 1
         End If
     Next
-    Exit Sub
 End Sub
 
-Sub pub_086_004067A8(ByRef a0)
+Sub pub_086_004067A8(ByRef a0 As Integer)
+    Dim stack-134 As Integer
     Call pub_007_004033B4()
     Me.f05E4(1) = Me.f05CC(a0).f0002
     Me.f05FC(1) = Me.f05CC(a0).f0004
@@ -1212,10 +1476,12 @@ Sub pub_086_004067A8(ByRef a0)
         Call pub_164_0040F58C_hot(1, -1)
     Next
     Me.f02CC = 0
-    Exit Sub
 End Sub
 
-Sub pub_087_004068A8(ByRef a0)
+Sub pub_087_004068A8(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     For stack-134 = 0 To Me.f02DE
         If Me.f0494(stack-134) > 0 Then
             stack-136 = Me.f05B4(stack-134).f0012 - Me.f0494(stack-134)
@@ -1231,10 +1497,12 @@ Sub pub_087_004068A8(ByRef a0)
             End If
         End If
     Next
-    Exit Sub
 End Sub
 
-Sub pub_088_004069B0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_088_004069B0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-134 = a0
     For stack-136 = 0 To a2
         stack-138 = Me.f01C8(Me.f04F4(stack-136))
@@ -1244,10 +1512,10 @@ Sub pub_088_004069B0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         Call Pal.putp(stack-134, a1, Me.f01C8(stack-138), Me.f02A4, 0, 0)
         stack-134 = stack-134 + Me.f01C8(stack-138)
     Next
-    Exit Sub
 End Sub
 
-Sub pub_089_00406ABC_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_089_00406ABC_hot(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
     If a2 <= 0 Then
         Exit Sub
     End If
@@ -1264,10 +1532,10 @@ Sub pub_089_00406ABC_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
             Exit Sub
         End If
     Next
-    Exit Sub
 End Sub
 
 Sub pub_090_00406BCC()
+    Dim stack-134 As Integer
     For stack-134 = 0 To Me.f02DE
         If Me.f04DC(stack-134) Then
             Me.f05B4(stack-134).f0012 = Me.f05B4(stack-134).f0012 - Me.f04DC(20 + stack-134)
@@ -1279,10 +1547,11 @@ Sub pub_090_00406BCC()
             End If
         End If
     Next
-    Exit Sub
 End Sub
 
 Sub pub_091_00406CDC()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     stack-134 = pub_165_0040F8D4(Me.f0286, Me.f0288, Me.f026E)
     If stack-134 >= 0 Then
         If Me.f07DC(stack-134).f0016 < (Me.f07DC(stack-134).f0012 * 4) Then
@@ -1295,15 +1564,16 @@ Sub pub_091_00406CDC()
         End If
         Call pub_189_00417834_hot(stack-134, Me.f07DC(stack-134).f0008)
     End If
-    Exit Sub
 End Sub
 
 Sub priv_092_00406DF0()  ' MethCallEngine entry
-    Call Me.method_0064(Me.method_0010(Me.method_006C(Me.method_0010(Me.method_0054(Me.method_005C(CSng(0), Me.f0878.f0000), CSng(0), Me.f0878.f0000), stack-136, Me.f087C.f0000), stack-136, stack-152, Me.f0878.f0000), stack-156, Me.f087C.f0000), stack-156, stack-152, Me.f0878.f0000)
-    Exit Sub
+    Dim stack-136
+    Dim stack-156
+    Call Me.f0878.f0000.method_0064(Me.f087C.f0000.method_0010(Me.f0878.f0000.method_006C(Me.f087C.f0000.method_0010(Me.f0878.f0000.method_0054(Me.f0878.f0000.method_005C(0), 0), stack-136), stack-136.lateid_00010001), stack-156), stack-156.lateid_00010000)
 End Sub
 
-Function pub_093_00406F08_hot(ByRef a0) As Integer
+Function pub_093_00406F08_hot(ByRef a0 As Integer) As Integer
+    Dim stack-136 As Integer
     stack-136 = -1
     stack-136 = stack-136 And (Me.f06C4(a0, 0).f0000 <= 0)
     stack-136 = stack-136 And (Me.f06C4(a0, 1).f0000 <= 0)
@@ -1319,7 +1589,10 @@ Function pub_093_00406F08_hot(ByRef a0) As Integer
     Return stack-136
 End Function
 
-Function pub_094_00407024(a0, a1, ByRef a2) As Integer
+Function pub_094_00407024(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     stack-136 = 0
     If Me.f0266 > 0 Then
         If stack-138 > Me.f0266 Then
@@ -1337,6 +1610,10 @@ Function pub_094_00407024(a0, a1, ByRef a2) As Integer
 End Function
 
 Sub pub_095_00407140()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     Do
         stack-134 = pub_191_004189B0(Me.f02F0, 0, 1)
         If stack-134 < 0 Then
@@ -1357,10 +1634,10 @@ Sub pub_095_00407140()
         End If
         Call pub_179_0041342C(stack-138, 110, 2, Me.f02F0)
     Loop While stack-138 < 0
-    Exit Sub
 End Sub
 
-Sub pub_096_0040725C(ByRef a0, ByRef a1, ByRef a2)
+Sub pub_096_0040725C(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
     stack-134 = Me.f0744(a2).f0000
     If stack-134 Then
         Call Pal.putp(a0 + 5, a1 + 4, Me.f01C8(Me.f01C8(70)), Me.f02A4, 0, 3)
@@ -1368,7 +1645,6 @@ Sub pub_096_0040725C(ByRef a0, ByRef a1, ByRef a2)
         Call pub_048_004048A4(stack-134)
         Call Pal.putp(a0 + 8, a1 + 7, Me.f01C8(Me.f01C8(0)), Me.f02A4, 0, 0)
     End If
-    Exit Sub
 End Sub
 
 Sub pub_097_00407378(ByRef a0)
@@ -1377,10 +1653,10 @@ Sub pub_097_00407378(ByRef a0)
     Call pub_100_004076F0(148, 114, a0, 6)
     Call pub_016_0040375C_hot(194, 110, Me.f0344(10), 3, 0)
     Me.f02B4 = Me.f02B4 + a0
-    Exit Sub
 End Sub
 
 Sub pub_098_004074A0()
+    Dim stack-134 As Integer
     For stack-134 = 0 To Me.f02DE
         Me.f05B4(stack-134).f0002 = Me.f06A4(Me.f02DE, stack-134).f0000
         Me.f05B4(stack-134).f0004 = Me.f06A4(Me.f02DE, stack-134).f0002 + Me.f068C(stack-134).f000A
@@ -1389,10 +1665,13 @@ Sub pub_098_004074A0()
         Me.f05B4(stack-134).f000A = 0
         Me.f05B4(stack-134).f000C = 0
     Next
-    Exit Sub
 End Sub
 
-Sub pub_099_004075C8_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_099_004075C8_hot(ByRef a0 As Integer, ByRef a1 As Integer, ByVal a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     Call Pal.copymen(Me.f01C8(0), Me.f0090(0), Me.f02B0)
     If a2 < 0 Then
         Exit Sub
@@ -1414,10 +1693,13 @@ Sub pub_099_004075C8_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         Call Pal.putp(stack-134, a1, Me.f01C8(Me.f01C8(stack-140 + stack-138)), Me.f02A4, 0, 0)
         stack-134 = stack-134 - 6
     Loop While stack-136 > 0
-    Exit Sub
 End Sub
 
-Sub pub_100_004076F0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_100_004076F0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-144 As Long
     Call Pal.copymen(Me.f01C8(0), Me.f0090(0), Me.f02B0)
     If a2 < 0 Then
         Exit Sub
@@ -1426,17 +1708,18 @@ Sub pub_100_004076F0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     stack-144 = a2
     For stack-136 = 1 To a3
         stack-138 = stack-144 Mod 10
-        stack-144 = Int(stack-144 / CSng(10))
+        stack-144 = Int(stack-144 / 10)
         Call Pal.putp(stack-134, a1, Me.f01C8(Me.f01C8(stack-138 + 19)), Me.f02A4, 0, 0)
         stack-134 = stack-134 - 6
         If stack-144 <= 0 Then
             Exit Sub
         End If
     Next
-    Exit Sub
 End Sub
 
 Function pub_101_00407818() As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     If Me.f02DA <= 0 Then
         Return 0
     Else
@@ -1469,7 +1752,8 @@ Function pub_101_00407818() As Integer
     Return stack-136
 End Function
 
-Sub pub_102_00407940(ByRef a0, ByRef a1)
+Sub pub_102_00407940(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
     If a0 <= 0 Then
         Exit Sub
     End If
@@ -1487,10 +1771,13 @@ Sub pub_102_00407940(ByRef a0, ByRef a1)
             Exit Sub
         End If
     Next
-    Exit Sub
 End Sub
 
-Sub pub_103_00407A6C(ByRef a0)
+Sub pub_103_00407A6C(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     stack-134 = 8
     For stack-136 = 1 To a0
         For stack-138 = 0 To 1
@@ -1508,10 +1795,12 @@ Sub pub_103_00407A6C(ByRef a0)
         Next
         stack-134 = stack-134 \ 2
     Next
-    Exit Sub
 End Sub
 
-Sub pub_104_00407B9C_hot(a0, ByRef a1)
+Sub pub_104_00407B9C_hot(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-140 As Long
     stack-134 = a1
     If stack-134 = 0 Then
         stack-134 = 88
@@ -1539,7 +1828,9 @@ Sub pub_104_00407B9C_hot(a0, ByRef a1)
     End If
 End Sub
 
-Sub pub_105_00407CD0(ByRef a0, ByRef a1, ByRef a2)
+Sub pub_105_00407CD0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     Call Pal.pushscr(Me.f00C0(0))
     For stack-134 = 0 To a1
         stack-136 = stack-134 Mod 6
@@ -1553,10 +1844,12 @@ Sub pub_105_00407CD0(ByRef a0, ByRef a1, ByRef a2)
         Call pub_038_00404284()
     Next
     Call Pal.popscr(Me.f01B0(0))
-    Exit Sub
 End Sub
 
 Function pub_106_00407E04() As Integer
+    Dim stack-198 As String * 32
+    Dim stack-204 As Long
+    Dim stack-224 As Long
     stack-224 = kernel32.mciSendStringA('status midi mode', stack-198, 30, 0)
     stack-204 = stack-224
     If Left(stack-198, 7) = 'playing' Then
@@ -1566,7 +1859,12 @@ Function pub_106_00407E04() As Integer
     End If
 End Function
 
-Sub pub_107_00407F40(ByRef a0, ByRef a1)
+Sub pub_107_00407F40(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
     For stack-134 = 1 To 15
         Call Pal.wtime(2)
         For stack-136 = a0 To a1
@@ -1576,10 +1874,12 @@ Sub pub_107_00407F40(ByRef a0, ByRef a1)
             Call Pal.putp(stack-140, stack-142, Me.f0198(stack-138), Me.f02A4, stack-134, 1)
         Next
     Next
-    Exit Sub
 End Sub
 
 Function pub_108_0040807C() As Integer
+    Dim stack-198 As String * 32
+    Dim stack-204 As Long
+    Dim stack-224 As Long
     stack-224 = kernel32.mciSendStringA('status cdtrack mode', stack-198, 30, 0)
     stack-204 = stack-224
     If Left(stack-198, 7) = 'playing' Then
@@ -1589,7 +1889,9 @@ Function pub_108_0040807C() As Integer
     End If
 End Function
 
-Sub pub_109_004081C0(ByRef a0)
+Sub pub_109_004081C0(ByRef a0 As Integer)
+    Dim stack-136 As Long
+    Dim stack-140 As String
     If Me.f038C(a0).f0000 <> Me.f025E Then
         stack-140 = 'MAP.MKF'
         Call pub_025_00403B8C_hot(stack-140, Me.f038C(a0).f0000)
@@ -1601,10 +1903,11 @@ Sub pub_109_004081C0(ByRef a0)
         Call kernel32._lclose(stack-136)
     End If
     Me.f025E = Me.f038C(a0).f0000
-    Exit Sub
 End Sub
 
-Sub pub_110_00408308(ByRef a0, ByRef a1)
+Sub pub_110_00408308(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     Me.f05CC(a0).f000C = 0
     stack-134 = 4
     For stack-136 = 1 To 4
@@ -1620,10 +1923,14 @@ Sub pub_110_00408308(ByRef a0, ByRef a1)
         Call pub_086_004067A8(a0)
     End If
     Call pub_164_0040F58C_hot(1, 0)
-    Exit Sub
 End Sub
 
-Sub pub_111_00408454(ByRef a0)
+Sub pub_111_00408454(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-148 As Long
     stack-134 = Me.f0168(Me.f0314)
     For stack-136 = 1 To Me.f02CC
         stack-138 = Me.f05E4(stack-136) - (Me.f0168(stack-134) \ 2)
@@ -1635,10 +1942,12 @@ Sub pub_111_00408454(ByRef a0)
             Call Pal.addtre(stack-138, (Me.f05FC(stack-136) + Me.f0614(stack-136)) - Me.f0326, Me.f0614(stack-136), Me.f0168(stack-134))
         End If
     Next
-    Exit Sub
 End Sub
 
-Sub pub_112_004085A8(ByRef a0, ByRef a1)
+Sub pub_112_004085A8(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-164 As Single
     Call Pal.clsmen(Me.f04DC(0), 25)
     If Me.f06C4(a0, 8).f0000 > 0 Then
         stack-134 = 1
@@ -1652,22 +1961,26 @@ Sub pub_112_004085A8(ByRef a0, ByRef a1)
     Call pub_164_0040F58C_hot(1, 0)
     Call pub_090_00406BCC()
     stack-164 = VB40032.rtcRandomNext()
-    Me.f07BC(a1, 1).f0006 = CSng(Me.f07BC(a1, 1).f0006) + (stack-164 * CSng(2))
+    Me.f07BC(a1, 1).f0006 = CSng(Me.f07BC(a1, 1).f0006) + (stack-164 * 2)
     Me.f07BC(a1, 3).f0006 = Me.f07BC(a1, 3).f0006 + 1
-    Exit Sub
 End Sub
 
 Sub pub_113_004086FC()
+    Dim stack-196 As String * 32
+    Dim stack-200 As Long
+    Dim stack-220 As Long
     If Me.f023C = 2 Then
         stack-220 = kernel32.mciSendStringA('stop cdtrack', stack-196, 30, 0)
         stack-200 = stack-220
         stack-220 = kernel32.mciSendStringA('close cdtrack', stack-196, 30, 0)
         stack-200 = stack-220
     End If
-    Exit Sub
 End Sub
 
 Sub pub_114_00408850()
+    Dim stack-196 As String * 32
+    Dim stack-200 As Long
+    Dim stack-220 As Long
     If (Me.f023C <> 0) And (Me.f0240 <> 0) Then
         Me.f0242 = 0
         Me.f0240 = 0
@@ -1676,10 +1989,10 @@ Sub pub_114_00408850()
         stack-220 = kernel32.mciSendStringA('close midi', stack-196, 30, 0)
         stack-200 = stack-220
     End If
-    Exit Sub
 End Sub
 
-Sub pub_115_004089B4(a0)
+Sub pub_115_004089B4(ByRef a0 As Integer)
+    Dim stack-136 As Long
     stack-136 = Pal.arrayptr(Me.f01B0(0))
     Call Pal.clripna(Me.f0328, Me.f032A, Me.f0338, Me.f0336, Me.f0334, stack-136, Me.f01C8(0))
     Me.f0298 = Me.f0298 + Me.f029A
@@ -1698,10 +2011,11 @@ Sub pub_115_004089B4(a0)
     Call Pal.wtime(10)
     Call pub_065_004054A4(a0)
     Call pub_038_00404284()
-    Exit Sub
 End Sub
 
 Sub pub_116_00408B20()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     stack-134 = Me.f079C(Me.f04AC(0).f0000, 64).f0000
     If stack-134 = 0 Then
         stack-134 = 3
@@ -1718,10 +2032,12 @@ Sub pub_116_00408B20()
         Me.f04AC(Me.f0266 + stack-136).f0006 = Me.f04C4(2 + stack-136).f0004 * 3
     Next
     Me.f028C = (Me.f028C And 2) Xor 2
-    Exit Sub
 End Sub
 
 Sub pub_117_00408C90()
+    Dim stack-196 As String * 32
+    Dim stack-200 As Long
+    Dim stack-220 As Long
     If Me.f0872 = 1 Then
         Call user32.StopApp(1)
         If Me.f0240 = 1 Then
@@ -1734,10 +2050,10 @@ Sub pub_117_00408C90()
         End If
     End If
     Me.f0870 = 1
-    Exit Sub
 End Sub
 
-Sub pub_118_00408E08_hot(ByRef a0, ByRef a1)
+Sub pub_118_00408E08_hot(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
     Me.f07DC(a0).f0002 = Me.f07DC(a0).f0002 + (Me.f044C(Me.f07DC(a0).f0014) * (a1 + a1))
     Me.f07DC(a0).f0004 = Me.f07DC(a0).f0004 + (Me.f0464(Me.f07DC(a0).f0014) * a1)
     stack-134 = Me.f07DC(a0).f0012
@@ -1754,6 +2070,9 @@ Sub pub_118_00408E08_hot(ByRef a0, ByRef a1)
 End Sub
 
 Sub pub_119_00408F84()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     Select Case Me.f02BA
         Case 0
             Call Pal.exmap(Me.f0262, Me.f0264, Me.f0180(0), Me.f01C8(0), Me.f0198(0))
@@ -1781,7 +2100,9 @@ Sub pub_119_00408F84()
     End Select
 End Sub
 
-Sub pub_120_00409104(ByRef a0, ByRef a1)
+Sub pub_120_00409104(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     stack-134 = a1
     For stack-136 = 0 To 255
         If ((Me.f075C(stack-136).f0000 = a0) And (Me.f075C(stack-136).f0002 > 0)) And (stack-134 > 0) Then
@@ -1800,7 +2121,6 @@ Sub pub_120_00409104(ByRef a0, ByRef a1)
         End If
     Next
     Call pub_070_004058BC(a0, stack-134)
-    Exit Sub
 End Sub
 
 Sub pub_121_00409288()
@@ -1844,10 +2164,12 @@ Sub pub_121_00409288()
     End If
     Me.f0306 = 0
     Call pub_126_00409A70()
-    Exit Sub
 End Sub
 
-Sub pub_122_00409410(ByRef a0)
+Sub pub_122_00409410(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     Call Pal.clsmen(Me.f04DC(0), 150)
     stack-134 = -1
     For stack-136 = 32 To 63
@@ -1866,39 +2188,39 @@ Sub pub_122_00409410(ByRef a0)
     For stack-136 = 0 To 31
         Me.f079C(a0, stack-136 + 32).f0000 = Me.f04DC(stack-136)
     Next
-    Exit Sub
 End Sub
 
-Sub pub_123_0040959C(ByRef a0, ByRef a1, ByRef a2)
-    stack-134 = CSng(100) / CSng(a2)
+Sub pub_123_0040959C(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    stack-134 = 100 / CSng(a2)
     Call Pal.copymen(Me.f00D8(0), Me.f01B0(0), 64000)
     For stack-136 = a0 To a1
-        AryLock mem=stack-144
         Call Pal.copymen(Me.f080C(0), Me.f01F8(stack-136 * 4), 8)
-        AryUnlock mem=stack-144
         Me.f0000 = Me.f080C(1) - Me.f080C(0)
         If Me.f0000 <= 0 Then
             Exit For
         End If
-        AryLock mem=stack-144
         Call Pal.unpak(Me.f01F8(Me.f080C(0)), Me.f01B0(0))
-        AryUnlock mem=stack-144
         Call Pal.rngput(Me.f01B0(0))
         Call Pal.wtime(stack-134)
         Call pub_065_004054A4(1)
         Call pub_038_00404284()
     Next
     Call Pal.copymen(Me.f01B0(0), Me.f00D8(0), 64000)
-    Exit Sub
 End Sub
 
-Sub pub_124_0040972C(ByRef a0, a1, ByRef a2)
+Sub pub_124_0040972C(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-196 As String * 32
+    Dim stack-200 As String
+    Dim stack-204 As Long
+    Dim stack-272 As Long
     If Me.f023C = 2 Then
         Call pub_114_00408850()
         Call pub_078_00405FE8()
         If Me.f023E Then
             If a0 > 0 Then
-                stack-200 = (('play cdtrack from' & VB40032.rtcStrFromVar(a0)) & ' to') & VB40032.rtcStrFromVar(a0 + 1)
+                stack-200 = (('play cdtrack from' & Str(a0)) & ' to') & Str(a0 + 1)
                 stack-272 = kernel32.mciSendStringA(stack-200, stack-196, 30, 0)
                 stack-204 = stack-272
                 Me.f0246 = a2
@@ -1914,6 +2236,9 @@ Sub pub_124_0040972C(ByRef a0, a1, ByRef a2)
 End Sub
 
 Function pub_125_004098C4() As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-164
     Call Pal.clsmen(Me.f04DC(0), 256)
     stack-136 = -1
     For stack-138 = 0 To 255
@@ -1934,6 +2259,9 @@ Function pub_125_004098C4() As Integer
 End Function
 
 Sub pub_126_00409A70()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     For stack-134 = 0 To 255
         Me.f075C(stack-134).f0004 = 0
     Next
@@ -1950,10 +2278,17 @@ Sub pub_126_00409A70()
             End If
         Next
     Next
-    Exit Sub
 End Sub
 
-Function pub_127_00409C24(ByRef a0, ByRef a1) As Integer
+Function pub_127_00409C24(ByRef a0 As Integer, ByRef a1 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
     stack-136 = 120
     stack-138 = 100
     stack-140 = -1
@@ -1986,6 +2321,9 @@ Function pub_127_00409C24(ByRef a0, ByRef a1) As Integer
 End Function
 
 Function pub_128_00409DE8() As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     If pub_021_0040399C_hot() <= 1 Then
         stack-136 = 0
         For stack-138 = 0 To Me.f02DE
@@ -2030,6 +2368,12 @@ Function pub_128_00409DE8() As Integer
 End Function
 
 Sub pub_129_00409FB0()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
     For stack-134 = 1 To Me.f0296
         If Me.f07DC(stack-134).f000C > 0 Then
             stack-136 = Me.f07DC(stack-134).f0002 - Me.f0262
@@ -2054,10 +2398,14 @@ Sub pub_129_00409FB0()
             End If
         End If
     Next
-    Exit Sub
 End Sub
 
 Sub pub_130_0040A178()
+    Dim stack-134 As Integer
+    Dim stack-136
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-152 As Integer
     stack-134 = pub_041_00404448(stack-136, 40, 60, 11, 4, 5)
     stack-152 = stack-134
     Select Case stack-152
@@ -2104,6 +2452,14 @@ Sub pub_130_0040A178()
 End Sub
 
 Function pub_131_0040A344() As Integer
+    Dim stack-140 As Long
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-156 As Long
     Call pub_018_00403834()
     stack-156 = Pal.arrayptr(Me.f01B0(0))
     stack-140 = stack-156
@@ -2142,7 +2498,9 @@ Function pub_131_0040A344() As Integer
     Return stack-150
 End Function
 
-Sub pub_132_0040A524(a0, ByRef a1, ByRef a2)
+Sub pub_132_0040A524(ByRef a0 As Integer, ByVal a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     Call pub_013_004035D0_hot(a0)
     If a2 < 9 Then
         Call pub_011_00403510_hot(Me.f0824(0).f001E, 0)
@@ -2161,7 +2519,7 @@ Sub pub_132_0040A524(a0, ByRef a1, ByRef a2)
     For stack-134 = 1 To Me.f0824(0).f0012
         Call pub_164_0040F58C_hot(1, 0)
         stack-136 = 10 - stack-136
-        Me.f0326 = Int(VB40032.rtcRandomNext() * CSng(6)) + CSng(stack-136)
+        Me.f0326 = Int(VB40032.rtcRandomNext() * 6) + CSng(stack-136)
     Next
     Me.f0326 = 0
     Me.f02AC = 0
@@ -2169,10 +2527,13 @@ Sub pub_132_0040A524(a0, ByRef a1, ByRef a2)
         Call pub_111_00408454(-1)
         Call Pal.copymen(Me.f00D8(0), Me.f01B0(0), 64000)
     End If
-    Exit Sub
 End Sub
 
-Sub pub_133_0040A710(ByRef a0)
+Sub pub_133_0040A710(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     For stack-134 = 0 To Me.f02DA
         stack-136 = Me.f04AC(stack-134).f0000
         stack-138 = Me.f079C(stack-136, 9).f0000 - Me.f047C(stack-134).f0000
@@ -2197,10 +2558,17 @@ Sub pub_133_0040A710(ByRef a0)
             Me.f079C(stack-136, 10).f0000 = 0
         End If
     Next
-    Exit Sub
 End Sub
 
 Sub pub_134_0040A910()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-156 As Integer
     stack-140 = 0
     For stack-134 = 1 To Me.f0296
         stack-142 = Me.f07DC(stack-134).f0010
@@ -2236,10 +2604,13 @@ Sub pub_134_0040A910()
         End If
     Next
     Me.f0340 = stack-140
-    Exit Sub
 End Sub
 
 Sub pub_135_0040AB1C()
+    Dim stack-196 As String * 32
+    Dim stack-200 As String
+    Dim stack-204 As Long
+    Dim stack-224 As Long
     Call user32.StopApp(0)
     If Me.f0240 = 1 Then
         stack-224 = kernel32.mciSendStringA('play midi', stack-196, 30, 0)
@@ -2251,10 +2622,13 @@ Sub pub_135_0040AB1C()
         stack-204 = stack-224
     End If
     Me.f0870 = 0
-    Exit Sub
 End Sub
 
-Sub pub_136_0040AD28(ByRef a0, a1)
+Sub pub_136_0040AD28(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-136 As String
+    Dim stack-152 As String
+    Dim stack-160 As String
+    Dim stack-168 As String
     Call pub_062_00405254_hot(78, 0, 10, -1)
     stack-152 = pub_068_0040570C(Me.f0344(Me.f079C(a0, 3).f0000))
     stack-160 = pub_068_0040570C(Me.f0344(48))
@@ -2266,10 +2640,18 @@ Sub pub_136_0040AD28(ByRef a0, a1)
     Call pub_177_00412AE4(a0, a1, -1)
     Call pub_151_0040CF2C(169, 47, a0, 0)
     Call pub_014_00403630_hot(200)
-    Exit Sub
 End Sub
 
 Sub pub_137_0040AF48()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
     Call pub_174_00411DBC()
     stack-134 = pub_094_00407024(36, 64, -1)
     If stack-134 < 0 Then
@@ -2313,6 +2695,13 @@ Sub pub_137_0040AF48()
 End Sub
 
 Sub pub_138_0040B168()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-154 As Integer
     stack-134 = 0
     For stack-136 = 0 To Me.f0266
         stack-142 = Me.f079C(Me.f04AC(stack-136).f0000, 2).f0000
@@ -2342,10 +2731,16 @@ Sub pub_138_0040B168()
         Me.f04AC(stack-136).f0008 = stack-134
         stack-134 = stack-134 + stack-144
     Next
-    Exit Sub
 End Sub
 
 Sub pub_139_0040B398()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-154 As Integer
     stack-134 = 0
     For stack-136 = 0 To Me.f02DE
         If (Me.f05B4(stack-136).f0012 > 0) And (Me.f05B4(stack-136).f0014 > 0) Then
@@ -2374,11 +2769,17 @@ Sub pub_139_0040B398()
         End If
     Next
     Call pub_098_004074A0()
-    Exit Sub
 End Sub
 
-Sub pub_140_0040B5C8(a0, ByRef a1, ByRef a2)
-    stack-134 = CSng(100) / CSng(a2)
+Sub pub_140_0040B5C8(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-148 As Long
+    Dim stack-156 As Long
+    stack-134 = 100 / CSng(a2)
     Call pub_037_004041F0(a0)
     If a1 > 0 Then
         Call pub_015_00403694(a1)
@@ -2410,10 +2811,11 @@ Sub pub_140_0040B5C8(a0, ByRef a1, ByRef a2)
         Call Pal.wtime(stack-134)
     Next
     Me.f0250 = 0
-    Exit Sub
 End Sub
 
 Sub pub_141_0040B7F8()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
     Call Pal.copymen(Me.f01B0(0), Me.f00D8(0), 64000)
     If Me.f02E6 And (Me.f0824(0).f0010 <> 0) Then
         Call Pal.popscrb(Me.f01B0(0), Me.f0824(0).f0010)
@@ -2435,10 +2837,12 @@ Sub pub_141_0040B7F8()
     If Me.f02E6 And (Me.f0824(0).f0010 <> 0) Then
         Call Pal.popscrb(Me.f01B0(0), Me.f0824(0).f0010)
     End If
-    Exit Sub
 End Sub
 
-Sub pub_142_0040BA30(ByRef a0, ByRef a1, ByRef a2)
+Sub pub_142_0040BA30(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-134 = -1
     stack-136 = 0
     For stack-138 = 63 To 32 Step -1
@@ -2459,10 +2863,16 @@ Sub pub_142_0040BA30(ByRef a0, ByRef a1, ByRef a2)
             Call pub_014_00403630_hot(180)
         End If
     End If
-    Exit Sub
 End Sub
 
-Function pub_143_0040BC70(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4) As Integer
+Function pub_143_0040BC70(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer, ByRef a4 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
     stack-136 = a3 - 1
     stack-138 = a4 - 1
     Call pub_145_0040C104(a1, a2, 0, a3, a4, -1)
@@ -2509,7 +2919,8 @@ Function pub_143_0040BC70(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4) As I
     Return stack-140
 End Function
 
-Sub pub_144_0040BEB8(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_144_0040BEB8(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
     stack-134 = Me.f01C8(48 + a2)
     If a3 = 0 Then
         Call Pal.putp(a0 - 3, a1, Me.f01C8(stack-134), Me.f02A4, 0, 0)
@@ -2522,10 +2933,15 @@ Sub pub_144_0040BEB8(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Call pub_099_004075C8_hot(a0 + 64, a1 + 29, Me.f079C(a2, 8), 2)
     Call pub_099_004075C8_hot(a0 + 42, a1 + 9, Me.f079C(a2, 9), 0)
     Call pub_099_004075C8_hot(a0 + 42, a1 + 25, Me.f079C(a2, 10), 2)
-    Exit Sub
 End Sub
 
-Sub pub_145_0040C104(a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
+Sub pub_145_0040C104(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer, ByRef a4 As Integer, ByRef a5 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
     If a3 < 0 Then
         Exit Sub
     End If
@@ -2561,10 +2977,13 @@ Sub pub_145_0040C104(a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
     Next
     Me.f04F4(stack-140) = a2 + 8
     Call pub_088_004069B0(a0, stack-138, stack-140, -1 And a5)
-    Exit Sub
 End Sub
 
 Sub pub_146_0040C350()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     For stack-134 = Me.f02DA To 0 Step -1
         stack-136 = Me.f0198(Me.f05CC(stack-134).f0010 + Me.f05CC(stack-134).f000C) + Me.f05CC(stack-134).f0010
         stack-138 = Me.f05CC(stack-134).f0002 - (Me.f0198(stack-136) \ 2)
@@ -2585,10 +3004,9 @@ Sub pub_146_0040C350()
             End If
         End If
     Next
-    Exit Sub
 End Sub
 
-Sub pub_147_0040C5A4(ByRef a0, ByRef a1)
+Sub pub_147_0040C5A4(ByRef a0 As Integer, ByRef a1 As Integer)
     Me.f05B4(a0).f0014 = a1
     If a1 > 0 Then
         Me.f05B4(a0).f0000 = Me.f0744(a1).f0000
@@ -2609,11 +3027,16 @@ Sub pub_147_0040C5A4(ByRef a0, ByRef a1)
         Call Pal.LoadDSound(Me.f068C(a0).f0012, 0)
         Call Pal.LoadDSound(Me.f068C(a0).f0014, 0)
     End If
-    Exit Sub
 End Sub
 
-Sub pub_148_0040C804(a0, ByRef a1, ByRef a2)
-    stack-134 = CSng(100) / CSng(a2)
+Sub pub_148_0040C804(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-144 As String
+    Dim stack-152 As Long
+    stack-134 = 100 / CSng(a2)
     stack-144 = 'FBP.MKF'
     Call pub_025_00403B8C_hot(stack-144, a0)
     Call Pal.unpak(Me.f01C8(0), Me.f0198(0))
@@ -2646,10 +3069,12 @@ Sub pub_148_0040C804(a0, ByRef a1, ByRef a2)
         Call Pal.wtime(stack-134)
     Next
     Me.f0250 = 0
-    Exit Sub
 End Sub
 
 Sub pub_149_0040CA64()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
     stack-134 = 0
     For stack-136 = 0 To Me.f02DA
         stack-138 = Me.f04AC(stack-136).f0000
@@ -2675,10 +3100,13 @@ Sub pub_149_0040CA64()
             Me.f05CC(stack-136).f0004 = Me.f05CC(stack-136).f000A
         End If
     Next
-    Exit Sub
 End Sub
 
-Sub pub_150_0040CCC8(ByRef a0)
+Sub pub_150_0040CCC8(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     Me.f029E = -1
     stack-134 = Me.f0744(a0).f0000
     Call pub_013_004035D0_hot(stack-134)
@@ -2711,10 +3139,12 @@ Sub pub_150_0040CCC8(ByRef a0)
         Me.f02EC = Me.f02EC + 1
     Next
     Me.f029E = 0
-    Exit Sub
 End Sub
 
-Sub pub_151_0040CF2C(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_151_0040CF2C(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-156 As Integer
     Call pub_099_004075C8_hot(a0 + 58, a1 + 4, Me.f079C(a2, 6), 0)
     stack-134 = a1
     For stack-136 = 48 To 55
@@ -2738,10 +3168,25 @@ Sub pub_151_0040CF2C(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         Call pub_099_004075C8_hot(a0 + 58, stack-134, stack-156, 0)
         stack-134 = stack-134 + 18
     Next
-    Exit Sub
 End Sub
 
-Sub pub_152_0040D194_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
+Sub pub_152_0040D194_hot(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer, ByRef a4 As Integer, ByRef a5 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-160 As Long
+    Dim stack-164 As Long
+    Dim stack-168 As Long
+    Dim stack-172 As Long
+    Dim stack-188 As Long
     Call Pal.vwindow(a0, a1, a2, a3)
     stack-134 = a4 \ 32
     stack-138 = -(a4 Mod 32) - 16
@@ -2768,10 +3213,14 @@ Sub pub_152_0040D194_hot(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef
             stack-146 = stack-146 + 8
         Next
     Next
-    Exit Sub
 End Sub
 
 Sub pub_153_0040D680()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
     For stack-134 = Me.f02DE To 0 Step -1
         stack-136 = Me.f068C(stack-134).f0006
         If ((Me.f05B4(stack-134).f0012 > 0) Or (Me.f0494(stack-134) > 0)) And (stack-136 > 0) Then
@@ -2792,17 +3241,19 @@ Sub pub_153_0040D680()
                 End If
             End If
             If Me.f06E4(stack-134, 0).f0000 Then
-                stack-142 = VB40032.rtcRandomNext() * CSng(3)
+                stack-142 = VB40032.rtcRandomNext() * 3
             Else
                 stack-142 = 0
             End If
             Call Pal.addtre((stack-140 + stack-142) + Me.f0322, (Me.f05B4(stack-134).f0004 - Me.f0326) + (Me.f0322 \ 2), 0, Me.f0180(stack-138))
         End If
     Next
-    Exit Sub
 End Sub
 
-Function pub_154_0040D904(ByRef a0) As Integer
+Function pub_154_0040D904(ByRef a0 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
     stack-136 = -2
     While stack-136 = -2
         stack-138 = pub_008_00403408()
@@ -2846,7 +3297,14 @@ Function pub_154_0040D904(ByRef a0) As Integer
     Return stack-136
 End Function
 
-Sub pub_155_0040DB90(ByRef a0, ByRef a1, ByRef a2)
+Sub pub_155_0040DB90(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-176 As Single
     If Me.f079C(a1, 4).f0000 Then
         Call pub_112_004085A8(a0, a1)
         Exit Sub
@@ -2874,12 +3332,19 @@ Sub pub_155_0040DB90(ByRef a0, ByRef a1, ByRef a2)
         Me.f02A2 = Me.f068C(a2).f0012
     End If
     stack-176 = VB40032.rtcRandomNext()
-    Me.f07BC(a1, 1).f0006 = CSng(Me.f07BC(a1, 1).f0006) + (stack-176 * CSng(2))
+    Me.f07BC(a1, 1).f0006 = CSng(Me.f07BC(a1, 1).f0006) + (stack-176 * 2)
     Me.f07BC(a1, 3).f0006 = Me.f07BC(a1, 3).f0006 + 1
-    Exit Sub
 End Sub
 
-Function pub_156_0040DE24(ByRef a0) As Integer
+Function pub_156_0040DE24(ByRef a0 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-152 As Integer
     stack-136 = 1
     Do
         If a0 = 0 Then
@@ -2937,7 +3402,12 @@ Function pub_156_0040DE24(ByRef a0) As Integer
     Return stack-136
 End Function
 
-Sub pub_157_0040E0BC(ByRef a0, ByRef a1, ByRef a2)
+Sub pub_157_0040E0BC(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-136 As String
+    Dim stack-138 As Integer
+    Dim stack-156 As String
+    Dim stack-164 As String
+    Dim stack-172 As String
     If a1 <= 2 Then
         Me.f079C(a0, 8 + a1).f0000 = Me.f079C(a0, 8 + a1).f0000 + a2
         stack-138 = a1 + 6
@@ -2956,10 +3426,15 @@ Sub pub_157_0040E0BC(ByRef a0, ByRef a1, ByRef a2)
     Call pub_016_0040375C_hot(62, 70, stack-136, 3, 0)
     Call pub_099_004075C8_hot(218, 74, a2, 0)
     Call pub_014_00403630_hot(180)
-    Exit Sub
 End Sub
 
-Sub pub_158_0040E36C(ByRef a0, ByRef a1)
+Sub pub_158_0040E36C(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
     stack-134 = Me.f04AC(a0).f0000
     If a1 = 0 Then
         stack-136 = a0
@@ -2999,10 +3474,17 @@ Sub pub_158_0040E36C(ByRef a0, ByRef a1)
         a1 = 2
     End If
     Me.f02D2 = a1
-    Exit Sub
 End Sub
 
 Function pub_159_0040E640() As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-152 As Long
+    Dim stack-156 As String
     For stack-136 = 1 To 5
         stack-156 = Chr(48 + stack-136) & '.RPG'
         stack-152 = pub_056_00404DFC_hot(stack-156, 0)
@@ -3055,7 +3537,14 @@ Function pub_159_0040E640() As Integer
     Return stack-144
 End Function
 
-Sub pub_160_0040E938(ByRef a0, ByRef a1)
+Sub pub_160_0040E938(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-136 As String
+    Dim stack-140 As String
+    Dim stack-204 As String * 32
+    Dim stack-208 As Long
+    Dim stack-212 As String
+    Dim stack-216 As String
+    Dim stack-308 As Long
     If Me.f023C Then
         Call pub_114_00408850()
         Call pub_078_00405FE8()
@@ -3084,10 +3573,17 @@ Sub pub_160_0040E938(ByRef a0, ByRef a1)
             End If
         End If
     End If
-    Exit Sub
 End Sub
 
-Sub pub_161_0040EC34(ByRef a0, ByRef a1)
+Sub pub_161_0040EC34(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
     Me.f033C = pub_008_00403408()
     stack-138 = 0
     stack-140 = 0
@@ -3156,10 +3652,17 @@ Sub pub_161_0040EC34(ByRef a0, ByRef a1)
     End If
     a0 = stack-134
     a1 = stack-136
-    Exit Sub
 End Sub
 
 Sub pub_162_0040EF4C()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-148 As Long
+    Dim stack-160 As Long
     Call pub_037_004041F0(61)
     Call pub_015_00403694(571)
     Call Pal.unpak(Me.f01C8(0), Me.f0168(0))
@@ -3198,12 +3701,17 @@ Sub pub_162_0040EF4C()
         Call Pal.wtime(5)
     Next
     Me.f0250 = 0
-    Exit Sub
 End Sub
 
 Sub priv_163_0040F264()  ' MethCallEngine entry
+    Dim stack-196 As String * 32
+    Dim stack-200 As String
+    Dim stack-204 As Long
+    Dim stack-208 As Long
+    Dim stack-212 As Long
+    Dim stack-214 As Integer
     stack-208 = Pal.GetActiveWindow()
-    If Me.method_0078(Me.method_0038(stack-208, stack-212, Me) = stack-212, stack-214, Me) And (stack-214 = 0) Then
+    If Me.method_0078(Me.method_0038(stack-208, stack-212) = stack-212, stack-214) And (stack-214 = 0) Then
         If Me.f0870 = 1 Then
             Call pub_135_0040AB1C()
         End If
@@ -3229,7 +3737,15 @@ Sub priv_163_0040F264()  ' MethCallEngine entry
     End If
 End Sub
 
-Sub pub_164_0040F58C_hot(ByRef a0, ByRef a1)
+Sub pub_164_0040F58C_hot(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-168
     stack-168 = VB40032.rtcRandomNext()
     Me.f0322 = CSng(Me.f0322) + (CSng(Me.f0324) * stack-168)
     stack-134 = a0
@@ -3273,10 +3789,20 @@ Sub pub_164_0040F58C_hot(ByRef a0, ByRef a1)
     Next
     Call Pal.clsmen(Me.f062C(0), 5)
     Call Pal.clsmen(Me.f0644(0), 3)
-    Exit Sub
 End Sub
 
-Function pub_165_0040F8D4(ByRef a0, ByRef a1, ByRef a2) As Integer
+Function pub_165_0040F8D4(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
     stack-136 = a0
     stack-138 = a1
     Me.f0554(0) = stack-136
@@ -3316,7 +3842,13 @@ Function pub_165_0040F8D4(ByRef a0, ByRef a1, ByRef a2) As Integer
     Return stack-148
 End Function
 
-Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
+Sub pub_166_0040FC2C(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-156
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-164 As Integer
+    Dim stack-170 As Byte
     Me.f0204 = a0
     Me.f0206 = a1
     Me.f0208 = 0
@@ -3329,13 +3861,13 @@ Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
                 Me.f0232 = Me.f020C(stack-160 + 1) - 48
                 Me.f0232 = Me.f0232 * 10
                 Me.f0232 = Me.f0232 + (Me.f020C(stack-160 + 2) - 48)
-                Me.f0232 = CSng(Me.f0232 * 10) / CSng(7)
+                Me.f0232 = CSng(Me.f0232 * 10) / 7
                 stack-160 = stack-160 + 2
             Case 126
                 stack-162 = Me.f020C(stack-160 + 1) - 48
                 stack-162 = stack-162 * 10
                 stack-162 = stack-162 + (Me.f020C(stack-160 + 2) - 48)
-                stack-162 = CSng(stack-162 * 10) / CSng(7)
+                stack-162 = CSng(stack-162 * 10) / 7
                 Me.f0234 = 0
                 Me.f020A = 0
                 Call Pal.delay1(stack-162)
@@ -3367,10 +3899,17 @@ Sub pub_166_0040FC2C(ByRef a0, ByRef a1)
                 End If
         End Select
     Next
-    Exit Sub
 End Sub
 
-Sub pub_167_0040FF88(ByRef a0, ByRef a1)
+Sub pub_167_0040FF88(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-136 As Long
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-168 As Single
     Do
         stack-136 = 0
         Call Pal.copymen(stack-136, a1, 2)
@@ -3427,7 +3966,7 @@ Sub pub_167_0040FF88(ByRef a0, ByRef a1)
                 End If
             Case 6
                 stack-168 = VB40032.rtcRandomNext()
-                If CSng(stack-140) >= (stack-168 * CSng(100)) Then
+                If CSng(stack-140) >= (stack-168 * 100) Then
                     Exit Do
                 End If
                 If stack-142 = 0 Then
@@ -3449,11 +3988,11 @@ Sub pub_167_0040FF88(ByRef a0, ByRef a1)
         a1 = stack-142
     Loop
     a1 = pub_009_0040345C(a1)
-    Exit Sub
-    ' ---- unreachable p-code ----
 End Sub
 
-Sub pub_168_0041030C(ByRef a0)
+Sub pub_168_0041030C(ByRef a0 As Integer)
+    Dim stack-136 As String
+    Dim stack-140 As Long
     stack-136 = Chr(48 + a0) & '.RPG'
     Me.f0258 = a0
     stack-140 = pub_056_00404DFC_hot(stack-136, -1)
@@ -3488,10 +4027,11 @@ Sub pub_168_0041030C(ByRef a0)
     Call pub_024_00403B10()
     Call kernel32._hwrite(stack-140, Me.f0138(0), Me.f0294 * 32)
     Call kernel32._lclose(stack-140)
-    Exit Sub
 End Sub
 
-Sub pub_169_00410A40(ByRef a0)
+Sub pub_169_00410A40(ByRef a0 As Integer)
+    Dim stack-136 As String
+    Dim stack-140 As Long
     stack-136 = Chr(48 + a0) & '.RPG'
     Me.f0258 = a0
     stack-140 = pub_056_00404DFC_hot(stack-136, 0)
@@ -3532,10 +4072,14 @@ Sub pub_169_00410A40(ByRef a0)
         Call pub_084_004065B0(1)
     End If
     Call kernel32._lclose(stack-140)
-    Exit Sub
 End Sub
 
-Sub pub_170_00410DFC(ByRef a0, ByRef a1)
+Sub pub_170_00410DFC(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
     Me.f02CC = 0
     Call pub_007_004033B4()
     For stack-134 = 1 To 3
@@ -3575,7 +4119,18 @@ Sub pub_170_00410DFC(ByRef a0, ByRef a1)
     End If
 End Sub
 
-Sub pub_171_004111BC(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
+Sub pub_171_004111BC(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer, ByRef a4 As Integer, ByRef a5 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
     If a5 = 0 Then
         stack-134 = Me.f01E0(Me.f04AC(a3).f0008 + a4) + Me.f04AC(a3).f0008
         stack-136 = Me.f01E0(stack-134)
@@ -3612,10 +4167,16 @@ Sub pub_171_004111BC(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
             Next
         Next
     End If
-    Exit Sub
 End Sub
 
 Sub pub_172_00411580()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
     If Me.f079C(Me.f04AC(0).f0000, 64).f0000 = 4 Then
         Me.f04AC(0).f0006 = (Me.f026E * 4) + Me.f028C
     Else
@@ -3661,10 +4222,14 @@ Sub pub_172_00411580()
         Me.f04AC(stack-134).f0004 = Me.f04C4(stack-146).f0002 - Me.f0264
         Me.f04AC(stack-134).f0006 = (Me.f04C4(stack-146).f0004 * 3) + Me.f0272
     Next
-    Exit Sub
 End Sub
 
-Sub pub_173_00411998(ByRef a0)
+Sub pub_173_00411998(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-184 As Single
     Call pub_062_00405254_hot(76, 60, 8, -1)
     Call pub_016_0040375C_hot(90, 70, Me.f0344(30), 3, 0)
     Call pub_099_004075C8_hot(200, 75, a0, 0)
@@ -3696,16 +4261,22 @@ Sub pub_173_00411998(ByRef a0)
                         Call pub_136_0040AD28(stack-136, 1)
                     Else
                         stack-184 = VB40032.rtcRandomNext()
-                        Call pub_157_0040E0BC(stack-136, stack-140, CSng(1) + stack-184)
+                        Call pub_157_0040E0BC(stack-136, stack-140, 1 + stack-184)
                     End If
                 Wend
             Next
         End If
     Next
-    Exit Sub
 End Sub
 
 Sub pub_174_00411DBC()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-148
     Call Pal.copymen(Me.f01C8(0), Me.f0090(0), Me.f02B0)
     If Me.f0304 Then
         stack-134 = 90
@@ -3751,10 +4322,17 @@ Sub pub_174_00411DBC()
         End If
         stack-134 = stack-134 + 78
     Next
-    Exit Sub
 End Sub
 
 Sub pub_175_0041220C()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-148 As Long
+    Dim stack-152 As Long
     stack-152 = Pal.arrayptr(Me.f01B0(0))
     stack-148 = stack-152
     Call Pal.exmyll(Me.f02A8)
@@ -3800,7 +4378,19 @@ Sub pub_175_0041220C()
     End If
 End Sub
 
-Sub pub_176_0041265C(ByRef a0)
+Sub pub_176_0041265C(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156
     stack-134 = -1
     For stack-136 = 0 To 8
         stack-138 = Me.f03FC(stack-136, a0).f0000
@@ -3869,10 +4459,12 @@ Sub pub_176_0041265C(ByRef a0)
             stack-144 = -1
         End If
     Wend
-    Exit Sub
 End Sub
 
-Sub pub_177_00412AE4(ByRef a0, ByRef a1, ByRef a2)
+Sub pub_177_00412AE4(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-160 As Single
     For stack-134 = 1 To a1
         Me.f079C(a0, 6).f0000 = Me.f079C(a0, 6).f0000 + 1
         Me.f07BC(a0, 0).f0004 = Me.f079C(a0, 6).f0000
@@ -3880,12 +4472,12 @@ Sub pub_177_00412AE4(ByRef a0, ByRef a1, ByRef a2)
             Me.f079C(a0, 6).f0000 = 99
         End If
         stack-160 = VB40032.rtcRandomNext()
-        Me.f079C(a0, 7).f0000 = CSng(Me.f079C(a0, 7).f0000 + 10) + Int(stack-160 * CSng(8))
+        Me.f079C(a0, 7).f0000 = CSng(Me.f079C(a0, 7).f0000 + 10) + Int(stack-160 * 8)
         If Me.f079C(a0, 7).f0000 > 999 Then
             Me.f079C(a0, 7).f0000 = 999
         End If
         stack-160 = VB40032.rtcRandomNext()
-        Me.f079C(a0, 8).f0000 = CSng(Me.f079C(a0, 8).f0000 + 8) + Int(stack-160 * CSng(6))
+        Me.f079C(a0, 8).f0000 = CSng(Me.f079C(a0, 8).f0000 + 8) + Int(stack-160 * 6)
         If Me.f079C(a0, 8).f0000 > 999 Then
             Me.f079C(a0, 8).f0000 = 999
         End If
@@ -3908,10 +4500,15 @@ Sub pub_177_00412AE4(ByRef a0, ByRef a1, ByRef a2)
         Me.f079C(a0, 9).f0000 = Me.f079C(a0, 7).f0000
         Me.f079C(a0, 10).f0000 = Me.f079C(a0, 8).f0000
     End If
-    Exit Sub
 End Sub
 
-Sub pub_178_00412F6C(ByRef a0, ByRef a1)
+Sub pub_178_00412F6C(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-152 As Integer
     stack-134 = Me.f04AC(a1).f0000
     stack-136 = pub_040_004043B0_hot(stack-134, 19)
     If Me.f05CC(a1).f000C = 3 Then
@@ -3966,10 +4563,19 @@ Sub pub_178_00412F6C(ByRef a0, ByRef a1)
     Call pub_164_0040F58C_hot(2, 0)
     Me.f05CC(a1).f000C = Me.f05CC(a1).f000E
     Call pub_164_0040F58C_hot(1, 0)
-    Exit Sub
 End Sub
 
-Sub pub_179_0041342C(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_179_0041342C(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-152 As Long
+    Dim stack-164 As Integer
     Call Pal.copymen(Me.f01C8(0), Me.f0090(0), Me.f02B0)
     If (a0 < 0) Or (a0 > Me.f0266) Then
         a0 = 0
@@ -4046,11 +4652,16 @@ Sub pub_179_0041342C(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         End Select
     Loop
     Me.f02A4 = 0
-    Exit Sub
-    ' ---- unreachable p-code ----
 End Sub
 
-Sub pub_180_00413938(ByRef a0)
+Sub pub_180_00413938(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
     If Me.f0250 <> 0 Then
         Exit Sub
     End If
@@ -4123,22 +4734,26 @@ Sub pub_180_00413938(ByRef a0)
         Me.f030E = 1
         Me.f0310 = 0
     End If
-    Exit Sub
 End Sub
 
 Sub pub_181_00413E4C()
+    Dim stack-136 As Long
+    Dim stack-140 As Long
+    Dim stack-142 As Integer
+    Dim stack-148 As String
+    Dim stack-156 As Long
     stack-148 = 'SSS.MKF'
     Me.f0254 = pub_056_00404DFC_hot(stack-148, 0)
     Call kernel32._hread(Me.f0254, Me.f080C(0), 24)
     Call pub_053_00404BF8_hot(0, Me.f0138)
-    Me.f0294 = Me.f0000 / CSng(32)
+    Me.f0294 = Me.f0000 / 32
     Call pub_053_00404BF8_hot(1, Me.f01B0)
     Call Pal.copymen(Me.f038C(1).f0000, Me.f01B0(0), Me.f0000)
     Call pub_053_00404BF8_hot(2, Me.f01B0)
     Call Pal.copymen(Me.f0744(0).f0000, Me.f01B0(0), Me.f0000)
     Call pub_053_00404BF8_hot(3, Me.f00F0)
     Call pub_053_00404BF8_hot(4, Me.f0108)
-    Me.f0290 = (Me.f0000 / CSng(8)) - CSng(1)
+    Me.f0290 = (Me.f0000 / 8) - 1
     Call kernel32._lclose(Me.f0254)
     stack-148 = 'DATA.MKF'
     Me.f0254 = pub_056_00404DFC_hot(stack-148, 0)
@@ -4173,20 +4788,27 @@ Sub pub_181_00413E4C()
     stack-140 = stack-156
     Call kernel32._hread(Me.f0254, Me.f0120(0), stack-136)
     Call kernel32._lclose(Me.f0254)
-    Open 'WORD.DAT', 2, 10
+    Open 'WORD.DAT' For Random Access Read As #2 Len = 10
     For stack-142 = 0 To 564
         Get 2, Me.f0344(stack-142)
     Next
     Close 2
-    Exit Sub
 End Sub
 
-Sub pub_182_004143C8(ByRef a0, ByRef a1)
+Sub pub_182_004143C8(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-148 As Single
+    Dim stack-182 As Integer
+    Dim stack-184 As Integer
     stack-134 = Me.f04AC(a0).f0000
     stack-136 = 69
-    stack-148 = CSng(1)
-    If (Me.f06C4(a0, 5).f0000 > 0) Or (Int(VB40032.rtcRandomNext() * CSng(6)) = CSng(4)) Then
-        stack-148 = CSng(3)
+    stack-148 = 1
+    If (Me.f06C4(a0, 5).f0000 > 0) Or (Int(VB40032.rtcRandomNext() * 6) = 4) Then
+        stack-148 = 3
         stack-136 = 71
     End If
     stack-136 = Me.f079C(stack-134, stack-136).f0000
@@ -4231,7 +4853,7 @@ Sub pub_182_004143C8(ByRef a0, ByRef a1)
             stack-142 = (pub_060_004050D4(stack-182, Me.f068C(stack-138).f002E + stack-184) * 2) \ Me.f068C(stack-138).f0040
             stack-142 = CSng(stack-142) * stack-148
             Me.f04DC(stack-138 + 20) = Me.f04DC(stack-138 + 20) + stack-142
-            stack-148 = stack-148 / CSng(2)
+            stack-148 = stack-148 / 2
             Call pub_089_00406ABC_hot(Me.f05B4(stack-138).f0002, Me.f05B4(stack-138).f0004 - 110, stack-142, 1)
             Me.f062C(stack-138) = -1
         End If
@@ -4243,10 +4865,25 @@ Sub pub_182_004143C8(ByRef a0, ByRef a1)
     Call pub_164_0040F58C_hot(1, 0)
     Me.f02CC = 0
     Call pub_103_00407A6C(3)
-    Exit Sub
 End Sub
 
 Sub pub_183_00414954()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-164 As Integer
     Me.f032C = Me.f0328
     Me.f032E = Me.f032A
     Me.f0328 = (((Me.f0328 + Me.f0262) - Me.f0330) + 320) Mod 320
@@ -4361,16 +4998,26 @@ Sub pub_183_00414954()
         Call pub_152_0040D194_hot(Me.f0328, stack-158, 319, stack-160, Me.f0262, stack-152)
     End If
     Call Pal.vwindow(0, 0, 319, 199)
-    Exit Sub
 End Sub
 
-Sub pub_184_00414F18(ByRef a0, a1, a2)
+Sub pub_184_00414F18(ByRef a0 As Integer, ByVal a1 As Integer, ByRef a2 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-172 As Single
     Me.f031C = -1
     If Me.f06E4(a0, 0).f0000 <= 0 Then
         Call pub_189_00417834_hot(a0, Me.f05B4(a0).f001A)
         stack-134 = 0
         stack-172 = VB40032.rtcRandomNext()
-        If CSng(Me.f068C(a0).f0020) >= (stack-172 * CSng(10)) Then
+        If CSng(Me.f068C(a0).f0020) >= (stack-172 * 10) Then
             stack-136 = Me.f068C(a0).f001E
         Else
             stack-136 = 0
@@ -4439,10 +5086,18 @@ Sub pub_184_00414F18(ByRef a0, a1, a2)
         End If
     End If
     Me.f031C = 0
-    Exit Sub
 End Sub
 
-Sub pub_185_00415514(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_185_00415514(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-172 As Single
     stack-134 = Me.f04AC(a0).f0000
     Me.f02CC = 0
     Call pub_007_004033B4()
@@ -4455,7 +5110,7 @@ Sub pub_185_00415514(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     End If
     stack-172 = VB40032.rtcRandomNext()
     a2 = CSng(a2 + 1) + stack-172
-    If (Int(VB40032.rtcRandomNext() * CSng(6)) = CSng(3)) Or (Me.f06C4(a0, 5).f0000 > 0) Then
+    If (Int(VB40032.rtcRandomNext() * 6) = 3) Or (Me.f06C4(a0, 5).f0000 > 0) Then
         a2 = a2 * 3
         stack-138 = 2
         stack-140 = Me.f079C(stack-134, 71).f0000
@@ -4464,8 +5119,8 @@ Sub pub_185_00415514(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         stack-140 = Me.f079C(stack-134, 69).f0000
     End If
     stack-172 = VB40032.rtcRandomNext()
-    a2 = CSng(a2) * (CSng(1) + (stack-172 / CSng(8)))
-    If (stack-134 = 0) And (Int(VB40032.rtcRandomNext() * CSng(12)) = CSng(3)) Then
+    a2 = CSng(a2) * (1 + (stack-172 / 8))
+    If (stack-134 = 0) And (Int(VB40032.rtcRandomNext() * 12) = 3) Then
         a2 = a2 * 2
         stack-138 = 2
         stack-140 = Me.f079C(stack-134, 71).f0000
@@ -4512,10 +5167,25 @@ Sub pub_185_00415514(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         stack-148 = -stack-148
         Call pub_164_0040F58C_hot(1, 0)
     Next
-    Exit Sub
 End Sub
 
 Sub pub_186_00415B1C()
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-168 As Long
+    Dim stack-176 As Integer
+    Dim stack-198 As Integer
     Do
         stack-134 = pub_191_004189B0(Me.f02F0, 0, 2)
         If stack-134 < 0 Then
@@ -4617,17 +5287,24 @@ L_004160F6:
         stack-158 = pub_125_004098C4()
         Me.f02A4 = 0
         Exit Sub
-L_004160F2:
-    Loop
 L_004160E6:
-    If stack-198 <> 1 Then
-        GoTo L_004160F6
-    End If
-    GoTo L_004160F2
-    ' ---- unreachable p-code ----
+        If stack-198 <> 1 Then
+            GoTo L_004160F6
+        End If
+    Loop
 End Sub
 
-Sub pub_187_00416138(ByRef a0)
+Sub pub_187_00416138(ByRef a0 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-156 As Long
     stack-134 = Me.f04AC(a0).f0000
     Call pub_026_00403C0C(0)
     stack-156 = Pal.arrayptr(Me.f01B0(0))
@@ -4689,10 +5366,37 @@ Sub pub_187_00416138(ByRef a0)
         Call Pal.copymen(Me.f01B0(0), Me.f00D8(0), 64000)
     End If
     stack-148 = pub_010_004034B4_hot()
-    Exit Sub
 End Sub
 
-Function pub_188_0041678C(ByRef a0, ByRef a1, ByRef a2) As Integer
+Function pub_188_0041678C(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-164 As Integer
+    Dim stack-166 As Integer
+    Dim stack-168 As Integer
+    Dim stack-170 As Integer
+    Dim stack-172 As Integer
+    Dim stack-174 As Integer
+    Dim stack-176 As Integer
+    Dim stack-178 As Integer
+    Dim stack-180 As Integer
+    Dim stack-182 As Integer
+    Dim stack-184 As Integer
+    Dim stack-186 As Integer
+    Dim stack-192 As Long
+    Dim stack-200 As Long
     Call pub_122_00409410(a0)
     Call Pal.clsmen(Me.f04DC(0), 32)
     stack-136 = -1
@@ -4855,7 +5559,23 @@ Function pub_188_0041678C(ByRef a0, ByRef a1, ByRef a2) As Integer
     Return stack-184
 End Function
 
-Sub pub_189_00417834_hot(ByRef a0, ByRef a1)
+Sub pub_189_00417834_hot(ByRef a0 As Integer, ByRef a1 As Integer)
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-168 As Long
+    Dim stack-170 As Integer
+    Dim stack-192 As Single
     Me.f0302 = -1
     stack-138 = 0
     stack-140 = a1
@@ -4987,7 +5707,7 @@ Sub pub_189_00417834_hot(ByRef a0, ByRef a1)
                 End If
             Case 6
                 stack-192 = VB40032.rtcRandomNext()
-                If CSng(stack-144) < (stack-192 * CSng(100)) Then
+                If CSng(stack-144) < (stack-192 * 100) Then
                     If stack-146 <> 0 Then
                         a1 = stack-146
                         Continue Do
@@ -5045,11 +5765,10 @@ L_0041805E:
         a1 = pub_009_0040345C(a1)
     Loop
     Call pub_019_004038AC()
-    Exit Sub
-    ' ---- unreachable p-code ----
 End Sub
 
 Sub priv_190_004180D0()  ' MethCallEngine entry
+    Dim stack-168 As Single
     stack-168 = VB40032.rtcGetTimer()
     Call VB40032.rtcRandomize(stack-168)
     Call Pal.GetKeyDefine(Me.f0854(0))
@@ -5153,10 +5872,37 @@ Sub priv_190_004180D0()  ' MethCallEngine entry
     Me.f0336 = 320
     Me.f0338 = 200
     Me.f01FC = 0
-    Exit Sub
 End Sub
 
-Function pub_191_004189B0(ByRef a0, ByRef a1, ByRef a2) As Integer
+Function pub_191_004189B0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-164 As Integer
+    Dim stack-166 As Integer
+    Dim stack-168 As Integer
+    Dim stack-170 As Integer
+    Dim stack-172 As Integer
+    Dim stack-174 As Integer
+    Dim stack-176 As Integer
+    Dim stack-178 As Integer
+    Dim stack-180 As Integer
+    Dim stack-182 As Integer
+    Dim stack-184 As Integer
+    Dim stack-186 As Integer
+    Dim stack-192 As Long
+    Dim stack-208 As Long
     stack-140 = 0
     stack-142 = 0
     stack-144 = 0
@@ -5347,7 +6093,18 @@ Function pub_191_004189B0(ByRef a0, ByRef a1, ByRef a2) As Integer
     Return stack-182
 End Function
 
-Sub pub_192_00419328(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_192_00419328(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-192 As Single
+    Dim stack-212 As Single
     Call Pal.clsmen(Me.f04DC(0), 20)
     stack-134 = Me.f04AC(a1).f0000
     stack-136 = pub_040_004043B0_hot(stack-134, 19)
@@ -5429,7 +6186,7 @@ Sub pub_192_00419328(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         stack-148 = pub_060_004050D4(CSng(a2) + stack-192, stack-136)
         stack-192 = VB40032.rtcRandomNext()
         stack-212 = VB40032.rtcRandomNext()
-        stack-148 = (CSng(stack-148) * (CSng(1) + (stack-192 / CSng(8)))) + stack-212
+        stack-148 = (CSng(stack-148) * (1 + (stack-192 / 8))) + stack-212
         If Me.f06C4(a1, 6).f0000 > 0 Then
             stack-148 = stack-148 \ 2
         End If
@@ -5466,13 +6223,24 @@ Sub pub_192_00419328(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     Me.f02D4 = -1
     stack-212 = VB40032.rtcRandomNext()
     stack-150 = pub_040_004043B0_hot(Me.f04AC(a1).f0000, 22)
-    If ((stack-138 >= 0) And (CSng(Me.f068C(a0).f0024) > (stack-212 * CSng(10)))) And ((VB40032.rtcRandomNext() * CSng(100)) > CSng(stack-150)) Then
+    If ((stack-138 >= 0) And (CSng(Me.f068C(a0).f0024) > (stack-212 * 10))) And ((VB40032.rtcRandomNext() * 100) > CSng(stack-150)) Then
         Call pub_189_00417834_hot(a1, Me.f0744(Me.f068C(a0).f0022).f0004)
     End If
-    Exit Sub
 End Sub
 
-Sub pub_193_00419DA0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_193_00419DA0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-158 As Integer
+    Dim stack-196 As Single
     Call Pal.clsmen(Me.f04DC(0), 25)
     stack-134 = Me.f0744(a2).f0000
     Call pub_013_004035D0_hot(stack-134)
@@ -5598,7 +6366,7 @@ Sub pub_193_00419DA0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
                         If stack-144 = 6 Then
                             stack-148 = Me.f068C(stack-142).f0034
                         End If
-                        stack-150 = CSng(stack-150) * (CSng(10 - stack-148) / CSng(5))
+                        stack-150 = CSng(stack-150) * (CSng(10 - stack-148) / 5)
                     End If
                 End If
                 stack-150 = pub_049_0040494C(stack-150, Me.f0824(0).f001C)
@@ -5623,10 +6391,32 @@ Sub pub_193_00419DA0(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     End If
     Me.f02D4 = -1
     Me.f0322 = 0
-    Exit Sub
 End Sub
 
 Sub Sub_Main()
+    Dim stack-136 As Long
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-164 As Integer
+    Dim stack-166 As Integer
+    Dim stack-168 As Integer
+    Dim stack-176 As String
+    Dim stack-180 As Long
+    Dim stack-212
+    Dim stack-276
+    Dim stack-308
+    Dim stack-316 As Long
+    Dim stack-320
+    Dim stack-322 As Integer
+    Dim stack-338 As Integer
     stack-180 = <unknown>(127, Me.f086C)
     stack-136 = stack-180
     Me.f0870 = 0
@@ -5642,10 +6432,10 @@ Sub Sub_Main()
     Loop While stack-136 = 1
     End
 L_0041A9A0:
-    Call Me.method_0268(Me.method_0028(Me.f0878.f0000, Me.f087C.f0000), 0, Me.f0878.f0000)
+    Call Me.f0878.f0000.method_0268(Me.f087C.f0000.method_0028(), 0)
     Call pub_002_00403264()
     Call Pal.settimer()
-    Call Me.method_0038(stack-180, Me.f0878.f0000)
+    Call Me.f0878.f0000.method_0038(stack-180)
     stack-316 = Pal.InitDSound(stack-180)
     If stack-316 <> 0 Then
         Me.f023C = 0
@@ -5657,11 +6447,11 @@ L_0041A9A0:
     End If
     Me.f023E = Me.f023C <> 0
     Me.f023A = Me.f0238 <> 0
-    Call Me.method_0038(Me.method_000C(stack-320, Me.f087C.f0000), stack-320, stack-316, Me.f0878.f0000)
-    stack-180 = Pal.InitInput(stack-308, stack-316)
+    Call Me.f0878.f0000.method_0038(Me.f087C.f0000.method_000C(stack-320), stack-316)
+    stack-180 = Pal.InitInput(stack-320.lateid_00010017, stack-316)
     stack-136 = stack-180
     If stack-136 Then
-        Call Me.method_002C(Me.f0878.f0000, Me.f087C.f0000)
+        Call Me.f087C.f0000.method_002C()
         Call Pal.killtimer()
         stack-276 = 'Error'
         stack-308 = 'DirectInput Initialize Error!'
@@ -5678,11 +6468,11 @@ L_0041A9A0:
     Me.f000C = pub_056_00404DFC_hot(stack-176, 0)
     stack-176 = 'ABC.MKF'
     Me.f0010 = pub_056_00404DFC_hot(stack-176, 0)
-    Call Me.method_0038(pub_181_00413E4C(), stack-316, Me.f0878.f0000)
+    Call Me.f0878.f0000.method_0038(pub_181_00413E4C(), stack-316)
     stack-322 = user32.SetMode(stack-316)
     stack-136 = stack-322
     If stack-136 Then
-        Call Me.method_002C(Me.f0878.f0000, Me.f087C.f0000)
+        Call Me.f087C.f0000.method_002C()
         stack-276 = 'Error'
         stack-308 = 'DirectDraw Initialize Error!'
         stack-136 = VB40032.rtcMsgBox(stack-308, 0, stack-276)
@@ -5692,13 +6482,13 @@ L_0041A9A0:
         End
     End If
     Call winmm.ShowCursor(0)
-    Call Me.method_0044(0, Me.f0878.f0000)
+    Call Me.f0878.f0000.method_0044(0)
     Call pub_002_00403264()
     Call Pal.ClrScr()
     Me.f0872 = 1
-    Call Me.method_0038(stack-316, Me.f0878.f0000)
+    Call Me.f0878.f0000.method_0038(stack-316)
     Call Pal.PlayAvi(stack-316, 1, 0)
-    Call Me.method_0038(stack-316, Me.f0878.f0000)
+    Call Me.f0878.f0000.method_0038(stack-316)
     Call Pal.PlayAvi(stack-316, 2, 0)
     Me.f0250 = 0
     Call pub_084_004065B0(2)
@@ -5730,15 +6520,15 @@ L_0041A9A0:
         GoTo L_0041B10A
     End If
 L_0041AFD0:
-    Call Me.method_0038(pub_114_00408850(), pub_084_004065B0(1), stack-316, Me.f0878.f0000)
+    Call Me.f0878.f0000.method_0038(pub_114_00408850(), pub_084_004065B0(1), stack-316)
     Call Pal.PlayAvi(stack-316, 3, 0)
     Me.f026A = 1
     Me.f0306 = Me.f0306 Or 13
     For stack-148 = 0 To 4
         For stack-150 = 0 To 7
             If stack-150 > 0 Then
-                stack-152 = (VB40032.rtcRandomNext() * CSng(2)) + CSng(2)
-                stack-156 = VB40032.rtcRandomNext() * CSng(20)
+                stack-152 = (VB40032.rtcRandomNext() * 2) + 2
+                stack-156 = VB40032.rtcRandomNext() * 20
             Else
                 stack-152 = 0
                 stack-156 = 0
@@ -5841,11 +6631,24 @@ L_0041B14A:
             End If
         Loop
     Loop
-    ' ---- unreachable p-code ----
-    Exit Sub
 End Sub
 
-Sub pub_195_0041B530(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
+Sub pub_195_0041B530(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer)
+    Dim stack-134 As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-158 As Integer
+    Dim stack-164 As Integer
+    Dim stack-204 As Single
+    Dim stack-206 As Integer
     stack-134 = 0
     stack-136 = Me.f0744(a2).f0000
     Call pub_013_004035D0_hot(stack-136)
@@ -5967,7 +6770,7 @@ Sub pub_195_0041B530(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
     For stack-148 = 0 To Me.f02DA
         stack-146 = Me.f04AC(stack-148).f0000
         stack-204 = VB40032.rtcRandomNext()
-        stack-150 = CSng(a3) + (stack-204 * CSng(4))
+        stack-150 = CSng(a3) + (stack-204 * 4)
         If Me.f04DC(stack-148) Then
             stack-138 = Me.f0824(0).f001C
             stack-206 = pub_040_004043B0_hot(stack-146, 19)
@@ -5978,7 +6781,7 @@ Sub pub_195_0041B530(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
                     stack-138 = 0
                 End If
                 stack-158 = pub_040_004043B0_hot(stack-146, 22 + stack-138)
-                stack-150 = CSng(stack-150) * (CSng(100 - stack-158) / CSng(100))
+                stack-150 = CSng(stack-150) * (CSng(100 - stack-158) / 100)
             End If
             stack-150 = pub_049_0040494C(stack-150, Me.f0824(0).f001C)
             If stack-150 > Me.f079C(stack-146, 9).f0000 Then
@@ -6023,10 +6826,59 @@ Sub pub_195_0041B530(ByRef a0, ByRef a1, ByRef a2, ByRef a3)
         End If
     Next
     Me.f02D4 = -1
-    Exit Sub
 End Sub
 
-Function pub_196_0041D56C(ByRef a0, ByRef a1) As Integer
+Function pub_196_0041D56C(ByRef a0 As Integer, ByRef a1 As Integer) As Integer
+    Dim stack-136 As Integer
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-164 As Integer
+    Dim stack-166 As Integer
+    Dim stack-168 As Integer
+    Dim stack-170 As Integer
+    Dim stack-172 As Integer
+    Dim stack-174 As Integer
+    Dim stack-176 As Integer
+    Dim stack-178 As Integer
+    Dim stack-180 As Integer
+    Dim stack-182 As Integer
+    Dim stack-184 As Integer
+    Dim stack-186 As Integer
+    Dim stack-188 As Integer
+    Dim stack-190 As Integer
+    Dim stack-192 As Integer
+    Dim stack-194 As Integer
+    Dim stack-196
+    Dim stack-198
+    Dim stack-200 As Integer
+    Dim stack-202 As Integer
+    Dim stack-204 As Integer
+    Dim stack-206 As Integer
+    Dim stack-208 As Integer
+    Dim stack-210 As Integer
+    Dim stack-212 As Integer
+    Dim stack-214 As Integer
+    Dim stack-216 As Integer
+    Dim stack-218 As Integer
+    Dim stack-220 As Integer
+    Dim stack-222 As Integer
+    Dim stack-224 As Integer
+    Dim stack-278 As Integer
+    Dim stack-286 As Integer
+    Dim stack-290 As Integer
+    Dim stack-324 As Single
+    Dim stack-354 As Integer
     Me.f031E = a1
     For stack-136 = 0 To Me.f0266
         stack-140 = Me.f04AC(stack-136).f0000
@@ -6272,7 +7124,7 @@ L_0041DBEE:
                                     Call pub_013_004035D0_hot(stack-170)
                                     If ((Me.f079C(stack-140, 10).f0000 >= Me.f0824(0).f0018) And ((Me.f0824(0).f0002 = 9) Or (Me.f0824(0).f0002 <= 3))) And (Me.f0824(0).f0018 > 1) Then
                                         stack-324 = VB40032.rtcRandomNext()
-                                        stack-172 = CSng(Me.f0824(0).f001A) + Int(stack-324 * CSng(60))
+                                        stack-172 = CSng(Me.f0824(0).f001A) + Int(stack-324 * 60)
                                         If stack-172 > stack-166 Then
                                             stack-166 = stack-172
                                             stack-164 = stack-168
@@ -6295,6 +7147,130 @@ L_0041DBEE:
                 Loop
                 Call pub_017_004037C4(stack-146, stack-148)
                 Call pub_064_004053DC()
+                GoTo L_0041EAAA
+L_0041DECC:
+                If stack-152 = -1 Then
+                    stack-158 = Me.f02C2
+                    For stack-136 = 0 To (Me.f02C2 - 1)
+                        If pub_093_00406F08_hot(stack-136) > 0 Then
+                            stack-158 = stack-136
+                        End If
+                    Next
+                    Me.f02C2 = stack-158
+                    Continue Do
+                Else
+                    stack-278 = stack-152
+                    Select Case stack-278
+                        Case 0
+                            If Me.f079C(Me.f04AC(Me.f02C2).f0000, 4).f0000 Then
+                                Me.f059C(Me.f02C2).f0002 = 10
+                                Call pub_017_004037C4(stack-146, stack-148)
+                            Else
+                                stack-192 = pub_128_00409DE8()
+                                If stack-192 >= 0 Then
+                                    Me.f059C(Me.f02C2).f0000 = stack-192
+                                    Me.f059C(Me.f02C2).f0002 = 0
+                                    Call pub_017_004037C4(stack-146, stack-148)
+                                End If
+                            End If
+                        Case 1
+                            Do
+                                If Me.f06C4(Me.f02C2, 3).f0000 Then
+                                    stack-184 = 0
+                                Else
+                                    stack-184 = 2
+                                End If
+                                stack-188 = pub_188_0041678C(Me.f04AC(Me.f02C2).f0000, stack-148, stack-184)
+                                Call pub_064_004053DC()
+                                If stack-188 < 0 Then
+                                    GoTo L_0041E404
+                                End If
+                                Call Pal.getbin(stack-158, Me.f0744(stack-188).f000C, 3)
+                                Call Pal.getbin(stack-190, Me.f0744(stack-188).f000C, 4)
+                                Me.f059C(Me.f02C2).f0004 = stack-188
+                                Me.f059C(Me.f02C2).f0006 = stack-148
+                                If stack-158 Then
+                                    If stack-190 Then
+                                        Me.f059C(Me.f02C2).f0000 = Me.f02C2
+                                        GoTo L_0041E134
+                                    End If
+                                    stack-192 = pub_128_00409DE8()
+                                    If stack-192 >= 0 Then
+                                        Me.f059C(Me.f02C2).f0000 = stack-192
+                                        GoTo L_0041E134
+                                    End If
+                                    Continue Do
+                                ElseIf stack-190 Then
+                                    Me.f059C(Me.f02C2).f0000 = Me.f02C2
+                                    Exit Do
+                                Else
+                                    stack-194 = pub_101_00407818()
+                                    If stack-194 >= 0 Then
+                                        Me.f059C(Me.f02C2).f0000 = stack-194
+                                        Exit Do
+                                    End If
+                                End If
+                            Loop
+                            Me.f059C(Me.f02C2).f0002 = 1
+L_0041E1C0:
+                            Call pub_017_004037C4(stack-146, stack-148)
+                            GoTo L_0041E404
+                        Case 2
+                            Call Pal.getbin(stack-190, Me.f0744(Me.f05CC(Me.f02C2).f0016).f000C, 4)
+                            If stack-190 = 0 Then
+                                stack-192 = pub_128_00409DE8()
+                            Else
+                                stack-192 = 0
+                            End If
+                            If stack-192 >= 0 Then
+                                For stack-136 = 0 To Me.f02DA
+                                    Me.f059C(stack-136).f0002 = -1
+                                Next
+                                Me.f059C(Me.f02C2).f0002 = 7
+                                Me.f059C(Me.f02C2).f0000 = stack-192
+                                Me.f02C2 = Me.f02DA
+                                Call pub_017_004037C4(stack-146, stack-148)
+                            End If
+                        Case 3
+                            Do
+                                stack-156 = pub_041_00404448(stack-196, 4, 16, 56, 3, 5)
+                                If stack-156 < 0 Then
+                                    Call pub_064_004053DC()
+                                    GoTo L_0041E404
+                                End If
+                                stack-290 = stack-156
+                                If stack-290 = 0 Then
+                                    stack-224 = pub_039_00404318()
+                                ElseIf stack-290 = 1 Then
+                                    stack-154 = pub_041_00404448(stack-198, 24, 50, 23, 2, 2)
+                                    If stack-154 < 0 Then
+                                        stack-156 = -2
+                                    Else
+                                        stack-156 = pub_156_0040DE24(stack-154)
+                                    End If
+                                ElseIf stack-290 = 2 Then
+                                    Call pub_004_004032E4()
+                                ElseIf stack-290 = 3 Then
+                                    Call pub_012_00403570()
+                                ElseIf stack-290 = 4 Then
+                                    Call pub_001_004031F4()
+                                End If
+                                If stack-156 <> -2 Then
+                                    Exit Do
+                                End If
+                            Loop
+                            If stack-156 <> 4 Then
+                                Call pub_017_004037C4(stack-146, stack-148)
+                                Call pub_064_004053DC()
+                            End If
+                    End Select
+L_0041E404:
+                    Me.f02C6 = 0
+                End If
+                GoTo L_0041EAAA
+L_0041E134:
+                Me.f059C(Me.f02C2).f0002 = 2
+                GoTo L_0041E1C0
 L_0041EAAA:
                 If Me.f02C2 >= Me.f02D8 Then
                     Exit Do
@@ -6307,7 +7283,7 @@ L_0041EAC0:
             For Me.f0312 = 0 To Me.f02DE
                 stack-174 = Sgn(VB40032.rtcRandomNext() * CSng(Me.f068C(Me.f0312).f0042))
                 stack-324 = VB40032.rtcRandomNext()
-                stack-158 = CSng(pub_006_00403368_hot(Me.f0312, 3) + Me.f068C(Me.f0312).f0030) * (0.9 + (stack-324 / CSng(5)))
+                stack-158 = CSng(pub_006_00403368_hot(Me.f0312, 3) + Me.f068C(Me.f0312).f0030) * (0.9 + (stack-324 / 5))
                 For stack-136 = 0 To stack-174
                     Me.f02E0 = Me.f02E0 + 1
                     Me.f0524(Me.f02E0) = 10 + Me.f0312
@@ -6323,7 +7299,7 @@ L_0041EAC0:
                 Me.f02E0 = Me.f02E0 + 1
                 Me.f0524(Me.f02E0) = Me.f0312
                 stack-324 = VB40032.rtcRandomNext()
-                stack-158 = CSng(pub_040_004043B0_hot(Me.f04AC(Me.f0312).f0000, 20)) * (0.9 + (stack-324 / CSng(5)))
+                stack-158 = CSng(pub_040_004043B0_hot(Me.f04AC(Me.f0312).f0000, 20)) * (0.9 + (stack-324 / 5))
                 If stack-176 = 7 Then
                     stack-158 = stack-158 * 10
                 End If
@@ -6387,7 +7363,7 @@ L_0041EAC0:
                                     If Me.f02D0 = 9 Then
                                         Me.f059C(Me.f0312).f0002 = 2
                                         stack-324 = VB40032.rtcRandomNext()
-                                        Me.f059C(Me.f0312).f0004 = Me.f079C(stack-180, CSng(32) + Int(stack-324 * CSng(4))).f0000
+                                        Me.f059C(Me.f0312).f0004 = Me.f079C(stack-180, 32 + Int(stack-324 * 4)).f0000
                                     End If
                                 End If
                                 If Me.f06C4(Me.f0312, 0).f0000 > 0 Then
@@ -6441,7 +7417,7 @@ L_0041EAC0:
                                                 Me.f02E4 = -1
                                             End If
                                             stack-324 = VB40032.rtcRandomNext()
-                                            Me.f07BC(stack-180, 2).f0006 = CSng(Me.f07BC(stack-180, 2).f0006) + (stack-324 * CSng(2))
+                                            Me.f07BC(stack-180, 2).f0006 = CSng(Me.f07BC(stack-180, 2).f0006) + (stack-324 * 2)
                                             Me.f07BC(stack-180, 4).f0006 = Me.f07BC(stack-180, 4).f0006 + 1
                                         End If
                                     Case 2
@@ -6476,7 +7452,7 @@ L_0041EAC0:
                                             End If
                                             Me.f079C(stack-180, 10).f0000 = Me.f079C(stack-180, 10).f0000 - stack-204
                                             stack-324 = VB40032.rtcRandomNext()
-                                            Me.f07BC(stack-180, 2).f0006 = CSng(Me.f07BC(stack-180, 2).f0006) + (stack-324 * CSng(2))
+                                            Me.f07BC(stack-180, 2).f0006 = CSng(Me.f07BC(stack-180, 2).f0006) + (stack-324 * 2)
                                             Me.f07BC(stack-180, 4).f0006 = Me.f07BC(stack-180, 4).f0006 + 1
                                         End If
                                     Case 3
@@ -6804,129 +7780,6 @@ L_00420B20:
         End If
         Return
     End If
-L_0041DECC:
-    If stack-152 = -1 Then
-        stack-158 = Me.f02C2
-        For stack-136 = 0 To (Me.f02C2 - 1)
-            If pub_093_00406F08_hot(stack-136) > 0 Then
-                stack-158 = stack-136
-            End If
-        Next
-        Me.f02C2 = stack-158
-        GoTo L_0041DBEE
-    Else
-        stack-278 = stack-152
-        Select Case stack-278
-            Case 0
-                If Me.f079C(Me.f04AC(Me.f02C2).f0000, 4).f0000 Then
-                    Me.f059C(Me.f02C2).f0002 = 10
-                    Call pub_017_004037C4(stack-146, stack-148)
-                Else
-                    stack-192 = pub_128_00409DE8()
-                    If stack-192 >= 0 Then
-                        Me.f059C(Me.f02C2).f0000 = stack-192
-                        Me.f059C(Me.f02C2).f0002 = 0
-                        Call pub_017_004037C4(stack-146, stack-148)
-                    End If
-                End If
-            Case 1
-                Do
-                    If Me.f06C4(Me.f02C2, 3).f0000 Then
-                        stack-184 = 0
-                    Else
-                        stack-184 = 2
-                    End If
-                    stack-188 = pub_188_0041678C(Me.f04AC(Me.f02C2).f0000, stack-148, stack-184)
-                    Call pub_064_004053DC()
-                    If stack-188 < 0 Then
-                        GoTo L_0041E404
-                    End If
-                    Call Pal.getbin(stack-158, Me.f0744(stack-188).f000C, 3)
-                    Call Pal.getbin(stack-190, Me.f0744(stack-188).f000C, 4)
-                    Me.f059C(Me.f02C2).f0004 = stack-188
-                    Me.f059C(Me.f02C2).f0006 = stack-148
-                    If stack-158 Then
-                        If stack-190 Then
-                            Me.f059C(Me.f02C2).f0000 = Me.f02C2
-                            GoTo L_0041E134
-                        End If
-                        stack-192 = pub_128_00409DE8()
-                        If stack-192 >= 0 Then
-                            Me.f059C(Me.f02C2).f0000 = stack-192
-                            GoTo L_0041E134
-                        End If
-                        Continue Do
-                    ElseIf stack-190 Then
-                        Me.f059C(Me.f02C2).f0000 = Me.f02C2
-                        Exit Do
-                    Else
-                        stack-194 = pub_101_00407818()
-                        If stack-194 >= 0 Then
-                            Me.f059C(Me.f02C2).f0000 = stack-194
-                            Exit Do
-                        End If
-                    End If
-                Loop
-                Me.f059C(Me.f02C2).f0002 = 1
-L_0041E1C0:
-                Call pub_017_004037C4(stack-146, stack-148)
-                GoTo L_0041E404
-            Case 2
-                Call Pal.getbin(stack-190, Me.f0744(Me.f05CC(Me.f02C2).f0016).f000C, 4)
-                If stack-190 = 0 Then
-                    stack-192 = pub_128_00409DE8()
-                Else
-                    stack-192 = 0
-                End If
-                If stack-192 >= 0 Then
-                    For stack-136 = 0 To Me.f02DA
-                        Me.f059C(stack-136).f0002 = -1
-                    Next
-                    Me.f059C(Me.f02C2).f0002 = 7
-                    Me.f059C(Me.f02C2).f0000 = stack-192
-                    Me.f02C2 = Me.f02DA
-                    Call pub_017_004037C4(stack-146, stack-148)
-                End If
-            Case 3
-                Do
-                    stack-156 = pub_041_00404448(stack-196, 4, 16, 56, 3, 5)
-                    If stack-156 < 0 Then
-                        Call pub_064_004053DC()
-                        GoTo L_0041E404
-                    End If
-                    stack-290 = stack-156
-                    If stack-290 = 0 Then
-                        stack-224 = pub_039_00404318()
-                    ElseIf stack-290 = 1 Then
-                        stack-154 = pub_041_00404448(stack-198, 24, 50, 23, 2, 2)
-                        If stack-154 < 0 Then
-                            stack-156 = -2
-                        Else
-                            stack-156 = pub_156_0040DE24(stack-154)
-                        End If
-                    ElseIf stack-290 = 2 Then
-                        Call pub_004_004032E4()
-                    ElseIf stack-290 = 3 Then
-                        Call pub_012_00403570()
-                    ElseIf stack-290 = 4 Then
-                        Call pub_001_004031F4()
-                    End If
-                    If stack-156 <> -2 Then
-                        Exit Do
-                    End If
-                Loop
-                If stack-156 <> 4 Then
-                    Call pub_017_004037C4(stack-146, stack-148)
-                    Call pub_064_004053DC()
-                End If
-        End Select
-L_0041E404:
-        Me.f02C6 = 0
-        GoTo L_0041EAAA
-    End If
-L_0041E134:
-    Me.f059C(Me.f02C2).f0002 = 2
-    GoTo L_0041E1C0
 L_00420C0E:
     If stack-142 = 1 Then
         Call pub_149_0040CA64()
@@ -6970,10 +7823,56 @@ L_00420C0E:
     pub_196_0041D56C = stack-142
     Call Pal.cleartre()
     Call Pal.FlushDSound()
-    Exit Function
 End Function
 
-Sub pub_197_00420FC0(ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5)
+Sub pub_197_00420FC0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Integer, ByRef a4 As Integer, ByRef a5 As Integer)
+    Dim stack-136 As Long
+    Dim stack-138 As Integer
+    Dim stack-140 As Integer
+    Dim stack-142 As Integer
+    Dim stack-144 As Integer
+    Dim stack-146 As Integer
+    Dim stack-148 As Integer
+    Dim stack-150 As Integer
+    Dim stack-152 As Integer
+    Dim stack-154 As Integer
+    Dim stack-156 As Integer
+    Dim stack-158 As Integer
+    Dim stack-160 As Integer
+    Dim stack-162 As Integer
+    Dim stack-164 As Integer
+    Dim stack-166 As Integer
+    Dim stack-168 As Integer
+    Dim stack-170 As Integer
+    Dim stack-172 As Integer
+    Dim stack-174 As Integer
+    Dim stack-176 As Integer
+    Dim stack-178 As Integer
+    Dim stack-180 As Integer
+    Dim stack-182 As Integer
+    Dim stack-184 As Integer
+    Dim stack-186 As Integer
+    Dim stack-188 As Integer
+    Dim stack-190 As Integer
+    Dim stack-192 As Integer
+    Dim stack-194 As Integer
+    Dim stack-196 As Integer
+    Dim stack-198 As Integer
+    Dim stack-200 As Integer
+    Dim stack-202 As Integer
+    Dim stack-204 As Integer
+    Dim stack-206 As Integer
+    Dim stack-208 As Integer
+    Dim stack-210 As Integer
+    Dim stack-212 As Integer
+    Dim stack-214 As Integer
+    Dim stack-216 As Integer
+    Dim stack-218 As Integer
+    Dim stack-220 As Integer
+    Dim stack-228 As Integer
+    Dim stack-284 As Single
+    Dim stack-294 As Integer
+    Dim stack-336 As String
     Call pub_002_00403264()
     If a2 <= 10 Then
         Exit Sub
@@ -7337,7 +8236,7 @@ L_00421140:
                     End If
                 Next
                 stack-284 = VB40032.rtcRandomNext()
-                If CSng(Me.f0744(Me.f05B4(stack-154).f0014).f0002) < Int(stack-284 * CSng(10)) Then
+                If CSng(Me.f0744(Me.f05B4(stack-154).f0014).f0002) < Int(stack-284 * 10) Then
                     For stack-156 = 0 To 15
                         stack-172 = -1
                         If Me.f0724(stack-154, stack-156).f0000 = 0 Then
@@ -7361,7 +8260,7 @@ L_004225B2:
             End If
             For stack-154 = stack-158 To stack-160
                 stack-294 = pub_040_004043B0_hot(Me.f04AC(stack-154).f0000, 22)
-                If (VB40032.rtcRandomNext() * CSng(100)) > CSng(stack-294) Then
+                If (VB40032.rtcRandomNext() * 100) > CSng(stack-294) Then
                     For stack-156 = 0 To 15
                         If Me.f0704(stack-154, stack-156).f0000 = a4 Then
                             GoTo L_00422744
@@ -7449,7 +8348,7 @@ L_00422744:
             Exit Sub
         Case 46
             stack-284 = VB40032.rtcRandomNext()
-            If CSng(Me.f0744(Me.f05B4(a0).f0014).f0002) < Int(stack-284 * CSng(10)) Then
+            If CSng(Me.f0744(Me.f05B4(a0).f0014).f0002) < Int(stack-284 * 10) Then
                 If a4 > 0 Then
                     Me.f06E4(a0, a3).f0000 = a4
                 End If
@@ -7464,7 +8363,7 @@ L_00422744:
             If a5 <> 0 Then
                 stack-138 = a5 - 1
             End If
-            Me.f0774(stack-138, 17, a3).f0000 = CSng(Me.f079C(stack-138, a3).f0000) * (CSng(a4) / CSng(100))
+            Me.f0774(stack-138, 17, a3).f0000 = CSng(Me.f079C(stack-138, a3).f0000) * (CSng(a4) / 100)
             Exit Sub
         Case 49
             Me.f05CC(a0).f0000 = a3
@@ -7807,7 +8706,7 @@ L_00423634:
             If (a5 = 0) And (stack-140 = 0) Then
                 Call Pal.exgm1(Me.f07DC(a0).f0002, Me.f07DC(a0).f0004, Me.f0180(0), stack-170)
                 If stack-170 = 0 Then
-                    stack-174 = Int(VB40032.rtcRandomNext() * CSng(4))
+                    stack-174 = Int(VB40032.rtcRandomNext() * 4)
                     stack-144 = Me.f07DC(a0).f0002 + Me.f041C(stack-174)
                     stack-146 = Me.f07DC(a0).f0004 + Me.f0434(stack-174)
                     Call Pal.exgm1(stack-144, stack-146, Me.f0180(0), stack-170)
@@ -7978,7 +8877,7 @@ L_00423634:
             If stack-162 <= 0 Then
                 stack-162 = 1
             End If
-            If (CSng(Me.f068C(a0).f0016) / CSng(stack-162)) <= (CSng(100) / CSng(a3)) Then
+            If (CSng(Me.f068C(a0).f0016) / CSng(stack-162)) <= (100 / CSng(a3)) Then
                 a1 = a4 - 1
             End If
             Exit Sub
@@ -7990,7 +8889,7 @@ L_00423634:
             Exit Sub
         Case 102
             stack-284 = VB40032.rtcRandomNext()
-            a4 = CSng(a4 * 5) + (CSng(Me.f079C(Me.f04AC(Me.f0312).f0000, 17).f0000) * Int(stack-284 * CSng(4)))
+            a4 = CSng(a4 * 5) + (CSng(Me.f079C(Me.f04AC(Me.f0312).f0000, 17).f0000) * Int(stack-284 * 4))
             GoTo L_004234FA
         Case 103
             Me.f068C(a0).f001E = a3
@@ -8051,10 +8950,10 @@ L_00423634:
                 a3 = 10
             End If
             stack-284 = VB40032.rtcRandomNext()
-            If (Me.f068C(stack-176).f0028 > 0) And (CSng(a3) >= Int(stack-284 * CSng(10))) Then
+            If (Me.f068C(stack-176).f0028 > 0) And (CSng(a3) >= Int(stack-284 * 10)) Then
                 If Me.f068C(stack-176).f0026 = 0 Then
                     stack-284 = VB40032.rtcRandomNext()
-                    stack-186 = Me.f068C(stack-176).f0028 \ (CSng(2) + stack-284)
+                    stack-186 = Me.f068C(stack-176).f0028 \ (2 + stack-284)
                     If stack-186 > 0 Then
                         Me.f068C(stack-176).f0028 = Me.f068C(stack-176).f0028 - stack-186
                         Me.f02B4 = Me.f02B4 + stack-186
@@ -8473,7 +9372,7 @@ L_00425278:
             Call pub_030_00403E14()
             Exit Sub
         Case 143
-            Me.f02B4 = Me.f02B4 / CSng(2)
+            Me.f02B4 = Me.f02B4 / 2
             Exit Sub
         Case 144
             If a3 > 0 Then
@@ -8754,11 +9653,11 @@ L_00425278:
             End If
             Exit Sub
         Case 160
-            Call Me.method_0038(stack-284, Me.f0878.f0000)
+            Call Me.f0878.f0000.method_0038(stack-284)
             Call Pal.PlayAvi(stack-284, 4, 1)
-            Call Me.method_0038(stack-284, Me.f0878.f0000)
+            Call Me.f0878.f0000.method_0038(stack-284)
             Call Pal.PlayAvi(stack-284, 5, 1)
-            Call Me.method_0038(stack-284, Me.f0878.f0000)
+            Call Me.f0878.f0000.method_0038(stack-284)
             Call Pal.PlayAvi(stack-284, 6, 1)
             Call pub_067_0040563C()
             Exit Sub
@@ -8809,5 +9708,4 @@ L_00425278:
             End If
             Exit Sub
     End Select
-    ' ---- unreachable p-code ----
 End Sub

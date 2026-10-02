@@ -85,6 +85,85 @@ Module-level declarations (VB4 declaration stream @ 0x00401A7C)
   +0x083C Array   Integer          (0 To 4)                           5 x 2 B
   +0x0854 Array   Byte             (0 To 7)                           8 x 1 B
   +0x086C ObjRef  payload=000000008000
+==== Declares (Declare table) ====
+idx    name                         lib      sig_off    name_ptr/lib_ptr
+0      GetKeyDefine                 Pal      0x000008D0  0040D3FC/004031C0
+1      StopApp                      user32   0x000008AC  0040D409/004031C8
+2      GetActiveWindow              Pal      0x00000890  0040D411/004031C0
+3      cvlong                       Pal      0x00000874  0040D421/004031C0
+4      PlayAvi                      Pal      0x00000858  0040D428/004031C0
+5      CKey                         Pal      0x0000083C  0040D430/004031C0
+6      ReadKey                      Pal      0x00000818  0040D435/004031C0
+7      ShutDownInput                Pal      0x000007FC  0040D43D/004031C0
+8      InitCD                       Pal      0x000007DC  0040D44B/004031C0
+9      InitInput                    Pal      0x000007C0  0040D452/004031C0
+10     delay1                       Pal      0x000007A4  0040D45C/004031C0
+11     wtime                        Pal      0x00000784  0040D463/004031C0
+12     killtimer                    Pal      0x00000764  0040D469/004031C0
+13     settimer                     Pal      0x00000744  0040D473/004031C0
+14     DrawString                   Pal      0x00000724  0040D47C/004031C0
+15     DrawString                   Pal      0x00000708  0040D487/004031C0
+16     rngput                       Pal      0x000006E8  0040D492/004031C0
+17     popscr6a                     Pal      0x000006CC  0040D499/004031C0
+18     popscr6                      Pal      0x000006B0  0040D4A2/004031C0
+19     adpic                        Pal      0x00000694  0040D4AA/004031C0
+20     adpic0                       Pal      0x00000678  0040D4B0/004031C0
+21     rblk                         Pal      0x00000658  0040D4B7/004031C0
+22     rripafreeze                  Pal      0x0000063C  0040D4BC/004031C0
+23     rripa                        Pal      0x00000620  0040D4C8/004031C0
+24     nipwseg                      Pal      0x00000604  0040D4CE/004031C0
+25     nipwb                        Pal      0x000005E8  0040D4D6/004031C0
+26     nipwa                        Pal      0x000005CC  0040D4DC/004031C0
+27     putipna                      Pal      0x000005B0  0040D4E2/004031C0
+28     clripna                      Pal      0x00000594  0040D4EA/004031C0
+29     extf                         Pal      0x00000578  0040D4F2/004031C0
+30     rhrff                        Pal      0x0000055C  0040D4F7/004031C0
+31     vmap                         Pal      0x00000540  0040D4FD/004031C0
+32     exmyll                       Pal      0x00000520  0040D502/004031C0
+33     cleartre                     Pal      0x00000504  0040D509/004031C0
+34     ntre                         Pal      0x000004E8  0040D512/004031C0
+35     addtre                       Pal      0x000004CC  0040D517/004031C0
+36     ffxy                         Pal      0x000004B0  0040D51E/004031C0
+37     exmap                        Pal      0x00000494  0040D523/004031C0
+38     exbb                         Pal      0x00000478  0040D529/004031C0
+39     exrij                        Pal      0x0000045C  0040D52E/004031C0
+40     exgm2                        Pal      0x00000440  0040D534/004031C0
+41     exgm1                        Pal      0x00000424  0040D53A/004031C0
+42     exgop                        Pal      0x00000408  0040D540/004031C0
+43     corpate                      Pal      0x000003EC  0040D546/004031C0
+44     fupate                       Pal      0x000003D0  0040D54E/004031C0
+45     cvpate                       Pal      0x000003B4  0040D555/004031C0
+46     expate                       Pal      0x00000398  0040D55C/004031C0
+47     intpate                      Pal      0x0000037C  0040D563/004031C0
+48     getbin                       Pal      0x00000360  0040D56B/004031C0
+49     pushscr                      Pal      0x00000344  0040D572/004031C0
+50     popscr                       Pal      0x00000328  0040D57A/004031C0
+51     popscrb                      Pal      0x0000030C  0040D581/004031C0
+52     putp                         Pal      0x000002F0  0040D589/004031C0
+53     vwindow                      Pal      0x000002D0  0040D58E/004031C0
+54     arrayptr                     Pal      0x000002B4  0040D596/004031C0
+55     clsmen                       Pal      0x00000298  0040D59F/004031C0
+56     copymen                      Pal      0x0000027C  0040D5A6/004031C0
+57     copymen                      Pal      0x00000260  0040D5AE/004031C0
+58     copymen                      Pal      0x00000244  0040D5B6/004031C0
+59     paksize                      Pal      0x00000228  0040D5BE/004031C0
+60     unpak                        Pal      0x00000208  0040D5C6/004031C0
+61     FlushDSound                  Pal      0x000001E8  0040D5CC/004031C0
+62     PlayDSound                   Pal      0x000001C8  0040D5D8/004031C0
+63     LoadDSound                   Pal      0x000001A4  0040D5E3/004031C0
+64     ShutdownDSound               Pal      0x00000184  0040D5EE/004031C0
+65     InitDSound                   Pal      0x00000168  0040D5FD/004031C0
+66     ClrScr                       Pal      0x00000148  0040D608/004031C0
+67     ResetMode                    Pal      0x0000012C  0040D60F/004031C0
+68     SetMode                      user32   0x0000010C  0040D619/004031C8
+69     ShowCursor                   winmm    0x000000E8  0040D621/004031D6
+70     mciSendStringA               kernel32 0x000000CC  0040D62C/004031E2
+71     _hwrite                      kernel32 0x000000B0  0040D63B/004031E2
+72     _hread                       kernel32 0x00000094  0040D643/004031E2
+73     _lclose                      kernel32 0x00000078  0040D64A/004031E2
+74     _llseek                      kernel32 0x0000005C  0040D652/004031E2
+75     _lcreat                      kernel32 0x00000040  0040D65A/004031E2
+76     _lopen                       kernel32 0x00000014  0040D662/004031E2
 
 ======================================================================
 pub_000_00403190  ProcDsc=0x00403198  ProcSize=0x8  codeStart=0x00403190
@@ -161,7 +240,7 @@ pub_006_00403368_hot  ProcDsc=0x0040338A  ProcSize=0x22  codeStart=0x00403368
 ======================================================================
 pub_007_004033B4  ProcDsc=0x004033E0  ProcSize=0x2C  codeStart=0x004033B4
 ======================================================================
-004033B4  84 05 08 00 18 03        FMemLdStr  mem=stack+8.f0318
+004033B4  84 05 08 00 18 03        FMemLd4  mem=stack+8.f0318
 004033BA  50 07 00 00 00 00        LitI4  val=0
 004033C0  98 05 08 00 A8 00        FMemLdRf  mem=stack+8.f00A8  ; Byte(0 To 18431)
 004033C6  18 03                    Ary1LdRf  -
@@ -302,16 +381,16 @@ pub_014_00403630_hot  ProcDsc=0x0040366C  ProcSize=0x3C  codeStart=0x00403630
 ======================================================================
 pub_015_00403694  ProcDsc=0x004036CE  ProcSize=0x3A  codeStart=0x00403694
 ======================================================================
-; params (1): ByVal a0
+; params (1): ByRef a0
 00403694  18 04 0C 00              FLdI4  mem=stack+12
 00403698  98 05 08 00 08 00        FMemLdRf  mem=stack+8.f0008
 0040369E  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
 004036A4  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-004036AA  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+004036AA  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 004036B0  50 07 00 00 00 00        LitI4  val=0
 004036B6  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 004036BC  18 03                    Ary1LdRf  -
-004036BE  84 05 08 00 08 00        FMemLdStr  mem=stack+8.f0008
+004036BE  84 05 08 00 08 00        FMemLd4  mem=stack+8.f0008
 004036C4  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 004036CA  FE 07                    SetLastSystemError  -
 004036CC  8A 03                    ExitProcStr  -
@@ -320,7 +399,7 @@ pub_015_00403694  ProcDsc=0x004036CE  ProcSize=0x3A  codeStart=0x00403694
 pub_016_0040375C_hot  ProcDsc=0x00403798  ProcSize=0x3C  codeStart=0x0040375C
 ======================================================================
 ; params (5): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4
-0040375C  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040375C  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00403762  02 04 1C 00              ILdI2  mem=stack+28
 00403766  02 04 18 00              ILdI2  mem=stack+24
 0040376A  02 04 10 00              ILdI2  mem=stack+16
@@ -364,7 +443,7 @@ pub_017_004037C4  ProcDsc=0x0040380A  ProcSize=0x46  codeStart=0x004037C4
 ======================================================================
 pub_018_00403834  ProcDsc=0x00403884  ProcSize=0x50  codeStart=0x00403834
 ======================================================================
-00403834  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00403834  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040383A  50 07 00 00 00 00        LitI4  val=0
 00403840  56 00                    EqI4  -
 00403842  E8 03 2C 00              BranchF  to=00403860
@@ -375,7 +454,7 @@ pub_018_00403834  ProcDsc=0x00403884  ProcSize=0x50  codeStart=0x00403834
 0040385A  FE 07                    SetLastSystemError  -
 0040385C  E6 03 4E 00              Branch  to=00403882
 00403860  50 07 00 FA 00 00        LitI4  val=64000
-00403866  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00403866  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040386C  50 07 00 00 00 00        LitI4  val=0
 00403872  98 05 08 00 C0 00        FMemLdRf  mem=stack+8.f00C0  ; Byte(0 To 65535)
 00403878  18 03                    Ary1LdRf  -
@@ -407,7 +486,7 @@ pub_019_004038AC  ProcDsc=0x004038FA  ProcSize=0x4E  codeStart=0x004038AC
 ======================================================================
 pub_020_00403924_hot  ProcDsc=0x0040396E  ProcSize=0x4A  codeStart=0x00403924
 ======================================================================
-; params (4): ByVal a0, ByVal a1, ByRef a2, ByVal a3
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
 00403924  18 04 18 00              FLdI4  mem=stack+24
 00403928  92 02                    LitI2  val=0
 0040392A  66 05 76 FF              PopTmpLdAd2  mem=stack-138
@@ -539,7 +618,7 @@ pub_024_00403B10  ProcDsc=0x00403B62  ProcSize=0x52  codeStart=0x00403B10
 ======================================================================
 pub_025_00403B8C_hot  ProcDsc=0x00403BE2  ProcSize=0x56  codeStart=0x00403B8C
 ======================================================================
-; params (2): ByVal a0, ByVal a1
+; params (2): ByRef a0, ByRef a1
 00403B8C  92 02                    LitI2  val=0
 00403B8E  66 05 76 FF              PopTmpLdAd2  mem=stack-138
 00403B92  18 04 0C 00              FLdI4  mem=stack+12
@@ -549,7 +628,7 @@ pub_025_00403B8C_hot  ProcDsc=0x00403BE2  ProcSize=0x56  codeStart=0x00403B8C
 00403BA4  B8 03 78 FF              FLdRfVar  mem=stack-136
 00403BA8  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
 00403BAE  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-00403BB4  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00403BB4  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00403BBA  50 07 00 00 00 00        LitI4  val=0
 00403BC0  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00403BC6  18 03                    Ary1LdRf  -
@@ -564,7 +643,7 @@ pub_025_00403B8C_hot  ProcDsc=0x00403BE2  ProcSize=0x56  codeStart=0x00403B8C
 ======================================================================
 pub_026_00403C0C  ProcDsc=0x00403C60  ProcSize=0x54  codeStart=0x00403C0C
 ======================================================================
-; params (1): ByVal a0
+; params (1): ByRef a0
 00403C0C  18 04 0C 00              FLdI4  mem=stack+12
 00403C10  5E 07 14 00 0E 00 00 00 46 00 42 00 50 00 2E 00 4D 00 4B 00 46 00 00 00 LitStr  index=0014 byteLen=14 text='FBP.MKF'
 00403C28  E2 03 78 FF              FStStrCopy  mem=stack-136
@@ -612,7 +691,7 @@ pub_027_00403C8C  ProcDsc=0x00403CE2  ProcSize=0x56  codeStart=0x00403C8C
 ======================================================================
 pub_028_00403D0C  ProcDsc=0x00403D64  ProcSize=0x58  codeStart=0x00403D0C
 ======================================================================
-; params (1): ByVal a0
+; params (1): ByRef a0
 00403D0C  18 04 0C 00              FLdI4  mem=stack+12
 00403D10  22 06 84 CF 41 00        ImpAdCallAd  call=pub_036_00404160@0041CF84
 00403D16  C2 03 78 FF              FStI2  mem=stack-136
@@ -641,7 +720,7 @@ pub_028_00403D0C  ProcDsc=0x00403D64  ProcSize=0x58  codeStart=0x00403D0C
 ======================================================================
 pub_029_00403D8C  ProcDsc=0x00403DE6  ProcSize=0x5A  codeStart=0x00403D8C
 ======================================================================
-; params (1): ByVal a0
+; params (1): ByRef a0
 00403D8C  18 04 0C 00              FLdI4  mem=stack+12
 00403D90  5E 07 14 00 0E 00 00 00 50 00 41 00 54 00 2E 00 4D 00 4B 00 46 00 00 00 LitStr  index=0014 byteLen=14 text='PAT.MKF'
 00403DA8  E2 03 78 FF              FStStrCopy  mem=stack-136
@@ -662,7 +741,7 @@ pub_029_00403D8C  ProcDsc=0x00403DE6  ProcSize=0x5A  codeStart=0x00403D8C
 ======================================================================
 pub_030_00403E14  ProcDsc=0x00403E74  ProcSize=0x60  codeStart=0x00403E14
 ======================================================================
-00403E14  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00403E14  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00403E1A  50 07 00 00 00 00        LitI4  val=0
 00403E20  56 00                    EqI4  -
 00403E22  E8 03 2C 00              BranchF  to=00403E40
@@ -676,7 +755,7 @@ pub_030_00403E14  ProcDsc=0x00403E74  ProcSize=0x60  codeStart=0x00403E14
 00403E46  50 07 00 00 00 00        LitI4  val=0
 00403E4C  98 05 08 00 C0 00        FMemLdRf  mem=stack+8.f00C0  ; Byte(0 To 65535)
 00403E52  18 03                    Ary1LdRf  -
-00403E54  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00403E54  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00403E5A  38 06 CC 75 41 00        ImpAdCall  call=Pal.copymen@004175CC
 00403E60  FE 07                    SetLastSystemError  -
 00403E62  92 02                    LitI2  val=0
@@ -995,7 +1074,7 @@ pub_040_004043B0_hot  ProcDsc=0x0040441E  ProcSize=0x6E  codeStart=0x004043B0
 ======================================================================
 pub_041_00404448  ProcDsc=0x004044B6  ProcSize=0x6E  codeStart=0x00404448
 ======================================================================
-; params (6): ByVal a0, ByVal a1, ByVal a2, ByRef a3, ByVal a4, ByRef a5
+; params (6): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5
 00404448  92 02                    LitI2  val=0
 0040444A  B8 03 78 FF              FLdRfVar  mem=stack-136
 0040444E  02 04 20 00              ILdI2  mem=stack+32
@@ -1039,7 +1118,7 @@ pub_042_004044E0  ProcDsc=0x0040454E  ProcSize=0x6E  codeStart=0x004044E0
 004044F2  E8 03 5A 00              BranchF  to=0040453A
 004044F6  50 07 00 00 00 00        LitI4  val=0
 004044FC  50 07 00 00 00 00        LitI4  val=0
-00404502  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00404502  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00404508  82 05 08 00 08 02        FMemLdI2  mem=stack+8.f0208
 0040450E  1E 02                    CI4I2  -
 00404510  98 05 08 00 5C 03        FMemLdRf  mem=stack+8.f035C  ; Integer(0 To 149)
@@ -1095,7 +1174,7 @@ pub_043_00404578  ProcDsc=0x004045EA  ProcSize=0x72  codeStart=0x00404578
 ======================================================================
 pub_044_00404614_hot  ProcDsc=0x00404686  ProcSize=0x72  codeStart=0x00404614
 ======================================================================
-; params (1): ByVal a0
+; params (1): ByRef a0
 00404614  82 05 08 00 4E 02        FMemLdI2  mem=stack+8.f024E
 0040461A  94 02                    LitI2  val=1
 0040461C  24 00                    XorUI1  -
@@ -1319,16 +1398,16 @@ pub_049_0040494C  ProcDsc=0x004049CC  ProcSize=0x80  codeStart=0x0040494C
 ======================================================================
 pub_050_004049F4  ProcDsc=0x00404A76  ProcSize=0x82  codeStart=0x004049F4
 ======================================================================
-; params (2): ByVal a0, ByRef a1
+; params (2): ByRef a0, ByRef a1
 004049F4  18 04 0C 00              FLdI4  mem=stack+12
 004049F8  98 05 08 00 0C 00        FMemLdRf  mem=stack+8.f000C
 004049FE  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
 00404A04  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-00404A0A  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00404A0A  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00404A10  50 07 00 00 00 00        LitI4  val=0
 00404A16  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00404A1C  18 03                    Ary1LdRf  -
-00404A1E  84 05 08 00 0C 00        FMemLdStr  mem=stack+8.f000C
+00404A1E  84 05 08 00 0C 00        FMemLd4  mem=stack+8.f000C
 00404A24  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 00404A2A  FE 07                    SetLastSystemError  -
 00404A2C  02 04 10 00              ILdI2  mem=stack+16
@@ -1440,7 +1519,7 @@ pub_053_00404BF8_hot  ProcDsc=0x00404C78  ProcSize=0x80  codeStart=0x00404BF8
 00404C02  1E 02                    CI4I2  -
 00404C04  98 05 08 00 0C 08        FMemLdRf  mem=stack+8.f080C  ; Single(0 To 31)
 00404C0A  04 03                    Ary1LdR4  -
-00404C0C  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00404C0C  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 00404C12  24 06 C4 77 41 00        ImpAdCallAd  call=kernel32._llseek@004177C4
 00404C18  C4 03 74 FF              FStI4  mem=stack-140
 00404C1C  FE 07                    SetLastSystemError  -
@@ -1458,12 +1537,12 @@ pub_053_00404BF8_hot  ProcDsc=0x00404C78  ProcSize=0x80  codeStart=0x00404BF8
 00404C44  04 03                    Ary1LdR4  -
 00404C46  14 01                    SubI4  -
 00404C48  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-00404C4E  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00404C4E  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00404C54  50 07 00 00 00 00        LitI4  val=0
 00404C5A  10 04 10 00              ILdI4  mem=stack+16
 00404C5E  FA 03 70 FF              AryLock  mem=stack-144
 00404C62  18 03                    Ary1LdRf  -
-00404C64  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00404C64  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 00404C6A  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 00404C70  FE 07                    SetLastSystemError  -
 00404C72  FC 03 70 FF              AryUnlock  mem=stack-144
@@ -1508,27 +1587,27 @@ pub_054_00404CA4  ProcDsc=0x00404D26  ProcSize=0x82  codeStart=0x00404CA4
 ======================================================================
 pub_055_00404D50  ProcDsc=0x00404DCE  ProcSize=0x7E  codeStart=0x00404D50
 ======================================================================
-; params (1): ByVal a0
+; params (1): ByRef a0
 00404D50  18 04 0C 00              FLdI4  mem=stack+12
 00404D54  98 05 08 00 14 00        FMemLdRf  mem=stack+8.f0014
 00404D5A  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
 00404D60  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-00404D66  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
-00404D6C  84 05 08 00 FC 01        FMemLdStr  mem=stack+8.f01FC
+00404D66  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
+00404D6C  84 05 08 00 FC 01        FMemLd4  mem=stack+8.f01FC
 00404D72  C4 00                    GtI4  -
 00404D74  E8 03 52 00              BranchF  to=00404DA2
 00404D78  50 07 00 00 00 00        LitI4  val=0
-00404D7E  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00404D7E  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00404D84  98 05 08 00 F8 01        FMemLdRf  mem=stack+8.f01F8  ; dynamic array (ReDim at runtime)
 00404D8A  FC 06 01 00 00 00 00 00 01 00 00 00 Redim  dims=1 desc=00000000 flags=0001,0000
-00404D96  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00404D96  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00404D9C  A4 05 08 00 FC 01        FMemStI4  mem=stack+8.f01FC
-00404DA2  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00404DA2  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00404DA8  50 07 00 00 00 00        LitI4  val=0
-00404DAE  90 05 08 00 F8 01        FMemLdStr  mem=stack+8.f01F8  ; dynamic array (ReDim at runtime)
+00404DAE  90 05 08 00 F8 01        FMemLd4  mem=stack+8.f01F8  ; dynamic array (ReDim at runtime)
 00404DB4  FA 03 78 FF              AryLock  mem=stack-136
 00404DB8  18 03                    Ary1LdRf  -
-00404DBA  84 05 08 00 14 00        FMemLdStr  mem=stack+8.f0014
+00404DBA  84 05 08 00 14 00        FMemLd4  mem=stack+8.f0014
 00404DC0  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 00404DC6  FE 07                    SetLastSystemError  -
 00404DC8  FC 03 78 FF              AryUnlock  mem=stack-136
@@ -1685,7 +1764,7 @@ pub_059_0040501C  ProcDsc=0x004050AA  ProcSize=0x8E  codeStart=0x0040501C
 ======================================================================
 pub_060_004050D4  ProcDsc=0x0040516A  ProcSize=0x96  codeStart=0x004050D4
 ======================================================================
-; params (2): ByRef a0, ByRef a1
+; params (2): ByVal a0, ByVal a1
 004050D4  92 02                    LitI2  val=0
 004050D6  C2 03 78 FF              FStI2  mem=stack-136
 004050DA  02 04 0C 00              ILdI2  mem=stack+12
@@ -1781,8 +1860,8 @@ pub_061_00405194  ProcDsc=0x0040522C  ProcSize=0x98  codeStart=0x00405194
 ======================================================================
 pub_062_00405254_hot  ProcDsc=0x004052EE  ProcSize=0x9A  codeStart=0x00405254
 ======================================================================
-; params (4): ByVal a0, ByVal a1, ByRef a2, ByVal a3
-00405254  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
+00405254  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 0040525A  50 07 00 00 00 00        LitI4  val=0
 00405260  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 00405266  18 03                    Ary1LdRf  -
@@ -1886,7 +1965,7 @@ pub_064_004053DC  ProcDsc=0x0040547C  ProcSize=0xA0  codeStart=0x004053DC
 0040540C  A6 06 72 FF 98 00        ForI2  ctl=stack-142 to=00405474
 00405412  50 07 02 00 00 00        LitI4  val=2
 00405418  50 07 04 00 00 00        LitI4  val=4
-0040541E  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040541E  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00405424  4A 07 28 00              LitI2  val=40
 00405428  A2 03 7A FF              FLdI2  mem=stack-134
 0040542C  02 01                    AddI2  -
@@ -1961,7 +2040,7 @@ pub_065_004054A4  ProcDsc=0x00405546  ProcSize=0xA2  codeStart=0x004054A4
 ======================================================================
 pub_066_00405570  ProcDsc=0x00405610  ProcSize=0xA0  codeStart=0x00405570
 ======================================================================
-; params (5): ByRef a0, ByRef a1, ByRef a2, ByVal a3, ByVal a4
+; params (5): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4
 00405570  18 04 1C 00              FLdI4  mem=stack+28
 00405574  9C 02                    LitI2  val=5
 00405576  66 05 7A FF              PopTmpLdAd2  mem=stack-134
@@ -2011,16 +2090,16 @@ pub_066_00405570  ProcDsc=0x00405610  ProcSize=0xA0  codeStart=0x00405570
 ======================================================================
 pub_067_0040563C  ProcDsc=0x004056E0  ProcSize=0xA4  codeStart=0x0040563C
 ======================================================================
-0040563C  84 05 08 00 10 00        FMemLdStr  mem=stack+8.f0010
+0040563C  84 05 08 00 10 00        FMemLd4  mem=stack+8.f0010
 00405642  38 06 A8 77 41 00        ImpAdCall  call=kernel32._lclose@004177A8
 00405648  FE 07                    SetLastSystemError  -
-0040564A  84 05 08 00 0C 00        FMemLdStr  mem=stack+8.f000C
+0040564A  84 05 08 00 0C 00        FMemLd4  mem=stack+8.f000C
 00405650  38 06 A8 77 41 00        ImpAdCall  call=kernel32._lclose@004177A8
 00405656  FE 07                    SetLastSystemError  -
-00405658  84 05 08 00 14 00        FMemLdStr  mem=stack+8.f0014
+00405658  84 05 08 00 14 00        FMemLd4  mem=stack+8.f0014
 0040565E  38 06 A8 77 41 00        ImpAdCall  call=kernel32._lclose@004177A8
 00405664  FE 07                    SetLastSystemError  -
-00405666  84 05 08 00 08 00        FMemLdStr  mem=stack+8.f0008
+00405666  84 05 08 00 08 00        FMemLd4  mem=stack+8.f0008
 0040566C  38 06 A8 77 41 00        ImpAdCall  call=kernel32._lclose@004177A8
 00405672  FE 07                    SetLastSystemError  -
 00405674  94 02                    LitI2  val=1
@@ -2101,7 +2180,7 @@ pub_068_0040570C  ProcDsc=0x004057AA  ProcSize=0x9E  codeStart=0x0040570C
 pub_069_004057E4  ProcDsc=0x00405894  ProcSize=0xB0  codeStart=0x004057E4
 ======================================================================
 ; params (2): ByRef a0, ByRef a1
-004057E4  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+004057E4  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 004057EA  50 07 00 00 00 00        LitI4  val=0
 004057F0  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 004057F6  18 03                    Ary1LdRf  -
@@ -2112,7 +2191,7 @@ pub_069_004057E4  ProcDsc=0x00405894  ProcSize=0xB0  codeStart=0x004057E4
 0040580C  FE 07                    SetLastSystemError  -
 0040580E  50 07 03 00 00 00        LitI4  val=3
 00405814  50 07 00 00 00 00        LitI4  val=0
-0040581A  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040581A  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00405820  50 07 45 00 00 00        LitI4  val=69
 00405826  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0040582C  02 03                    Ary1LdI2  -
@@ -2131,7 +2210,7 @@ pub_069_004057E4  ProcDsc=0x00405894  ProcSize=0xB0  codeStart=0x004057E4
 00405852  FE 07                    SetLastSystemError  -
 00405854  50 07 00 00 00 00        LitI4  val=0
 0040585A  50 07 00 00 00 00        LitI4  val=0
-00405860  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00405860  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00405866  50 07 45 00 00 00        LitI4  val=69
 0040586C  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00405872  02 03                    Ary1LdI2  -
@@ -2246,7 +2325,7 @@ pub_071_00405994  ProcDsc=0x00405A4A  ProcSize=0xB6  codeStart=0x00405994
 ======================================================================
 pub_072_00405A74  ProcDsc=0x00405B26  ProcSize=0xB2  codeStart=0x00405A74
 ======================================================================
-; params (3): ByRef a0, ByRef a1, ByVal a2
+; params (3): ByRef a0, ByRef a1, ByRef a2
 00405A74  18 04 14 00              FLdI4  mem=stack+20
 00405A78  5E 07 14 00 0E 00 00 00 52 00 47 00 4D 00 2E 00 4D 00 4B 00 46 00 00 00 LitStr  index=0014 byteLen=14 text='RGM.MKF'
 00405A90  E2 03 70 FF              FStStrCopy  mem=stack-144
@@ -2279,7 +2358,7 @@ pub_072_00405A74  ProcDsc=0x00405B26  ProcSize=0xB2  codeStart=0x00405A74
 00405AEC  C2 03 76 FF              FStI2  mem=stack-138
 00405AF0  50 07 00 00 00 00        LitI4  val=0
 00405AF6  50 07 00 00 00 00        LitI4  val=0
-00405AFC  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00405AFC  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00405B02  A2 03 7A FF              FLdI2  mem=stack-134
 00405B06  1E 02                    CI4I2  -
 00405B08  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
@@ -2762,7 +2841,7 @@ pub_081_004062C4  ProcDsc=0x00406394  ProcSize=0xD0  codeStart=0x004062C4
 00406332  50 07 00 00 00 00        LitI4  val=0
 00406338  98 05 08 00 0C 08        FMemLdRf  mem=stack+8.f080C  ; Single(0 To 31)
 0040633E  04 03                    Ary1LdR4  -
-00406340  84 05 08 00 04 00        FMemLdStr  mem=stack+8.f0004
+00406340  84 05 08 00 04 00        FMemLd4  mem=stack+8.f0004
 00406346  24 06 C4 77 41 00        ImpAdCallAd  call=kernel32._llseek@004177C4
 0040634C  C4 03 70 FF              FStI4  mem=stack-144
 00406350  FE 07                    SetLastSystemError  -
@@ -2772,7 +2851,7 @@ pub_081_004062C4  ProcDsc=0x00406394  ProcSize=0xD0  codeStart=0x004062C4
 0040635E  50 07 01 00 00 00        LitI4  val=1
 00406364  98 05 08 00 0C 02        FMemLdRf  mem=stack+8.f020C  ; Byte(0 To 255)
 0040636A  18 03                    Ary1LdRf  -
-0040636C  84 05 08 00 04 00        FMemLdStr  mem=stack+8.f0004
+0040636C  84 05 08 00 04 00        FMemLd4  mem=stack+8.f0004
 00406372  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 00406378  FE 07                    SetLastSystemError  -
 0040637A  92 02                    LitI2  val=0
@@ -2826,7 +2905,7 @@ pub_082_004063BC  ProcDsc=0x0040648A  ProcSize=0xCE  codeStart=0x004063BC
 00406444  66 05 6C FF              PopTmpLdAd2  mem=stack-148
 00406448  B8 03 7A FF              FLdRfVar  mem=stack-134
 0040644C  38 06 1C CE 41 00        ImpAdCall  call=pub_120_00409104@0041CE1C
-00406452  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00406452  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 00406458  A2 03 7A FF              FLdI2  mem=stack-134
 0040645C  1E 02                    CI4I2  -
 0040645E  98 05 08 00 44 07        FMemLdRf  mem=stack+8.f0744  ; UDT(14 B)(0 To 599)
@@ -2896,7 +2975,7 @@ pub_083_004064B4  ProcDsc=0x00406586  ProcSize=0xD2  codeStart=0x004064B4
 00406550  50 07 01 00 00 00        LitI4  val=1
 00406556  02 04 10 00              ILdI2  mem=stack+16
 0040655A  1E 02                    CI4I2  -
-0040655C  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040655C  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00406562  A2 03 7A FF              FLdI2  mem=stack-134
 00406566  1E 02                    CI4I2  -
 00406568  98 05 08 00 98 01        FMemLdRf  mem=stack+8.f0198  ; Integer(0 To 65535)
@@ -3191,7 +3270,7 @@ pub_088_004069B0  ProcDsc=0x00406A92  ProcSize=0xE2  codeStart=0x004069B0
 004069FA  E8 03 8A 00              BranchF  to=00406A3A
 004069FE  50 07 03 00 00 00        LitI4  val=3
 00406A04  50 07 00 00 00 00        LitI4  val=0
-00406A0A  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00406A0A  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00406A10  A2 03 76 FF              FLdI2  mem=stack-138
 00406A14  1E 02                    CI4I2  -
 00406A16  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
@@ -3208,7 +3287,7 @@ pub_088_004069B0  ProcDsc=0x00406A92  ProcSize=0xE2  codeStart=0x004069B0
 00406A38  FE 07                    SetLastSystemError  -
 00406A3A  50 07 00 00 00 00        LitI4  val=0
 00406A40  50 07 00 00 00 00        LitI4  val=0
-00406A46  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00406A46  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00406A4C  A2 03 76 FF              FLdI2  mem=stack-138
 00406A50  1E 02                    CI4I2  -
 00406A52  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
@@ -3566,7 +3645,7 @@ pub_093_00406F08_hot  ProcDsc=0x00406FFA  ProcSize=0xF2  codeStart=0x00406F08
 ======================================================================
 pub_094_00407024  ProcDsc=0x00407118  ProcSize=0xF4  codeStart=0x00407024
 ======================================================================
-; params (3): ByVal a0, ByVal a1, ByRef a2
+; params (3): ByRef a0, ByRef a1, ByRef a2
 00407024  92 02                    LitI2  val=0
 00407026  C2 03 78 FF              FStI2  mem=stack-136
 0040702A  82 05 08 00 66 02        FMemLdI2  mem=stack+8.f0266
@@ -3716,7 +3795,7 @@ pub_096_0040725C  ProcDsc=0x00407350  ProcSize=0xF4  codeStart=0x0040725C
 00407276  E8 03 F2 00              BranchF  to=0040734E
 0040727A  50 07 03 00 00 00        LitI4  val=3
 00407280  50 07 00 00 00 00        LitI4  val=0
-00407286  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00407286  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040728C  50 07 46 00 00 00        LitI4  val=70
 00407292  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00407298  02 03                    Ary1LdI2  -
@@ -3735,7 +3814,7 @@ pub_096_0040725C  ProcDsc=0x00407350  ProcSize=0xF4  codeStart=0x0040725C
 004072BE  FE 07                    SetLastSystemError  -
 004072C0  50 07 00 00 00 00        LitI4  val=0
 004072C6  50 07 00 00 00 00        LitI4  val=0
-004072CC  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+004072CC  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 004072D2  50 07 46 00 00 00        LitI4  val=70
 004072D8  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 004072DE  02 03                    Ary1LdI2  -
@@ -3752,7 +3831,7 @@ pub_096_0040725C  ProcDsc=0x00407350  ProcSize=0xF4  codeStart=0x0040725C
 00407302  38 06 74 D0 41 00        ImpAdCall  call=pub_048_004048A4@0041D074
 00407308  50 07 00 00 00 00        LitI4  val=0
 0040730E  50 07 00 00 00 00        LitI4  val=0
-00407314  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00407314  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040731A  50 07 00 00 00 00        LitI4  val=0
 00407320  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00407326  02 03                    Ary1LdI2  -
@@ -3833,7 +3912,7 @@ pub_097_00407378  ProcDsc=0x00407474  ProcSize=0xFC  codeStart=0x00407378
 00407456  18 03                    Ary1LdRf  -
 00407458  FC 05 0A 00              StFixedStr  len=10
 0040745C  14 05 70 FF              FFree1Str  mem=stack-144
-00407460  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00407460  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 00407466  04 04 0C 00              ILdI4  mem=stack+12
 0040746A  04 01                    AddI4  -
 0040746C  A4 05 08 00 B4 02        FMemStI4  mem=stack+8.f02B4
@@ -3915,8 +3994,8 @@ pub_098_004074A0  ProcDsc=0x0040759E  ProcSize=0xFE  codeStart=0x004074A0
 ======================================================================
 pub_099_004075C8_hot  ProcDsc=0x004076C6  ProcSize=0xFE  codeStart=0x004075C8
 ======================================================================
-; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
-004075C8  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+; params (4): ByRef a0, ByRef a1, ByVal a2, ByRef a3
+004075C8  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 004075CE  50 07 00 00 00 00        LitI4  val=0
 004075D4  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 004075DA  18 03                    Ary1LdRf  -
@@ -3962,7 +4041,7 @@ pub_099_004075C8_hot  ProcDsc=0x004076C6  ProcSize=0xFE  codeStart=0x004075C8
 00407660  C2 03 78 FF              FStI2  mem=stack-136
 00407664  50 07 00 00 00 00        LitI4  val=0
 0040766A  50 07 00 00 00 00        LitI4  val=0
-00407670  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00407670  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00407676  A2 03 74 FF              FLdI2  mem=stack-140
 0040767A  A2 03 76 FF              FLdI2  mem=stack-138
 0040767E  02 01                    AddI2  -
@@ -3993,7 +4072,7 @@ pub_099_004075C8_hot  ProcDsc=0x004076C6  ProcSize=0xFE  codeStart=0x004075C8
 pub_100_004076F0  ProcDsc=0x004077F0  ProcSize=0x100  codeStart=0x004076F0
 ======================================================================
 ; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
-004076F0  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+004076F0  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 004076F6  50 07 00 00 00 00        LitI4  val=0
 004076FC  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 00407702  18 03                    Ary1LdRf  -
@@ -4036,7 +4115,7 @@ pub_100_004076F0  ProcDsc=0x004077F0  ProcSize=0x100  codeStart=0x004076F0
 0040777C  C4 03 70 FF              FStI4  mem=stack-144
 00407780  50 07 00 00 00 00        LitI4  val=0
 00407786  50 07 00 00 00 00        LitI4  val=0
-0040778C  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040778C  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00407792  A2 03 76 FF              FLdI2  mem=stack-138
 00407796  4A 07 13 00              LitI2  val=19
 0040779A  02 01                    AddI2  -
@@ -4302,7 +4381,7 @@ pub_103_00407A6C  ProcDsc=0x00407B72  ProcSize=0x106  codeStart=0x00407A6C
 ======================================================================
 pub_104_00407B9C_hot  ProcDsc=0x00407CA6  ProcSize=0x10A  codeStart=0x00407B9C
 ======================================================================
-; params (2): ByVal a0, ByRef a1
+; params (2): ByRef a0, ByRef a1
 00407B9C  02 04 10 00              ILdI2  mem=stack+16
 00407BA0  C2 03 7A FF              FStI2  mem=stack-134
 00407BA4  A2 03 7A FF              FLdI2  mem=stack-134
@@ -4332,7 +4411,7 @@ pub_104_00407B9C_hot  ProcDsc=0x00407CA6  ProcSize=0x10A  codeStart=0x00407B9C
 00407C08  92 02                    LitI2  val=0
 00407C0A  66 05 72 FF              PopTmpLdAd2  mem=stack-142
 00407C0E  38 06 64 CB 41 00        ImpAdCall  call=pub_044_00404614_hot@0041CB64
-00407C14  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00407C14  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00407C1A  38 06 4C 72 41 00        ImpAdCall  call=Pal.nipwseg@0041724C
 00407C20  FE 07                    SetLastSystemError  -
 00407C22  50 07 00 FA 00 00        LitI4  val=64000
@@ -4552,7 +4631,7 @@ pub_107_00407F40  ProcDsc=0x00408052  ProcSize=0x112  codeStart=0x00407F40
 00408008  50 07 01 00 00 00        LitI4  val=1
 0040800E  A2 03 7A FF              FLdI2  mem=stack-134
 00408012  1E 02                    CI4I2  -
-00408014  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00408014  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040801A  A2 03 76 FF              FLdI2  mem=stack-138
 0040801E  1E 02                    CI4I2  -
 00408020  98 05 08 00 98 01        FMemLdRf  mem=stack+8.f0198  ; Integer(0 To 65535)
@@ -4666,7 +4745,7 @@ pub_109_004081C0  ProcDsc=0x004082DA  ProcSize=0x11A  codeStart=0x004081C0
 00408284  B8 03 78 FF              FLdRfVar  mem=stack-136
 00408288  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
 0040828E  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-00408294  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00408294  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 0040829A  50 07 00 00 00 00        LitI4  val=0
 004082A0  98 05 08 00 98 01        FMemLdRf  mem=stack+8.f0198  ; Integer(0 To 65535)
 004082A6  18 03                    Ary1LdRf  -
@@ -5063,7 +5142,7 @@ pub_114_00408850  ProcDsc=0x0040897A  ProcSize=0x12A  codeStart=0x00408850
 ======================================================================
 pub_115_004089B4  ProcDsc=0x00408AF6  ProcSize=0x142  codeStart=0x004089B4
 ======================================================================
-; params (1): ByVal a0
+; params (1): ByRef a0
 004089B4  50 07 00 00 00 00        LitI4  val=0
 004089BA  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 004089C0  18 03                    Ary1LdRf  -
@@ -5815,7 +5894,7 @@ pub_123_0040959C  ProcDsc=0x004096FE  ProcSize=0x162  codeStart=0x0040959C
 004095F6  9A 02                    LitI2  val=4
 004095F8  42 01                    MulI2  -
 004095FA  1E 02                    CI4I2  -
-004095FC  90 05 08 00 F8 01        FMemLdStr  mem=stack+8.f01F8  ; dynamic array (ReDim at runtime)
+004095FC  90 05 08 00 F8 01        FMemLd4  mem=stack+8.f01F8  ; dynamic array (ReDim at runtime)
 00409602  FA 03 70 FF              AryLock  mem=stack-144
 00409606  18 03                    Ary1LdRf  -
 00409608  50 07 00 00 00 00        LitI4  val=0
@@ -5832,7 +5911,7 @@ pub_123_0040959C  ProcDsc=0x004096FE  ProcSize=0x162  codeStart=0x0040959C
 0040963C  04 03                    Ary1LdR4  -
 0040963E  14 01                    SubI4  -
 00409640  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-00409646  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00409646  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 0040964C  50 07 00 00 00 00        LitI4  val=0
 00409652  C4 00                    GtI4  -
 00409654  E8 03 28 01              BranchF  to=004096C4
@@ -5842,7 +5921,7 @@ pub_123_0040959C  ProcDsc=0x004096FE  ProcSize=0x162  codeStart=0x0040959C
 00409666  50 07 00 00 00 00        LitI4  val=0
 0040966C  98 05 08 00 0C 08        FMemLdRf  mem=stack+8.f080C  ; Single(0 To 31)
 00409672  04 03                    Ary1LdR4  -
-00409674  90 05 08 00 F8 01        FMemLdStr  mem=stack+8.f01F8  ; dynamic array (ReDim at runtime)
+00409674  90 05 08 00 F8 01        FMemLd4  mem=stack+8.f01F8  ; dynamic array (ReDim at runtime)
 0040967A  FA 03 70 FF              AryLock  mem=stack-144
 0040967E  18 03                    Ary1LdRf  -
 00409680  38 06 3C 76 41 00        ImpAdCall  call=Pal.unpak@0041763C
@@ -5878,7 +5957,7 @@ pub_123_0040959C  ProcDsc=0x004096FE  ProcSize=0x162  codeStart=0x0040959C
 ======================================================================
 pub_124_0040972C  ProcDsc=0x00409884  ProcSize=0x158  codeStart=0x0040972C
 ======================================================================
-; params (3): ByRef a0, ByVal a1, ByRef a2
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040972C  82 05 08 00 3C 02        FMemLdI2  mem=stack+8.f023C
 00409732  96 02                    LitI2  val=2
 00409734  54 00                    EqUI1  -
@@ -6641,7 +6720,7 @@ pub_131_0040A344  ProcDsc=0x0040A4FA  ProcSize=0x1B6  codeStart=0x0040A344
 0040A362  FE 07                    SetLastSystemError  -
 0040A364  A4 03 64 FF              FLdI4  mem=stack-156
 0040A368  C4 03 74 FF              FStI4  mem=stack-140
-0040A36C  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+0040A36C  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 0040A372  50 07 00 00 00 00        LitI4  val=0
 0040A378  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 0040A37E  18 03                    Ary1LdRf  -
@@ -6754,7 +6833,7 @@ pub_131_0040A344  ProcDsc=0x0040A4FA  ProcSize=0x1B6  codeStart=0x0040A344
 ======================================================================
 pub_132_0040A524  ProcDsc=0x0040A6E4  ProcSize=0x1C0  codeStart=0x0040A524
 ======================================================================
-; params (3): ByVal a0, ByRef a1, ByRef a2
+; params (3): ByRef a0, ByVal a1, ByRef a2
 0040A524  18 04 0C 00              FLdI4  mem=stack+12
 0040A528  38 06 04 CB 41 00        ImpAdCall  call=pub_013_004035D0_hot@0041CB04
 0040A52E  02 04 14 00              ILdI2  mem=stack+20
@@ -7235,7 +7314,7 @@ pub_135_0040AB1C  ProcDsc=0x0040ACD2  ProcSize=0x1B6  codeStart=0x0040AB1C
 ======================================================================
 pub_136_0040AD28  ProcDsc=0x0040AEFE  ProcSize=0x1D6  codeStart=0x0040AD28
 ======================================================================
-; params (2): ByRef a0, ByVal a1
+; params (2): ByRef a0, ByRef a1
 0040AD28  94 02                    LitI2  val=1
 0040AD2A  72 01                    UMiI2  -
 0040AD2C  66 05 70 FF              PopTmpLdAd2  mem=stack-144
@@ -7694,11 +7773,11 @@ pub_139_0040B398  ProcDsc=0x0040B59E  ProcSize=0x206  codeStart=0x0040B398
 0040B46E  98 05 08 00 10 00        FMemLdRf  mem=stack+8.f0010
 0040B474  24 06 6C C6 41 00        ImpAdCallAd  call=pub_061_00405194@0041C66C
 0040B47A  A4 05 08 00 00 00        FMemStI4  mem=stack+8.f0000
-0040B480  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+0040B480  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 0040B486  50 07 00 00 00 00        LitI4  val=0
 0040B48C  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0040B492  18 03                    Ary1LdRf  -
-0040B494  84 05 08 00 10 00        FMemLdStr  mem=stack+8.f0010
+0040B494  84 05 08 00 10 00        FMemLd4  mem=stack+8.f0010
 0040B49A  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 0040B4A0  FE 07                    SetLastSystemError  -
 0040B4A2  50 07 00 00 00 00        LitI4  val=0
@@ -7773,7 +7852,7 @@ pub_139_0040B398  ProcDsc=0x0040B59E  ProcSize=0x206  codeStart=0x0040B398
 ======================================================================
 pub_140_0040B5C8  ProcDsc=0x0040B7CE  ProcSize=0x206  codeStart=0x0040B5C8
 ======================================================================
-; params (3): ByVal a0, ByRef a1, ByRef a2
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040B5C8  4A 07 64 00              LitI2  val=100
 0040B5CC  2E 02                    FnCSngUI1  -
 0040B5CE  02 04 14 00              ILdI2  mem=stack+20
@@ -8375,7 +8454,7 @@ pub_144_0040BEB8  ProcDsc=0x0040C0DC  ProcSize=0x224  codeStart=0x0040BEB8
 0040BED8  E8 03 60 00              BranchF  to=0040BF18
 0040BEDC  50 07 00 00 00 00        LitI4  val=0
 0040BEE2  50 07 00 00 00 00        LitI4  val=0
-0040BEE8  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040BEE8  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040BEEE  A2 03 7A FF              FLdI2  mem=stack-134
 0040BEF2  1E 02                    CI4I2  -
 0040BEF4  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
@@ -8392,7 +8471,7 @@ pub_144_0040BEB8  ProcDsc=0x0040C0DC  ProcSize=0x224  codeStart=0x0040BEB8
 0040BF18  50 07 02 00 00 00        LitI4  val=2
 0040BF1E  02 04 18 00              ILdI2  mem=stack+24
 0040BF22  1E 02                    CI4I2  -
-0040BF24  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040BF24  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040BF2A  A2 03 7A FF              FLdI2  mem=stack-134
 0040BF2E  1E 02                    CI4I2  -
 0040BF30  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
@@ -8407,7 +8486,7 @@ pub_144_0040BEB8  ProcDsc=0x0040C0DC  ProcSize=0x224  codeStart=0x0040BEB8
 0040BF4E  FE 07                    SetLastSystemError  -
 0040BF50  50 07 00 00 00 00        LitI4  val=0
 0040BF56  50 07 00 00 00 00        LitI4  val=0
-0040BF5C  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040BF5C  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040BF62  50 07 27 00 00 00        LitI4  val=39
 0040BF68  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0040BF6E  02 03                    Ary1LdI2  -
@@ -8426,7 +8505,7 @@ pub_144_0040BEB8  ProcDsc=0x0040C0DC  ProcSize=0x224  codeStart=0x0040BEB8
 0040BF98  FE 07                    SetLastSystemError  -
 0040BF9A  50 07 00 00 00 00        LitI4  val=0
 0040BFA0  50 07 00 00 00 00        LitI4  val=0
-0040BFA6  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040BFA6  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040BFAC  50 07 27 00 00 00        LitI4  val=39
 0040BFB2  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0040BFB8  02 03                    Ary1LdI2  -
@@ -8512,13 +8591,13 @@ pub_144_0040BEB8  ProcDsc=0x0040C0DC  ProcSize=0x224  codeStart=0x0040BEB8
 ======================================================================
 pub_145_0040C104  ProcDsc=0x0040C326  ProcSize=0x222  codeStart=0x0040C104
 ======================================================================
-; params (6): ByVal a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5
+; params (6): ByRef a0, ByRef a1, ByRef a2, ByRef a3, ByRef a4, ByRef a5
 0040C104  02 04 18 00              ILdI2  mem=stack+24
 0040C108  92 02                    LitI2  val=0
 0040C10A  AC 00                    LtI2  -
 0040C10C  E8 03 0E 00              BranchF  to=0040C112
 0040C110  8A 03                    ExitProcStr  -
-0040C112  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+0040C112  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 0040C118  50 07 00 00 00 00        LitI4  val=0
 0040C11E  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 0040C124  18 03                    Ary1LdRf  -
@@ -8930,7 +9009,7 @@ pub_147_0040C5A4  ProcDsc=0x0040C7DC  ProcSize=0x238  codeStart=0x0040C5A4
 0040C702  C2 04 18 00              MemLdI2  mem=0018
 0040C706  02 01                    AddI2  -
 0040C708  A2 05 08 00 FA 02        FMemStI2  mem=stack+8.f02FA
-0040C70E  84 05 08 00 FC 02        FMemLdStr  mem=stack+8.f02FC
+0040C70E  84 05 08 00 FC 02        FMemLd4  mem=stack+8.f02FC
 0040C714  02 04 0C 00              ILdI2  mem=stack+12
 0040C718  1E 02                    CI4I2  -
 0040C71A  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C  ; UDT(70 B)(0 To 4)
@@ -8989,7 +9068,7 @@ pub_147_0040C5A4  ProcDsc=0x0040C7DC  ProcSize=0x238  codeStart=0x0040C5A4
 ======================================================================
 pub_148_0040C804  ProcDsc=0x0040CA38  ProcSize=0x234  codeStart=0x0040C804
 ======================================================================
-; params (3): ByVal a0, ByRef a1, ByRef a2
+; params (3): ByRef a0, ByRef a1, ByRef a2
 0040C804  4A 07 64 00              LitI2  val=100
 0040C808  2E 02                    FnCSngUI1  -
 0040C80A  02 04 14 00              ILdI2  mem=stack+20
@@ -9473,7 +9552,7 @@ pub_151_0040CF2C  ProcDsc=0x0040D16A  ProcSize=0x23E  codeStart=0x0040CF2C
 0040CFA4  E6 03 C4 00              Branch  to=0040CFF0
 0040CFA8  50 07 00 00 00 00        LitI4  val=0
 0040CFAE  50 07 00 00 00 00        LitI4  val=0
-0040CFB4  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040CFB4  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040CFBA  50 07 2F 00 00 00        LitI4  val=47
 0040CFC0  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0040CFC6  02 03                    Ary1LdI2  -
@@ -9522,7 +9601,7 @@ pub_151_0040CF2C  ProcDsc=0x0040D16A  ProcSize=0x23E  codeStart=0x0040CF2C
 0040D056  38 06 E4 C9 41 00        ImpAdCall  call=pub_099_004075C8_hot@0041C9E4
 0040D05C  50 07 00 00 00 00        LitI4  val=0
 0040D062  50 07 00 00 00 00        LitI4  val=0
-0040D068  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040D068  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040D06E  50 07 27 00 00 00        LitI4  val=39
 0040D074  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0040D07A  02 03                    Ary1LdI2  -
@@ -10025,7 +10104,7 @@ pub_154_0040D904  ProcDsc=0x0040DB68  ProcSize=0x264  codeStart=0x0040D904
 0040DA1C  E8 03 78 01              BranchF  to=0040DA7C
 0040DA20  50 07 02 00 00 00        LitI4  val=2
 0040DA26  50 07 14 00 00 00        LitI4  val=20
-0040DA2C  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040DA2C  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040DA32  4A 07 28 00              LitI2  val=40
 0040DA36  A2 03 74 FF              FLdI2  mem=stack-140
 0040DA3A  02 01                    AddI2  -
@@ -10054,7 +10133,7 @@ pub_154_0040D904  ProcDsc=0x0040DB68  ProcSize=0x264  codeStart=0x0040D904
 0040DA86  E8 03 E2 01              BranchF  to=0040DAE6
 0040DA8A  50 07 00 00 00 00        LitI4  val=0
 0040DA90  50 07 00 00 00 00        LitI4  val=0
-0040DA96  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040DA96  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040DA9C  4A 07 28 00              LitI2  val=40
 0040DAA0  A2 03 74 FF              FLdI2  mem=stack-140
 0040DAA4  02 01                    AddI2  -
@@ -10079,7 +10158,7 @@ pub_154_0040D904  ProcDsc=0x0040DB68  ProcSize=0x264  codeStart=0x0040D904
 0040DAE2  E6 03 3A 02              Branch  to=0040DB3E
 0040DAE6  50 07 02 00 00 00        LitI4  val=2
 0040DAEC  50 07 04 00 00 00        LitI4  val=4
-0040DAF2  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040DAF2  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040DAF8  4A 07 28 00              LitI2  val=40
 0040DAFC  A2 03 74 FF              FLdI2  mem=stack-140
 0040DB00  02 01                    AddI2  -
@@ -11043,13 +11122,13 @@ pub_160_0040E938  ProcDsc=0x0040EBE8  ProcSize=0x2B0  codeStart=0x0040E938
 0040E968  6A 00                    NeI2  -
 0040E96A  44 00                    AndI4  -
 0040E96C  E8 03 AE 02              BranchF  to=0040EBE6
-0040E970  8E 05 08 00 6C 08        FMemLdStr  mem=stack+8.f086C  ; object reference
+0040E970  8E 05 08 00 6C 08        FMemLd4  mem=stack+8.f086C  ; object reference
 0040E976  E2 03 2C FF              FStStrCopy  mem=stack-212
 0040E97A  B8 03 2C FF              FLdRfVar  mem=stack-212
 0040E97E  2E 06 8C CD 41 00        ImpAdCallAd  call=pub_068_0040570C@0041CD8C
 0040E984  CE 03 28 FF              FStStr  mem=stack-216
 0040E988  AE 03 2C FF              FLdI4  mem=stack-212
-0040E98C  8E 05 08 00 6C 08        FMemLdStr  mem=stack+8.f086C  ; object reference
+0040E98C  8E 05 08 00 6C 08        FMemLd4  mem=stack+8.f086C  ; object reference
 0040E992  FC 05 00 00              StFixedStr  len=0
 0040E996  AE 03 28 FF              FLdI4  mem=stack-216
 0040E99A  E2 03 78 FF              FStStrCopy  mem=stack-136
@@ -11902,7 +11981,7 @@ pub_164_0040F58C_hot  ProcDsc=0x0040F8A8  ProcSize=0x31C  codeStart=0x0040F58C
 0040F7CE  C2 03 6E FF              FStI2  mem=stack-146
 0040F7D2  50 07 01 00 00 00        LitI4  val=1
 0040F7D8  50 07 06 00 00 00        LitI4  val=6
-0040F7DE  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040F7DE  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040F7E4  A2 03 72 FF              FLdI2  mem=stack-142
 0040F7E8  1E 02                    CI4I2  -
 0040F7EA  98 05 08 00 80 01        FMemLdRf  mem=stack+8.f0180  ; Integer(0 To 32767)
@@ -12381,7 +12460,7 @@ pub_166_0040FC2C  ProcDsc=0x0040FF38  ProcSize=0x30C  codeStart=0x0040FC2C
 0040FEA8  20 03                    Ary1StUI1  -
 0040FEAA  A2 02                    LitI2  val=8
 0040FEAC  C2 03 62 FF              FStI2  mem=stack-158
-0040FEB0  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0040FEB0  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0040FEB6  82 05 08 00 2A 02        FMemLdI2  mem=stack+8.f022A
 0040FEBC  92 02                    LitI2  val=0
 0040FEBE  82 05 08 00 06 02        FMemLdI2  mem=stack+8.f0206
@@ -14118,7 +14197,7 @@ pub_173_00411998  ProcDsc=0x00411D8C  ProcSize=0x3F4  codeStart=0x00411998
 ======================================================================
 pub_174_00411DBC  ProcDsc=0x004121E4  ProcSize=0x428  codeStart=0x00411DBC
 ======================================================================
-00411DBC  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+00411DBC  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 00411DC2  50 07 00 00 00 00        LitI4  val=0
 00411DC8  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 00411DCE  18 03                    Ary1LdRf  -
@@ -14280,7 +14359,7 @@ pub_174_00411DBC  ProcDsc=0x004121E4  ProcSize=0x428  codeStart=0x00411DBC
 0041201A  E2 04 14 00              MemStI2  mem=0014
 0041201E  50 07 00 00 00 00        LitI4  val=0
 00412024  50 07 00 00 00 00        LitI4  val=0
-0041202A  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0041202A  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00412030  50 07 12 00 00 00        LitI4  val=18
 00412036  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0041203C  02 03                    Ary1LdI2  -
@@ -14763,7 +14842,7 @@ pub_176_0041265C  ProcDsc=0x00412ABC  ProcSize=0x460  codeStart=0x0041265C
 0041273E  38 06 B4 C9 41 00        ImpAdCall  call=pub_066_00405570@0041C9B4
 00412744  50 07 03 00 00 00        LitI4  val=3
 0041274A  50 07 00 00 00 00        LitI4  val=0
-00412750  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00412750  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00412756  50 07 46 00 00 00        LitI4  val=70
 0041275C  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00412762  02 03                    Ary1LdI2  -
@@ -14776,7 +14855,7 @@ pub_176_0041265C  ProcDsc=0x00412ABC  ProcSize=0x460  codeStart=0x0041265C
 00412780  FE 07                    SetLastSystemError  -
 00412782  50 07 00 00 00 00        LitI4  val=0
 00412788  50 07 00 00 00 00        LitI4  val=0
-0041278E  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0041278E  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00412794  50 07 46 00 00 00        LitI4  val=70
 0041279A  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 004127A0  02 03                    Ary1LdI2  -
@@ -14928,7 +15007,7 @@ pub_176_0041265C  ProcDsc=0x00412ABC  ProcSize=0x460  codeStart=0x0041265C
 004129B8  96 02                    LitI2  val=2
 004129BA  54 00                    EqUI1  -
 004129BC  E8 03 EE 03              BranchF  to=00412A4A
-004129C0  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+004129C0  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 004129C6  A2 03 70 FF              FLdI2  mem=stack-144
 004129CA  A6 02                    LitI2  val=10
 004129CC  02 01                    AddI2  -
@@ -14948,7 +15027,7 @@ pub_176_0041265C  ProcDsc=0x00412ABC  ProcSize=0x460  codeStart=0x0041265C
 00412A00  94 02                    LitI2  val=1
 00412A02  54 00                    EqUI1  -
 00412A04  E8 03 E8 03              BranchF  to=00412A44
-00412A08  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00412A08  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 00412A0E  A2 03 70 FF              FLdI2  mem=stack-144
 00412A12  A6 02                    LitI2  val=10
 00412A14  02 01                    AddI2  -
@@ -15628,7 +15707,7 @@ pub_178_00412F6C  ProcDsc=0x00413404  ProcSize=0x498  codeStart=0x00412F6C
 pub_179_0041342C  ProcDsc=0x00413910  ProcSize=0x4E4  codeStart=0x0041342C
 ======================================================================
 ; params (4): ByRef a0, ByRef a1, ByRef a2, ByRef a3
-0041342C  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+0041342C  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 00413432  50 07 00 00 00 00        LitI4  val=0
 00413438  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 0041343E  18 03                    Ary1LdRf  -
@@ -15680,7 +15759,7 @@ pub_179_0041342C  ProcDsc=0x00413910  ProcSize=0x4E4  codeStart=0x0041342C
 004134EC  C2 03 7A FF              FStI2  mem=stack-134
 004134F0  50 07 03 00 00 00        LitI4  val=3
 004134F6  50 07 00 00 00 00        LitI4  val=0
-004134FC  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+004134FC  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00413502  50 07 46 00 00 00        LitI4  val=70
 00413508  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0041350E  02 03                    Ary1LdI2  -
@@ -15699,7 +15778,7 @@ pub_179_0041342C  ProcDsc=0x00413910  ProcSize=0x4E4  codeStart=0x0041342C
 00413538  FE 07                    SetLastSystemError  -
 0041353A  50 07 00 00 00 00        LitI4  val=0
 00413540  50 07 00 00 00 00        LitI4  val=0
-00413546  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00413546  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0041354C  50 07 46 00 00 00        LitI4  val=70
 00413552  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00413558  02 03                    Ary1LdI2  -
@@ -15812,7 +15891,7 @@ pub_179_0041342C  ProcDsc=0x00413910  ProcSize=0x4E4  codeStart=0x0041342C
 004136EC  38 06 74 D0 41 00        ImpAdCall  call=pub_048_004048A4@0041D074
 004136F2  50 07 00 00 00 00        LitI4  val=0
 004136F8  50 07 00 00 00 00        LitI4  val=0
-004136FE  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+004136FE  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00413704  50 07 00 00 00 00        LitI4  val=0
 0041370A  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00413710  02 03                    Ary1LdI2  -
@@ -16328,7 +16407,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00413E88  50 07 00 00 00 00        LitI4  val=0
 00413E8E  98 05 08 00 0C 08        FMemLdRf  mem=stack+8.f080C  ; Single(0 To 31)
 00413E94  18 03                    Ary1LdRf  -
-00413E96  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00413E96  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 00413E9C  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 00413EA2  FE 07                    SetLastSystemError  -
 00413EA4  98 05 08 00 38 01        FMemLdRf  mem=stack+8.f0138  ; Byte(0 To 171008)
@@ -16336,7 +16415,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00413EAE  92 02                    LitI2  val=0
 00413EB0  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 00413EB4  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00413EBA  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00413EBA  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00413EC0  40 02                    CR8I4  -
 00413EC2  4A 07 20 00              LitI2  val=32
 00413EC6  3E 02                    FnCSngUI1  -
@@ -16348,7 +16427,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00413EDC  94 02                    LitI2  val=1
 00413EDE  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 00413EE2  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00413EE8  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00413EE8  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00413EEE  50 07 00 00 00 00        LitI4  val=0
 00413EF4  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 00413EFA  18 03                    Ary1LdRf  -
@@ -16363,7 +16442,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00413F20  96 02                    LitI2  val=2
 00413F22  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 00413F26  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00413F2C  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00413F2C  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00413F32  50 07 00 00 00 00        LitI4  val=0
 00413F38  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 00413F3E  18 03                    Ary1LdRf  -
@@ -16383,7 +16462,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00413F7A  9A 02                    LitI2  val=4
 00413F7C  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 00413F80  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00413F86  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00413F86  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00413F8C  40 02                    CR8I4  -
 00413F8E  A2 02                    LitI2  val=8
 00413F90  3E 02                    FnCSngUI1  -
@@ -16393,7 +16472,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00413F98  18 01                    SubR4  -
 00413F9A  24 02                    CI4R8  -
 00413F9C  A4 05 08 00 90 02        FMemStI4  mem=stack+8.f0290
-00413FA2  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00413FA2  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 00413FA8  38 06 A8 77 41 00        ImpAdCall  call=kernel32._lclose@004177A8
 00413FAE  FE 07                    SetLastSystemError  -
 00413FB0  92 02                    LitI2  val=0
@@ -16408,7 +16487,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00413FEE  50 07 00 00 00 00        LitI4  val=0
 00413FF4  98 05 08 00 0C 08        FMemLdRf  mem=stack+8.f080C  ; Single(0 To 31)
 00413FFA  18 03                    Ary1LdRf  -
-00413FFC  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00413FFC  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 00414002  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 00414008  FE 07                    SetLastSystemError  -
 0041400A  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
@@ -16416,7 +16495,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00414014  92 02                    LitI2  val=0
 00414016  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 0041401A  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00414020  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00414020  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00414026  50 07 00 00 00 00        LitI4  val=0
 0041402C  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 00414032  18 03                    Ary1LdRf  -
@@ -16441,7 +16520,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00414088  98 02                    LitI2  val=3
 0041408A  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 0041408E  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00414094  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00414094  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 0041409A  50 07 00 00 00 00        LitI4  val=0
 004140A0  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 004140A6  18 03                    Ary1LdRf  -
@@ -16466,7 +16545,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 004140FC  9E 02                    LitI2  val=6
 004140FE  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 00414102  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00414108  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00414108  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 0041410E  50 07 00 00 00 00        LitI4  val=0
 00414114  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 0041411A  18 03                    Ary1LdRf  -
@@ -16482,21 +16561,21 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00414148  A4 02                    LitI2  val=9
 0041414A  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 0041414E  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00414154  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00414154  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 0041415A  A4 05 08 00 B0 02        FMemStI4  mem=stack+8.f02B0
 00414160  98 05 08 00 A8 00        FMemLdRf  mem=stack+8.f00A8  ; Byte(0 To 18431)
 00414166  68 05 64 FF              PopTmpLdAd4  mem=stack-156
 0041416A  A6 02                    LitI2  val=10
 0041416C  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 00414170  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00414176  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00414176  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 0041417C  A4 05 08 00 18 03        FMemStI4  mem=stack+8.f0318
 00414182  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 00414188  68 05 64 FF              PopTmpLdAd4  mem=stack-156
 0041418C  4A 07 0B 00              LitI2  val=11
 00414190  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 00414194  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-0041419A  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+0041419A  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 004141A0  50 07 00 00 00 00        LitI4  val=0
 004141A6  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 004141AC  18 03                    Ary1LdRf  -
@@ -16511,7 +16590,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 004141D2  4A 07 0C 00              LitI2  val=12
 004141D6  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 004141DA  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-004141E0  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+004141E0  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 004141E6  50 07 00 00 00 00        LitI4  val=0
 004141EC  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 004141F2  18 03                    Ary1LdRf  -
@@ -16525,7 +16604,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00414214  4A 07 0D 00              LitI2  val=13
 00414218  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 0041421C  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00414222  84 05 08 00 00 00        FMemLdStr  mem=stack+8.f0000
+00414222  84 05 08 00 00 00        FMemLd4  mem=stack+8.f0000
 00414228  50 07 00 00 00 00        LitI4  val=0
 0041422E  98 05 08 00 B0 01        FMemLdRf  mem=stack+8.f01B0  ; Byte(0 To 128000)
 00414234  18 03                    Ary1LdRf  -
@@ -16541,7 +16620,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00414262  4A 07 0E 00              LitI2  val=14
 00414266  66 05 6A FF              PopTmpLdAd2  mem=stack-150
 0041426A  38 06 7C C8 41 00        ImpAdCall  call=pub_053_00404BF8_hot@0041C87C
-00414270  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00414270  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 00414276  38 06 A8 77 41 00        ImpAdCall  call=kernel32._lclose@004177A8
 0041427C  FE 07                    SetLastSystemError  -
 0041427E  92 02                    LitI2  val=0
@@ -16554,7 +16633,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 004142B2  14 05 6C FF              FFree1Str  mem=stack-148
 004142B6  50 07 02 00 00 00        LitI4  val=2
 004142BC  50 07 00 00 00 00        LitI4  val=0
-004142C2  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+004142C2  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 004142C8  24 06 C4 77 41 00        ImpAdCallAd  call=kernel32._llseek@004177C4
 004142CE  C4 03 64 FF              FStI4  mem=stack-156
 004142D2  FE 07                    SetLastSystemError  -
@@ -16562,7 +16641,7 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 004142D8  C4 03 78 FF              FStI4  mem=stack-136
 004142DC  50 07 00 00 00 00        LitI4  val=0
 004142E2  50 07 00 00 00 00        LitI4  val=0
-004142E8  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+004142E8  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 004142EE  24 06 C4 77 41 00        ImpAdCallAd  call=kernel32._llseek@004177C4
 004142F4  C4 03 64 FF              FStI4  mem=stack-156
 004142F8  FE 07                    SetLastSystemError  -
@@ -16572,10 +16651,10 @@ pub_181_00413E4C  ProcDsc=0x0041439C  ProcSize=0x550  codeStart=0x00413E4C
 00414306  50 07 00 00 00 00        LitI4  val=0
 0041430C  98 05 08 00 20 01        FMemLdRf  mem=stack+8.f0120  ; Byte(0 To 147455)
 00414312  18 03                    Ary1LdRf  -
-00414314  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00414314  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 0041431A  38 06 8C 77 41 00        ImpAdCall  call=kernel32._hread@0041778C
 00414320  FE 07                    SetLastSystemError  -
-00414322  84 05 08 00 54 02        FMemLdStr  mem=stack+8.f0254
+00414322  84 05 08 00 54 02        FMemLd4  mem=stack+8.f0254
 00414328  38 06 A8 77 41 00        ImpAdCall  call=kernel32._lclose@004177A8
 0041432E  FE 07                    SetLastSystemError  -
 00414330  5E 07 16 00 10 00 00 00 57 00 4F 00 52 00 44 00 2E 00 44 00 41 00 54 00 00 00 LitStr  index=0016 byteLen=16 text='WORD.DAT'
@@ -17369,7 +17448,7 @@ pub_183_00414954  ProcDsc=0x00414EEE  ProcSize=0x59A  codeStart=0x00414954
 ======================================================================
 pub_184_00414F18  ProcDsc=0x004154E6  ProcSize=0x5CE  codeStart=0x00414F18
 ======================================================================
-; params (3): ByRef a0, ByVal a1, ByVal a2
+; params (3): ByRef a0, ByVal a1, ByRef a2
 00414F18  94 02                    LitI2  val=1
 00414F1A  72 01                    UMiI2  -
 00414F1C  A2 05 08 00 1C 03        FMemStI2  mem=stack+8.f031C
@@ -18307,7 +18386,7 @@ pub_186_00415B1C  ProcDsc=0x0041610E  ProcSize=0x5F2  codeStart=0x00415B1C
 00415C82  38 06 74 D0 41 00        ImpAdCall  call=pub_048_004048A4@0041D074
 00415C88  50 07 00 00 00 00        LitI4  val=0
 00415C8E  50 07 00 00 00 00        LitI4  val=0
-00415C94  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00415C94  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00415C9A  50 07 00 00 00 00        LitI4  val=0
 00415CA0  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00415CA6  02 03                    Ary1LdI2  -
@@ -18731,7 +18810,7 @@ pub_187_00416138  ProcDsc=0x00416762  ProcSize=0x62A  codeStart=0x00416138
 00416308  38 06 E4 C9 41 00        ImpAdCall  call=pub_099_004075C8_hot@0041C9E4
 0041630E  50 07 00 00 00 00        LitI4  val=0
 00416314  50 07 00 00 00 00        LitI4  val=0
-0041631A  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+0041631A  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00416320  50 07 27 00 00 00        LitI4  val=39
 00416326  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 0041632C  02 03                    Ary1LdI2  -
@@ -18875,7 +18954,7 @@ pub_187_00416138  ProcDsc=0x00416762  ProcSize=0x62A  codeStart=0x00416138
 0041654E  38 06 74 D0 41 00        ImpAdCall  call=pub_048_004048A4@0041D074
 00416554  50 07 00 00 00 00        LitI4  val=0
 0041655A  50 07 00 00 00 00        LitI4  val=0
-00416560  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00416560  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00416566  50 07 00 00 00 00        LitI4  val=0
 0041656C  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00416572  02 03                    Ary1LdI2  -
@@ -19329,7 +19408,7 @@ pub_188_0041678C  ProcDsc=0x00416F82  ProcSize=0x7F6  codeStart=0x0041678C
 00416BE6  38 06 E4 C9 41 00        ImpAdCall  call=pub_099_004075C8_hot@0041C9E4
 00416BEC  50 07 00 00 00 00        LitI4  val=0
 00416BF2  50 07 00 00 00 00        LitI4  val=0
-00416BF8  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00416BF8  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00416BFE  50 07 27 00 00 00        LitI4  val=39
 00416C04  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00416C0A  02 03                    Ary1LdI2  -
@@ -19471,7 +19550,7 @@ pub_188_0041678C  ProcDsc=0x00416F82  ProcSize=0x7F6  codeStart=0x0041678C
 00416DFE  18 03                    Ary1LdRf  -
 00416E00  38 06 24 75 41 00        ImpAdCall  call=Pal.popscr@00417524
 00416E06  FE 07                    SetLastSystemError  -
-00416E08  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00416E08  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00416E0E  C4 03 40 FF              FStI4  mem=stack-192
 00416E12  50 07 00 00 00 00        LitI4  val=0
 00416E18  A4 05 08 00 A4 02        FMemStI4  mem=stack+8.f02A4
@@ -19620,7 +19699,7 @@ pub_189_00417834_hot  ProcDsc=0x004180A0  ProcSize=0x86C  codeStart=0x00417834
 004178BA  38 06 00 70 41 00        ImpAdCall  call=Pal.cvlong@00417000
 004178C0  FE 07                    SetLastSystemError  -
 004178C2  A4 03 58 FF              FLdI4  mem=stack-168
-004178C6  84 05 08 00 90 02        FMemLdStr  mem=stack+8.f0290
+004178C6  84 05 08 00 90 02        FMemLd4  mem=stack+8.f0290
 004178CC  C4 00                    GtI4  -
 004178CE  02 04 10 00              ILdI2  mem=stack+16
 004178D2  92 02                    LitI2  val=0
@@ -19708,7 +19787,7 @@ pub_189_00417834_hot  ProcDsc=0x004180A0  ProcSize=0x86C  codeStart=0x00417834
 00417A14  B8 03 5E FF              FLdRfVar  mem=stack-162
 00417A18  B8 03 60 FF              FLdRfVar  mem=stack-160
 00417A1C  38 06 AC CB 41 00        ImpAdCall  call=pub_062_00405254_hot@0041CBAC
-00417A22  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00417A22  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00417A28  4A 07 40 00              LitI2  val=64
 00417A2C  98 02                    LitI2  val=3
 00417A2E  A2 03 5E FF              FLdI2  mem=stack-162
@@ -19792,7 +19871,7 @@ pub_189_00417834_hot  ProcDsc=0x004180A0  ProcSize=0x86C  codeStart=0x00417834
 00417B32  34 00                    OrI4  -
 00417B34  44 00                    AndI4  -
 00417B36  E8 03 38 03              BranchF  to=00417B6C
-00417B3A  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00417B3A  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00417B40  4A 07 8C 00              LitI2  val=140
 00417B44  92 02                    LitI2  val=0
 00417B46  82 05 08 00 02 02        FMemLdI2  mem=stack+8.f0202
@@ -19816,7 +19895,7 @@ pub_189_00417834_hot  ProcDsc=0x004180A0  ProcSize=0x86C  codeStart=0x00417834
 00417B8E  E6 03 66 03              Branch  to=00417B9A
 00417B92  4A 07 1C 00              LitI2  val=28
 00417B96  C2 03 68 FF              FStI2  mem=stack-152
-00417B9A  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00417B9A  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00417BA0  82 05 08 00 2A 02        FMemLdI2  mem=stack+8.f022A
 00417BA6  92 02                    LitI2  val=0
 00417BA8  A2 03 5E FF              FLdI2  mem=stack-162
@@ -21242,7 +21321,7 @@ pub_191_004189B0  ProcDsc=0x00419300  ProcSize=0x950  codeStart=0x004189B0
 0041912E  92 02                    LitI2  val=0
 00419130  80 00                    LeI2  -
 00419132  E8 03 D4 07              BranchF  to=00419184
-00419136  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00419136  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 0041913C  C4 03 40 FF              FStI4  mem=stack-192
 00419140  50 07 00 00 00 00        LitI4  val=0
 00419146  A4 05 08 00 A4 02        FMemStI4  mem=stack+8.f02A4
@@ -22844,7 +22923,7 @@ pub_193_00419DA0  ProcDsc=0x0041A850  ProcSize=0xAB0  codeStart=0x00419DA0
 ======================================================================
 Sub_Main  ProcDsc=0x0041B4E2  ProcSize=0xC66  codeStart=0x0041A87C
 ======================================================================
-0041A87C  8E 05 08 00 6C 08        FMemLdStr  mem=stack+8.f086C  ; object reference
+0041A87C  8E 05 08 00 6C 08        FMemLd4  mem=stack+8.f086C  ; object reference
 0041A882  B8 03 54 FF              FLdRfVar  mem=stack-172
 0041A886  EA 07                    CStr2Ansi  -
 0041A888  AE 03 54 FF              FLdI4  mem=stack-172
@@ -22856,7 +22935,7 @@ Sub_Main  ProcDsc=0x0041B4E2  ProcSize=0xC66  codeStart=0x0041A87C
 0041A8A2  B8 03 50 FF              FLdRfVar  mem=stack-176
 0041A8A6  E2 07                    CStr2Uni  -
 0041A8A8  AE 03 50 FF              FLdI4  mem=stack-176
-0041A8AC  8E 05 08 00 6C 08        FMemLdStr  mem=stack+8.f086C  ; object reference
+0041A8AC  8E 05 08 00 6C 08        FMemLd4  mem=stack+8.f086C  ; object reference
 0041A8B2  FC 05 00 00              StFixedStr  len=0
 0041A8B6  A4 03 4C FF              FLdI4  mem=stack-180
 0041A8BA  C4 03 78 FF              FStI4  mem=stack-136
@@ -24809,7 +24888,7 @@ pub_196_0041D56C  ProcDsc=0x00420F92  ProcSize=0x3A26  codeStart=0x0041D56C
 0041DA6E  18 03                    Ary1LdRf  -
 0041DA70  38 06 B0 75 41 00        ImpAdCall  call=Pal.clsmen@004175B0
 0041DA76  FE 07                    SetLastSystemError  -
-0041DA78  84 05 08 00 B0 02        FMemLdStr  mem=stack+8.f02B0
+0041DA78  84 05 08 00 B0 02        FMemLd4  mem=stack+8.f02B0
 0041DA7E  50 07 00 00 00 00        LitI4  val=0
 0041DA84  98 05 08 00 90 00        FMemLdRf  mem=stack+8.f0090  ; Byte(0 To 26623)
 0041DA8A  18 03                    Ary1LdRf  -
@@ -28156,7 +28235,7 @@ pub_196_0041D56C  ProcDsc=0x00420F92  ProcSize=0x3A26  codeStart=0x0041D56C
 00420C36  98 02                    LitI2  val=3
 00420C38  54 00                    EqUI1  -
 00420C3A  E8 03 1C 39              BranchF  to=00420E88
-00420C3E  84 05 08 00 FC 02        FMemLdStr  mem=stack+8.f02FC
+00420C3E  84 05 08 00 FC 02        FMemLd4  mem=stack+8.f02FC
 00420C44  50 07 00 00 00 00        LitI4  val=0
 00420C4A  C4 00                    GtI4  -
 00420C4C  82 05 08 00 FA 02        FMemLdI2  mem=stack+8.f02FA
@@ -29370,7 +29449,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00421E74  02 04 18 00              ILdI2  mem=stack+24
 00421E78  92 02                    LitI2  val=0
 00421E7A  AC 00                    LtI2  -
-00421E7C  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00421E7C  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 00421E82  02 04 18 00              ILdI2  mem=stack+24
 00421E86  1E 02                    CI4I2  -
 00421E88  04 01                    AddI4  -
@@ -29383,7 +29462,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00421E9E  12 01                    SubI2  -
 00421EA0  22 04 10 00              IStI2  mem=stack+16
 00421EA4  E6 03 FC 0E              Branch  to=00421EBC
-00421EA8  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00421EA8  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 00421EAE  02 04 18 00              ILdI2  mem=stack+24
 00421EB2  1E 02                    CI4I2  -
 00421EB4  04 01                    AddI4  -
@@ -30478,7 +30557,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00422E58  14 05 B0 FE              FFree1Str  mem=stack-336
 00422E5C  50 07 00 00 00 00        LitI4  val=0
 00422E62  50 07 00 00 00 00        LitI4  val=0
-00422E68  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00422E68  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00422E6E  50 07 46 00 00 00        LitI4  val=70
 00422E74  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00422E7A  02 03                    Ary1LdI2  -
@@ -30497,7 +30576,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00422EAC  38 06 74 D0 41 00        ImpAdCall  call=pub_048_004048A4@0041D074
 00422EB2  50 07 00 00 00 00        LitI4  val=0
 00422EB8  50 07 00 00 00 00        LitI4  val=0
-00422EBE  84 05 08 00 A4 02        FMemLdStr  mem=stack+8.f02A4
+00422EBE  84 05 08 00 A4 02        FMemLd4  mem=stack+8.f02A4
 00422EC4  50 07 00 00 00 00        LitI4  val=0
 00422ECA  98 05 08 00 C8 01        FMemLdRf  mem=stack+8.f01C8  ; Integer(0 To 31999)
 00422ED0  02 03                    Ary1LdI2  -
@@ -32362,7 +32441,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 004249B8  C2 04 18 00              MemLdI2  mem=0018
 004249BC  12 01                    SubI2  -
 004249BE  A2 05 08 00 FA 02        FMemStI2  mem=stack+8.f02FA
-004249C4  84 05 08 00 FC 02        FMemLdStr  mem=stack+8.f02FC
+004249C4  84 05 08 00 FC 02        FMemLd4  mem=stack+8.f02FC
 004249CA  A2 03 66 FF              FLdI2  mem=stack-154
 004249CE  1E 02                    CI4I2  -
 004249D0  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C  ; UDT(70 B)(0 To 4)
@@ -32588,7 +32667,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00424CCE  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C  ; UDT(70 B)(0 To 4)
 00424CD4  16 03                    Ary1LdPr  -
 00424CD6  E2 04 28 00              MemStI2  mem=0028
-00424CDA  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00424CDA  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 00424CE0  A2 03 46 FF              FLdI2  mem=stack-186
 00424CE4  1E 02                    CI4I2  -
 00424CE6  04 01                    AddI4  -
@@ -34039,14 +34118,14 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 0042622C  4A 07 88 00              LitI2  val=136
 00426230  54 00                    EqUI1  -
 00426232  E8 03 2A 53              BranchF  to=004262EA
-00426236  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00426236  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 0042623C  50 07 88 13 00 00        LitI4  val=5000
 00426242  C4 00                    GtI4  -
 00426244  E8 03 94 52              BranchF  to=00426254
 00426248  4A 07 88 13              LitI2  val=5000
 0042624C  C2 03 46 FF              FStI2  mem=stack-186
 00426250  E6 03 A0 52              Branch  to=00426260
-00426254  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00426254  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 0042625A  10 02                    CI2I4  -
 0042625C  C2 03 46 FF              FStI2  mem=stack-186
 00426260  02 04 18 00              ILdI2  mem=stack+24
@@ -34079,7 +34158,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 004262C8  18 03                    Ary1LdRf  -
 004262CA  38 06 04 76 41 00        ImpAdCall  call=Pal.copymen@00417604
 004262D0  FE 07                    SetLastSystemError  -
-004262D2  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+004262D2  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 004262D8  A2 03 46 FF              FLdI2  mem=stack-186
 004262DC  1E 02                    CI4I2  -
 004262DE  14 01                    SubI4  -
@@ -34228,7 +34307,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00426506  4A 07 8F 00              LitI2  val=143
 0042650A  54 00                    EqUI1  -
 0042650C  E8 03 6A 55              BranchF  to=0042652A
-00426510  84 05 08 00 B4 02        FMemLdStr  mem=stack+8.f02B4
+00426510  84 05 08 00 B4 02        FMemLd4  mem=stack+8.f02B4
 00426516  40 02                    CR8I4  -
 00426518  96 02                    LitI2  val=2
 0042651A  3E 02                    FnCSngUI1  -
@@ -34765,7 +34844,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00426CD4  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C  ; UDT(70 B)(0 To 4)
 00426CDA  18 03                    Ary1LdRf  -
 00426CDC  74 05 46 00              CopyBytes  len=70
-00426CE0  84 05 08 00 FC 02        FMemLdStr  mem=stack+8.f02FC
+00426CE0  84 05 08 00 FC 02        FMemLd4  mem=stack+8.f02FC
 00426CE6  A2 03 66 FF              FLdI2  mem=stack-154
 00426CEA  1E 02                    CI4I2  -
 00426CEC  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C  ; UDT(70 B)(0 To 4)
@@ -35204,7 +35283,7 @@ pub_197_00420FC0  ProcDsc=0x004276DE  ProcSize=0x671E  codeStart=0x00420FC0
 00427326  C2 04 18 00              MemLdI2  mem=0018
 0042732A  12 01                    SubI2  -
 0042732C  A2 05 08 00 FA 02        FMemStI2  mem=stack+8.f02FA
-00427332  84 05 08 00 FC 02        FMemLdStr  mem=stack+8.f02FC
+00427332  84 05 08 00 FC 02        FMemLd4  mem=stack+8.f02FC
 00427338  02 04 0C 00              ILdI2  mem=stack+12
 0042733C  1E 02                    CI4I2  -
 0042733E  98 05 08 00 8C 06        FMemLdRf  mem=stack+8.f068C  ; UDT(70 B)(0 To 4)

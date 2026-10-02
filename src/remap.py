@@ -275,7 +275,8 @@ def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> s
         else:
             current_func["stack_vars"] = None
 
-        # 替换参数列表中的 a0, a1, ... 为有意义的名称（保留 pseudocode 签名里的 ByRef 前缀）
+        # 替换参数列表中的 a0, a1, ... 为有意义的名称（保留 pseudocode 签名里的
+        # ByRef/ByVal 前缀与 As <类型> 子句 —— 后者由参数槽 opcode 后缀推断）
         new_params = params_str
         if base in params_map:
             param_names = params_map[base]
@@ -283,10 +284,16 @@ def process_line(line: str, mapping: dict, rules: list, current_func: dict) -> s
             if len(orig_params) == len(param_names):
                 rendered = []
                 for i, name in enumerate(param_names):
-                    if orig_params[i].startswith("ByRef "):
-                        rendered.append("ByRef " + name)
+                    op = orig_params[i]
+                    # 前缀：ByRef / ByVal（无前缀 = 旧版输出，保持原样）
+                    if op.startswith(("ByRef ", "ByVal ")):
+                        prefix = op.split()[0] + " "
                     else:
-                        rendered.append(name)
+                        prefix = ""
+                    # 尾部 As 子句（参数类型，如 "As Integer"）
+                    m_as = re.search(r"\bAs\s+[A-Za-z_][\w\s\*\d]*$", op)
+                    as_clause = (" " + m_as.group(0)) if m_as else ""
+                    rendered.append(prefix + name + as_clause)
                 new_params = "(" + ", ".join(rendered) + ")"
 
         # 保留 pseudocode 签名尾部的返回类型（"As Integer"，来自

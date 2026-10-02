@@ -102,14 +102,34 @@ def main(argv=None):
             stub_names[stub] = proc_name
     analysis = word_disasm.analyze(
         word_vb, img, stub_names=stub_names, declares=dec)
+    analysis["pal"] = img
 
-    # VB4 声明流：模块级数组的真实边界（内嵌 SAFEARRAY 描述符模板）。
+    # Style review #9: ByRef/ByVal cannot be read off the callee under the
+    # all-reference call ABI.  Pass 1 runs the full decompile once to
+    # collect per-(callee, arg position) push idioms; the voted modifier /
+    # pointee-type tables then drive BOTH the disasm params header and the
+    # pseudocode signatures (pass 2).
+    param_kinds, param_types, vcall_modes = pseudo_code.collect_param_votes(
+        img, analysis, procs)
+    analysis["param_kinds"] = param_kinds
+    n_byval = sum(1 for ks in param_kinds.values() for k in ks
+                  if k == "ByVal")
+    print("Param ABI votes: %d procs with params, %d ByVal params" % (
+        len(param_kinds), n_byval))
+    n_vsub = sum(1 for push in vcall_modes.values() if not push)
+    print("VCall sites: %d total, %d Sub-like (no callee result)" % (
+        len(vcall_modes), n_vsub))
+
+    # VB4 声明流：模块级数组的真实边界（内嵌 SAFEARRAY 描述符模板）；
+    # 标量槽位无流记录，由代码引用扫描补出（style review #1）。
     decls = decl_stream.load(img)
     if decls is not None:
         decls.resolve_types(decl_stream.scan_element_usage(img, analysis))
+        decls.set_scalars(decl_stream.scan_scalar_usage(img, analysis))
         analysis["decls"] = decls
-        print("Declaration stream @0x%08X: %d records, instance data 0x%X" % (
-            decls.va, len(decls.records), decls.data_size))
+        print("Declaration stream @0x%08X: %d records, instance data 0x%X, "
+              "%d scalar slots" % (decls.va, len(decls.records),
+                                   decls.data_size, len(decls.scalars)))
     else:
         print("Declaration stream: not found; module declarations omitted")
 
@@ -122,6 +142,8 @@ def main(argv=None):
         if decls is not None:
             f.write("\n")
             f.write("\n".join(decls.table_lines()))
+        f.write("\n")
+        f.write("\n".join(declares.table_dump_lines(dec)))
         f.write("\n\n")
         for idx, (_start, _end, _path) in enumerate(analysis["paths"]):
             f.write(word_disasm.format_proc(
@@ -137,7 +159,11 @@ def main(argv=None):
         if decls is not None:
             f.write("\n".join(decls.decl_block_lines()))
             f.write("\n")
-        f.write(pseudo_code.decompile_all(img, analysis, procs))
+        f.write("\n".join(declares.declare_block_lines(dec, analysis)))
+        f.write("\n\n")
+        f.write(pseudo_code.decompile_all(
+            img, analysis, procs, param_kinds=param_kinds,
+            param_types=param_types, vcall_modes=vcall_modes))
     print("Wrote %s" % pseudo_path)
 
 

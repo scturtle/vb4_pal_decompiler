@@ -596,6 +596,12 @@ class Structurer(object):
         # Depth of in-progress leaving-side walks: the "fall exits
         # loop" safety net must not fire there (by design).
         self._leaving_side_depth = 0
+        # #19 edge audit: every implicit walk transition logs here;
+        # run() verifies the target renders adjacent (an inserted
+        # region = an intercepted fall = silent flow change).
+        self._edge_log = []
+        self._last_begin = None
+        self._emitting_orphans = False
 
     def _can_reach(self, src, dst):
         """True if *dst* is reachable from *src* over the static CFG."""
@@ -729,6 +735,7 @@ class Structurer(object):
     def _begin_block(self, b):
         """Mark a block as being emitted now (labels attach here)."""
         self.visited.add(b)
+        self._last_begin = b
         self.block_first_stmt.setdefault(b.start, len(self.machine.statements))
 
     def _block_after(self, b):
@@ -803,16 +810,40 @@ class Structurer(object):
         return cond_text if ins.label in _BRANCH_TRUE \
             else _wrap_not(cond_text)
 
-    def _emit_one_sided(self, ins, disp, arm, stop, ctx, close_va=None):
+    def _emit_one_sided(self, ins, disp, arm, stop, ctx, close_va=None,
+                        allowed_stops=()):
         """If disp Then <walk arm> End If; returns the arm walk result.
         close_va anchors the leftover drain and the End If (the join
-        when closing at a join, else the opener's VA)."""
+        when closing at a join, else the opener's VA).  allowed_stops
+        lists stop members the caller realizes right after the End If
+        (the If's continuation point): an arm stopping there keeps
+        its edge by adjacency; anything else renders explicitly
+        (#19)."""
         va = ins.pos if close_va is None else close_va
         self.emit(ins.pos, +1, "If %s Then" % disp)
         depth = len(self.machine.stack)
         r = self.walk(arm, stop, ctx)
+        allowed = set(allowed_stops)
+        if close_va is not None:
+            allowed.add(close_va)
+        r = self._arm_stop_edge(r, allowed, ins, stop, ctx)
         self._flush_to_depth(va, depth)
         self.emit(va, -1, "End If")
+        return r
+
+    def _arm_stop_edge(self, r, allowed_starts, ins, stop, ctx):
+        """#19: an arm walk returning ("stop", X) means the arm ends by
+        falling into stop member X.  That edge renders by adjacency
+        only when X is the point the caller emits right after the
+        End If (a join / boundary in *allowed_starts*) -- otherwise
+        the If's own fall-through owns that position and the arm's
+        edge must be explicit, inside the arm.  A propagated
+        ("stop", latch) from an arm also made _emit_do's interior
+        append place a barrier for an edge the fall-through crosses
+        (the #18 regression: re-dispatch on stale input)."""
+        if r[0] == "stop" and r[1].start not in allowed_starts:
+            self._exit_stmt_for_target(r[1].start, ctx, ins.pos, stop)
+            return ("term",)
         return r
 
     def _exit_stmt_for_target(self, va, ctx, at_va, stop):
@@ -949,10 +980,20 @@ class Structurer(object):
             pending.extend(sorted(
                 set(self.needed_labels) - before))
         # Unreachable blocks: emit flat (informational) after a
-        # marker; bare single-branch trampolines are skipped.
+        # marker; bare single-branch trampolines are skipped (#18: a
+        # marker with nothing under it reads as "the code above is
+        # dead" -- exactly backwards for a live hoisted region).
         unreachable = [b for b in self.blocks if b not in self.reachable]
-        if unreachable:
-            self.emit(unreachable[0].start, 0, "' ---- unreachable p-code ----")
+        rendered_unreachable = [
+            b for b in unreachable
+            if not (b.kind == "uncond" and len(b.instrs) == 1
+                    and b.taken is not None)]
+        if rendered_unreachable:
+            stmts = self.machine.statements
+            before = len(stmts)
+            labels_before = set(self.needed_labels)
+            self.emit(rendered_unreachable[0].start, 0,
+                      "' ---- unreachable p-code ----")
             for b in unreachable:
                 if b.kind == "uncond" and len(b.instrs) == 1 \
                         and b.taken is not None:
@@ -966,6 +1007,19 @@ class Structurer(object):
                 if b.kind == "uncond" and b.taken is not None:
                     self.needed_labels.add(b.taken.start)
                     self.emit(b.term.pos, 0, "GoTo L_%08X" % b.taken.start)
+            if len(stmts) == before + 1 \
+                    or all(s.text in ("Exit Sub", "Exit Function")
+                           for s in stmts[before + 1:]):
+                # nothing (or only bare exit keywords) rendered: the
+                # writers drop trailing Exit Sub/Function at the proc
+                # tail (#4), which would leave a bare marker reading
+                # as "the code above is dead" -- drop the whole tail
+                stmts[:] = stmts[:before]
+                self.needed_labels.clear()
+                self.needed_labels.update(labels_before)
+                for k in list(self.block_first_stmt):
+                    if self.block_first_stmt[k] >= before:
+                        del self.block_first_stmt[k]
         # Map needed labels to statement indices.
         label_at_stmt = {}
         for va in sorted(self.needed_labels):
@@ -973,14 +1027,256 @@ class Structurer(object):
             idx = self.block_first_stmt.get(va)
             if b is not None and idx is not None:
                 label_at_stmt.setdefault(idx, []).append(va)
+        self.stats["edge_audit"] = self._audit_edges()
         return self.machine.statements, label_at_stmt, self.stats
 
-    def walk(self, b, stop, ctx):
+    def _audit_edges(self):
+        """#19 acceptance gate: every implicit walk edge ("fall" = the
+        walk continued into the successor; "defer" = the walk stopped
+        at a stop member for the caller to realize) must survive the
+        render: the flow from the transition position must reach the
+        target block's first statement on EVERY path, without flowing
+        into any other block's code (an inserted region = an
+        intercepted fall = silent flow change; the #19 shape: the
+        round tail check fell into the appended dispatch region).  A
+        defer whose next statement is an explicit jump (the #18
+        barrier) counts as realized.  Back edges (loop latches ->
+        headers) are exempt: loop closes own them.  Edges into proc
+        exits are exempt: the exit statement machinery owns them.
+        Returns a list of violation strings (empty = clean)."""
+        stmts = self.machine.statements
+        firsts_by_idx = {}
+        for va, idx in self.block_first_stmt.items():
+            firsts_by_idx.setdefault(idx, set()).add(va)
+        bad = []
+        for kind, u, v, pos in self._edge_log:
+            if v <= u:
+                continue          # back edge: realized by the loop close
+            vb = self.block_by_start.get(v)
+            if vb is not None and vb.kind == "term":
+                continue          # proc exit: Exit Sub/Return own it
+            # Bare trampolines into a proc exit (the _emit_if_join_exit
+            # fold renders one Exit Sub for such joins): the exit
+            # statement owns the edge.
+            tb = vb
+            hops = 0
+            while tb is not None and hops < 8 \
+                    and tb.kind == "uncond" and len(tb.instrs) == 1 \
+                    and tb.taken is not None \
+                    and self.proc_start <= tb.taken.start < self.proc_end:
+                tb = tb.taken
+                hops += 1
+                if tb is not None and (tb.kind == "term"
+                                       or tb.start in self.exit_addrs):
+                    tb = None
+                    break
+            if hops and tb is None:
+                continue
+            iv = self.block_first_stmt.get(v)
+            if iv is None:
+                bad.append("%s 0x%08X->0x%08X @%d: target not rendered"
+                           % (kind, u, v, pos))
+                continue
+            if pos < len(stmts):
+                t0 = stmts[pos].text.strip()
+                if t0.startswith("Continue"):
+                    continue      # explicit barrier realized the edge
+                if t0.startswith("Exit "):
+                    continue      # exit statement owns the edge (the
+                    # shared-exit fold / Exit Do upgrade chose it)
+                if t0.startswith("GoTo L_"):
+                    # explicit jump penetrating bare trampolines: the
+                    # walk's edge target may be a tramp chain whose
+                    # ultimate target the GoTo spells directly
+                    try:
+                        gva = int(t0[8:], 16)
+                    except ValueError:
+                        gva = None
+                    tb = self.block_by_start.get(v)
+                    hops = 0
+                    while tb is not None and gva is not None and hops < 8 \
+                            and tb.kind == "uncond" and len(tb.instrs) == 1 \
+                            and tb.taken is not None \
+                            and self.proc_start <= tb.taken.start < self.proc_end:
+                        if tb.start == gva:
+                            break
+                        tb = tb.taken
+                        hops += 1
+                    if tb is not None and gva is not None \
+                            and tb.start == gva:
+                        continue
+            if not self._flow_reaches(pos, iv, v, u, firsts_by_idx, stmts):
+                bad.append("%s 0x%08X->0x%08X @%d: flow does not reach "
+                           "the target cleanly" % (kind, u, v, pos))
+        return bad
+
+    def _flow_reaches(self, pos, iv, v_va, u_va, firsts_by_idx, stmts):
+        """All-paths reachability from statement *pos* to *iv*: every
+        path must arrive at the target's first statement (or an
+        explicit jump to it) without flowing into another block's
+        first statement.  Simulates the rendered VB control flow from
+        the indent-delta structure."""
+        n = len(stmts)
+        # depth[j]: nesting depth BEFORE statement j
+        depth = [0] * (n + 1)
+        d = 0
+        for j, s in enumerate(stmts):
+            depth[j] = d
+            d += s.indent_delta
+        depth[n] = d
+
+        def label_idx(va):
+            j = self.block_first_stmt.get(va)
+            return j
+
+        work = [pos]
+        seen = set()
+        while work:
+            j = work.pop()
+            while True:
+                if j in seen:
+                    break
+                seen.add(j)
+                if j >= n:
+                    return False        # fell off the proc end
+                if j == iv:
+                    break               # path arrived
+                t = stmts[j].text.strip()
+                if t == "Else" or t.startswith("ElseIf ") \
+                        or t.startswith("Case "):
+                    # falling onto an arm divider from the previous
+                    # arm: leave the construct at its close.  (The
+                    # divider line is itself a cond block's first
+                    # statement -- check it BEFORE the foreign-block
+                    # rule; the flow does not enter it.)
+                    j = self._matching_close(j, depth, stmts, n) + 1
+                    continue
+                if t == "End If" or t == "End Select":
+                    j += 1
+                    continue
+                vas = firsts_by_idx.get(j)
+                if vas and v_va not in vas and u_va not in vas:
+                    return False        # flows into foreign block code
+                dj = depth[j]
+                if t == "Loop" or t.startswith("Loop ") \
+                        or t == "Wend" or t == "Next" \
+                        or t.startswith("Next "):
+                    return False        # iterates that loop, not our edge
+                if t.startswith("GoTo L_"):
+                    try:
+                        va = int(t[8:], 16)
+                    except ValueError:
+                        return False
+                    if va == v_va:
+                        break           # explicit jump to the target
+                    # or to the end of the target's bare-tramp chain
+                    # (the renderer penetrates trampolines)
+                    tb = self.block_by_start.get(v_va)
+                    hops = 0
+                    while tb is not None and hops < 8 \
+                            and tb.kind == "uncond" and len(tb.instrs) == 1 \
+                            and tb.taken is not None \
+                            and self.proc_start <= tb.taken.start \
+                            < self.proc_end:
+                        if tb.start == va:
+                            break
+                        tb = tb.taken
+                        hops += 1
+                    if tb is not None and tb.start == va:
+                        break
+                    return False
+                if t.startswith("Continue"):
+                    return False        # restarts a loop, not our edge
+                if t.startswith("Exit Do") or t.startswith("Exit For") \
+                        or t.startswith("Exit While"):
+                    # leaves the enclosing loop, continues after its
+                    # close (the close at this depth)
+                    j = self._enclosing_close(j, depth, stmts, n) + 1
+                    continue
+                if t.startswith("Exit Sub") or t.startswith("Exit Function") \
+                        or t == "End" or t.startswith("Return"):
+                    return False        # leaves the proc
+                if t.startswith("If "):
+                    # fork: the Then arm and the false continuation
+                    work.append(self._false_side(j, depth, stmts, n))
+                    j += 1
+                    continue
+                if t.startswith("While "):
+                    work.append(self._matching_close(j, depth, stmts, n) + 1)
+                    j += 1
+                    continue
+                # Do / For / Select Case / plain statements: enter
+                j += 1
+        return True
+
+    @staticmethod
+    def _matching_close(j, depth, stmts, n):
+        """Index of the close that returns to depth[j] (End If /
+        Wend / Loop / Next / End Select), scanning forward."""
+        dj = depth[j]
+        k = j + 1
+        while k < n:
+            if depth[k] <= dj and stmts[k].indent_delta < 0:
+                return k
+            k += 1
+        return n
+
+    def _false_side(self, j, depth, stmts, n):
+        """Where an If's FALSE flow continues: after Else (into the
+        else arm) or after End If."""
+        dj = depth[j]
+        k = j + 1
+        while k < n:
+            t = stmts[k].text.strip()
+            if depth[k] == dj + 1 and t == "Else":
+                return k + 1
+            if depth[k] == dj and stmts[k].indent_delta < 0:
+                return k + 1
+            k += 1
+        return n
+
+    @staticmethod
+    def _enclosing_close(j, depth, stmts, n):
+        """Index of the Loop/Next/Wend closing the innermost loop
+        enclosing *j*."""
+        dj = depth[j]
+        k = j + 1
+        d = dj
+        while k < n:
+            nd = d + stmts[k].indent_delta
+            if stmts[k].indent_delta < 0 and nd < dj \
+                    and (stmts[k].text.strip() == "Loop"
+                         or stmts[k].text.strip().startswith("Loop ")
+                         or stmts[k].text.strip() == "Wend"
+                         or stmts[k].text.strip() == "Next"
+                         or stmts[k].text.strip().startswith("Next ")):
+                return k
+            d = nd
+            k += 1
+        return n
+
+    def walk(self, b, stop, ctx, primary=False):
         """Structure the linear spine starting at *b*.  Returns
         ("stop", block) at a caller's join, or ("term",) when this path
-        ends (exit/goto emitted at the edge)."""
+        ends (exit/goto emitted at the edge).
+
+        Every implicit transition logs an audit record (#19): the
+        edge renders by adjacency, so the target must be the next
+        block begun after the transition position -- run() verifies
+        that at proc end (an appended region between the two = an
+        intercepted fall = silent flow change).
+
+        *primary* marks the loop-body spine walk launched by
+        _emit_do: only it reaches the pre-latch placement hook (arm
+        and leaving-side walks must not splice regions -- their
+        pending sets are mid-walk states, not orphan sets)."""
+        prev = None
         while b is not None:
             if b.start in stop:
+                if prev is not None:
+                    self._edge_log.append(
+                        ("defer", prev.start, b.start,
+                         len(self.machine.statements)))
                 return ("stop", b)
             if ctx and ctx[-1].exit_block is not None \
                     and b is ctx[-1].exit_block \
@@ -1001,6 +1297,7 @@ class Structurer(object):
             if b in self.irreducible:
                 res = self.emit_flat_block(b, ctx)
                 if res[0] == "next":
+                    prev = b
                     b = res[1]
                     if b is not None and b not in self.reachable:
                         return ("term",)
@@ -1010,11 +1307,37 @@ class Structurer(object):
                 res = self.emit_loop(b, stop, ctx)
                 if res[0] == "next":
                     # The loop exit is ordinary continuation code.
+                    prev = None   # loop emit internals own their edges
                     b = res[1]
                     if b is not None and b not in self.reachable:
                         return ("term",)
                     continue
                 return res
+            if primary and not self._emitting_orphans and ctx \
+                    and ctx[-1].latch is not None \
+                    and b.fall is ctx[-1].latch \
+                    and b is not ctx[-1].latch:
+                # #19 pre-latch placement: *b* is the block that
+                # falls into this loop's latch -- the loop's natural
+                # closing flow.  Interior orphan regions due now
+                # splice in ahead of it (not at body end), so *b*
+                # keeps its fall-to-Loop position; the spine's
+                # implicit edge into *b* is intercepted by the
+                # region -- make it explicit first (a GoTo over the
+                # region to *b*'s label).  *b* itself is about to
+                # render: it is not an orphan.
+                ok = self._interior_orphan_ok(ctx[-1].header,
+                                              ctx[-1].body,
+                                              ctx[-1].latch)
+                if ok:
+                    ok.discard(b)
+                if ok:
+                    self.needed_labels.add(b.start)
+                    self.machine.flush_leftovers(b.start)
+                    self.emit(b.start, 0, "GoTo L_%08X" % b.start)
+                    self.stats["gotos"] += 1
+                    self._emit_orphan_regions(
+                        ok, ctx[-1].latch, stop | {b.start}, ctx)
             self._begin_block(b)
             res = self.process_block(b, stop, ctx)
             if res[0] == "next":
@@ -1028,6 +1351,10 @@ class Structurer(object):
                         and nxt is not ctx[-1].latch:
                     raise StructureUnsupported(
                         "fall exits loop at 0x%08X" % nxt.start)
+                self._edge_log.append(
+                    ("fall", b.start, nxt.start,
+                     len(self.machine.statements)))
+                prev = b
                 b = nxt
                 continue
             return res
@@ -1246,11 +1573,12 @@ class Structurer(object):
             if t_empty != f_empty:
                 if t_empty:
                     r = self._emit_one_sided(ins, then_cond, fall,
-                                             stop, ctx)
+                                             stop, ctx,
+                                             allowed_stops={taken.start})
                 else:
                     r = self._emit_one_sided(
                         ins, self._taken_disp(ins, cond_text), taken,
-                        stop, ctx)
+                        stop, ctx, allowed_stops={fall.start})
                 if r[0] == "stop":
                     return r
                 return ("next", taken if t_empty else fall)
@@ -1263,11 +1591,12 @@ class Structurer(object):
                       and fall.start not in stop)
             if f_term != t_term:
                 if f_term:
-                    self._emit_one_sided(ins, then_cond, fall, stop, ctx)
+                    self._emit_one_sided(ins, then_cond, fall, stop, ctx,
+                                         allowed_stops={taken.start})
                     return ("next", taken)
                 self._emit_one_sided(
                     ins, self._taken_disp(ins, cond_text), taken,
-                    stop, ctx)
+                    stop, ctx, allowed_stops={fall.start})
                 return ("next", fall)
             # A side that cannot reach the proc exit is an infinite
             # continuation: guard its departure one-sided.
@@ -1562,15 +1891,20 @@ class Structurer(object):
                 # Not(cond); BranchT on TRUE).
                 self._emit_one_sided(
                     ins, self._taken_disp(ins, cond_text), taken,
-                    arm_stop, ctx, close_va=join.start)
+                    arm_stop, ctx, close_va=join.start,
+                    allowed_stops={exit_va})
             else:
                 self.emit(ins.pos, +1, "If %s Then" % then_cond)
                 depth = len(self.machine.stack)
-                self.walk(fall, arm_stop, ctx)
+                r1 = self.walk(fall, arm_stop, ctx)
+                r1 = self._arm_stop_edge(
+                    r1, {join.start, exit_va}, ins, arm_stop, ctx)
                 self._flush_to_depth(join.start, depth)
                 if not t_empty:
                     self.emit(ins.pos, 0, "Else")
-                    self.walk(taken, arm_stop, ctx)
+                    r2 = self.walk(taken, arm_stop, ctx)
+                    r2 = self._arm_stop_edge(
+                        r2, {join.start, exit_va}, ins, arm_stop, ctx)
                     self._flush_to_depth(join.start, depth)
                 self.emit(join.start, -1, "End If")
         finally:
@@ -2349,8 +2683,23 @@ class Structurer(object):
                 return self._close_cond_loop(latch_pred.term, latch_pred,
                                              latch, body, depth)
             res = self.process_block(h, stop | {latch.start}, ctx2)
+            crossing = None
             if res[0] == "next" and res[1] is not None:
-                self.walk(res[1], stop | {latch.start}, ctx2)
+                res = self.walk(res[1], stop | {latch.start}, ctx2,
+                                primary=True)
+            if res[0] == "stop":
+                # The body walk ended on an edge rendered implicitly
+                # (by adjacency to whatever emits next).  Appending
+                # interior orphans between would intercept that fall
+                # (#19: process_Battle's round tail-check fell into
+                # the dispatch region instead of the latch restart).
+                crossing = res[1]
+            # #18: branch-only regions inside the loop render BEFORE the
+            # close (see _emit_interior_orphans), not hoisted after it
+            # by the orphan pass (which produced jump-into-block edges
+            # at inventory_use_menu / process_Battle).
+            self._emit_interior_orphans(h, body, latch, stop, ctx2,
+                                        crossing)
             self._consume_latch(latch)
         term = latch.term
         lab = term.label
@@ -2399,6 +2748,111 @@ class Structurer(object):
             # degrade to a phantom GoTo + dangling label).
             return ("term",)
         return ("next", exit_block)
+
+    def _interior_orphan_ok(self, h, body, latch):
+        """#18 query: pending span blocks of this loop that are clean
+        (no in-edge from a pred that will not render inside).
+        Returns the clean set or None."""
+        pending = [b for b in body
+                   if b not in self.visited and b is not latch]
+        if not pending:
+            return None
+        span = set(b for b in pending if h.start < b.start < latch.start)
+        if not span:
+            return None
+        tainted = set()
+        changed = True
+        while changed:
+            changed = False
+            for b in span:
+                if b in tainted:
+                    continue
+                if any(p is not b and p not in self.visited
+                       and (p not in span or p in tainted)
+                       for p in b.preds):
+                    tainted.add(b)
+                    changed = True
+        ok = span - tainted
+        return ok or None
+
+    def _emit_orphan_regions(self, ok, latch, stop, ctx):
+        """Walk the clean region blocks in address order (#18).
+        A loop-exit epilogue already rendered INSIDE this loop (a
+        nested loop's shared-exit upgrade grabbed it): an "Exit Do"
+        from a region rendered here would land past the Loop close,
+        skipping that epilogue -- clear the ctx exit so region edges
+        render plain GoTos to the label instead."""
+        if ctx and ctx[-1].exit_block is not None \
+                and ctx[-1].exit_block in self.visited:
+            trimmed = LoopCtx(ctx[-1].kind, ctx[-1].header, ctx[-1].body,
+                              ctx[-1].latch, None, ctx[-1].depth)
+            trimmed.shared_exit = False
+            ctx = ctx[:-1] + [trimmed]
+        self._emitting_orphans = True
+        try:
+            blocks = sorted(ok, key=lambda x: x.start)
+            for i, blk in enumerate(blocks):
+                if blk in self.visited:
+                    continue
+                self.needed_labels.add(blk.start)
+                res = self.walk(blk, stop | {latch.start}, ctx)
+                if res[0] == "stop" and i + 1 < len(blocks):
+                    # The walk deferred its edge to *res[1]* counting
+                    # on adjacency -- but more region blocks render
+                    # before the caller resumes, so adjacency is gone:
+                    # make the edge explicit (#19 audit caught this as
+                    # fall 0041E404->0041EAAA landing in 0041E134).
+                    self._exit_stmt_for_target(
+                        res[1].start, ctx, blk.term.pos, stop)
+        finally:
+            self._emitting_orphans = False
+
+    def _emit_interior_orphans(self, h, body, latch, stop, ctx, crossing):
+        """#18/#19: loop-interior branch-only regions render before the
+        Loop close -- not hoisted after the loop by the orphan pass
+        (which produced VB4-illegal jump-into-block edges).
+
+        A region qualifies when its head address falls inside the
+        loop's [head, latch) span and no in-edge comes from a block
+        that will not render inside: a pred outside the loop body, or
+        a pending span block that itself hoists (taint propagates
+        along successors -- mutual pred cycles among span blocks are
+        internal and stay clean).  Regions addressed at/after the
+        latch (cleanup epilogues) stay for the post-loop walk /
+        orphan pass.
+
+        This is the body-END fallback (before the Loop close): the
+        pre-latch hook in walk() places regions before the block
+        that falls into the latch, so the loop's tail flow keeps its
+        natural fall-to-Loop close.  A region still pending here
+        never met its pre-latch chance -- safe only because every
+        region block ends in an explicit jump and its entry edge is
+        an explicit GoTo (#19: appending without guarding broke the
+        body walk's implicit fall into the latch -- the tail check
+        fell into the region and re-dispatched stale input).  When
+        the walk just ended on such an implicit edge (crossing is
+        its target) the edge is re-rendered explicitly first: a
+        Continue Do barrier for the latch; any other crossing
+        target is unknown territory -- skip the append for this
+        loop (the orphan pass hoists, as before #18)."""
+        ok = self._interior_orphan_ok(h, body, latch)
+        if ok is None:
+            return
+        if crossing is not None:
+            if crossing is not latch:
+                # Unknown implicit edge -- do not risk intercepting it.
+                return
+            # The walk fell/branched into the latch and that edge
+            # renders by adjacency to the next emission; the appended
+            # region would sit in between.  Fall-to-latch + latch's
+            # Branch-to-head = the loop restart -- spell it out.
+            src = self._last_begin
+            va = src.term.pos if src is not None and src.term \
+                else latch.start
+            self.machine.flush_leftovers(va)
+            self.emit(va, 0, "Continue Do")
+            self.stats["continues"] += 1
+        self._emit_orphan_regions(ok, latch, stop, ctx)
 
     def _loop_exits(self, h, body, exclude_blocks):
         """Blocks in the loop body that branch (not fall) out of it."""

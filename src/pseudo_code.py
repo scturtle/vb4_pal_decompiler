@@ -7,6 +7,7 @@ This module consumes structured analysis rather than rendered text, runs the
 stack-machine decompiler per procedure, and emits readable VB-style pseudocode.
 """
 import re
+import sys
 
 import stack_ir
 import structuring
@@ -38,10 +39,7 @@ def _build_arg_counts(pal, analysis):
 
 def _label_for(entries, labels, opcode):
     target = entries.get(opcode, 0)
-    label = labels.get(target, "<no CodeView label>")
-    if label.startswith("lblEX_"):
-        label = label[len("lblEX_"):]
-    return label
+    return word_disasm.strip_label(labels.get(target, "<no CodeView label>"))
 
 
 def _display_label(label):
@@ -123,7 +121,386 @@ def proc_return_kind(labels):
     return None
 
 
-def _prepare_proc(pal, analysis, index, name, arg_map):
+# ---------------------------------------------------------------------------
+# Frame-slot type evidence (style review #6/#7)
+# ---------------------------------------------------------------------------
+# Direct F* loads/stores carry the slot's type in their suffix.  I*
+# (indirect) ops only ever touch POSITIVE (parameter) slots in PAL.EXE
+# (verified: no ILd*/ISt* on stack-N) where they dereference the caller's
+# variable: ILdI2/IStI2 prove the poinee is Integer.  ILdI4/IStI4 are
+# deliberately absent -- through a ByRef slot an I4 access may read a
+# Long, fetch a BSTR pointer (ByRef String marshaled via CStr2Ansi) or
+# fetch a UDT pointer, indistinguishable at the opcode level.
+_SLOT_STORE_TYPES = {
+    "FStI2": "Integer", "FStI4": "Long", "FStR4": "Single",
+    "FStFPR4": "Single", "FStR8": "Double", "FStFPR8": "Double",
+    "FStUI1": "Byte", "FStStr": "String", "FStStrCopy": "String",
+    "IStI2": "Integer",
+}
+_SLOT_LOAD_TYPES = {
+    "FLdI2": "Integer", "FLdI4": "Long", "FLdR4": "Single",
+    "FLdFPR4": "Single", "FLdR8": "Double", "FLdFPR8": "Double",
+    "FLdUI1": "Byte", "FLdStr": "String", "ILdI2": "Integer",
+    "ILdR8": "Double",
+}
+_SLOT_RE = re.compile(r"mem=stack([+-]\d+)$")
+_STACK_NEG_RE = re.compile(r"stack-(\d+)")
+
+# CVarRef type=4000|VT codes observed in PAL.EXE (VT_BYREF|VT): the
+# wrapped reference's element type.  Only the two observed codes are
+# mapped; anything else is deliberately no evidence.
+_CVARREF_TYPES = {"4002": "Integer", "4008": "String"}
+
+
+def _slot_of(operand):
+    """Signed frame offset of a mem=stackN operand, else None."""
+    m = _SLOT_RE.match(operand or "")
+    if not m:
+        return None
+    return int(m.group(1))
+
+
+def _slot_evidence(instrs):
+    """Collect per-slot type evidence from one proc's instructions.
+
+    Returns {slot_offset: votes} with votes = {"store": [(type, va,
+    imp, label)], "load": [...], "for": [...], "fixed_str": n}.  imp
+    marks ImpAd* evidence (MethCallEngine event procs; the 5 ImpAdSt
+    zero-inits are the only ImpAd stores in PAL.EXE and carry quirky
+    suffixes, so they lose ties -- see docs/vb40032.md "ImpAd 与 FMem
+    的同基址等价"); label names the proving opcode (or the look-back
+    pattern name) and drives _param_types' ByRef filtering.
+
+    Look-back patterns (the slot is not in the inspecting operand):
+    - fixed-string buffers: FLdRfVar <slot> directly before LdFixedStr/
+      StFixedStr len=N (a ``Dim s As String * N`` local);
+    - ByRef String params: ILdI4 <param> whose value feeds CStr2Ansi
+      (BSTR pointer fetch for ANSI marshaling) -- the value instruction
+      is two before the CStr2Ansi;
+    - CVarRef's Variant type code: ``FLdI4/ILdI4 <slot>`` directly before
+      ``CVarRef ... type=4000|VT`` names the POINTEE type (4002=ByRef
+      Integer, 4008=ByRef String; the 0x4000 flag is VT_BYREF).  Only
+      the two codes observed in PAL.EXE are mapped.
+    For-loop variable types are NOT scanned here: the end expression
+    between the FLdRfVar and the For opcode is arbitrarily long, so
+    pseudo_code takes them from StackMachine.loop_var_types (recorded
+    when _loop_start pops the ref).
+    """
+    ev = {}
+
+    def add(slot, kind, vtype, va, imp=False, label=None):
+        votes = ev.setdefault(slot, {"store": [], "load": [], "for": [],
+                                     "fixed_str": 0})
+        votes[kind].append((vtype, va, imp, label))
+
+    for i, ins in enumerate(instrs):
+        lab = ins.label
+        if lab in ("LdFixedStr", "StFixedStr") and i >= 1:
+            prev = instrs[i - 1]
+            if prev.label == "FLdRfVar":
+                slot = _slot_of(prev.operand)
+                if slot is not None:
+                    try:
+                        n = int((ins.operand or "").split("len=")[1])
+                    except (ValueError, IndexError):
+                        n = 0
+                    if n:
+                        votes = ev.setdefault(
+                            slot, {"store": [], "load": [], "for": [],
+                                   "fixed_str": 0})
+                        votes["fixed_str"] = max(votes["fixed_str"], n)
+        elif lab == "CStr2Ansi" and i >= 2:
+            src = instrs[i - 2]
+            if src.label in ("ILdI4", "FLdI4", "FLdStr", "FMemLd4"):
+                slot = _slot_of(src.operand)
+                if slot is not None:
+                    # Definitive BSTR proof: the fetched pointer is
+                    # marshaled as a string.
+                    add(slot, "store", "String", src.pos,
+                        imp=src.label.startswith("ImpAd"),
+                        label="CStr2Ansi")
+            continue
+        elif lab == "CVarRef" and i >= 1:
+            prev = instrs[i - 1]
+            if prev.label in ("ILdI4", "FLdI4"):
+                code = (ins.operand or "").split("type=")
+                vtype = _CVARREF_TYPES.get(code[1]) if len(code) == 2 else None
+                slot = _slot_of(prev.operand)
+                if vtype is not None and slot is not None:
+                    add(slot, "store", vtype, prev.pos, label="CVarRef")
+            continue
+        slot = _slot_of(ins.operand)
+        if slot is None:
+            continue
+        imp = lab.startswith("ImpAd")
+        if lab in _SLOT_STORE_TYPES:
+            add(slot, "store", _SLOT_STORE_TYPES[lab], ins.pos, imp, lab)
+        elif lab in _SLOT_LOAD_TYPES:
+            add(slot, "load", _SLOT_LOAD_TYPES[lab], ins.pos, imp, lab)
+    return ev
+
+
+def _arbitrate_slot_type(votes):
+    """Pick one VB type from _slot_evidence votes, or None.
+
+    Priority: fixed-string size > unanimous-or-majority store evidence >
+    For suffix > load suffix.  Store evidence defines the slot's content
+    (loads may be raw pointer fetches: FLdI4 on a BSTR slot feeding a
+    Declare).  ImpAd evidence loses ties (the known zero-init quirk).
+    A genuine tie renders no As clause (VB4 default Variant) -- e.g.
+    pub_164's stack-168 is one frame offset reused as a Single temp and
+    then a Long pointer temp.
+    """
+    if not votes:
+        return None
+    if votes.get("fixed_str"):
+        return "String * %d" % votes["fixed_str"]
+    for kind in ("store", "for", "load"):
+        items = votes.get(kind) or []
+        if not items:
+            continue
+        counts = {}
+        for vtype, _va, imp, _lbl in items:
+            reg, imp_n = counts.get(vtype, (0, 0))
+            counts[vtype] = (reg + (0 if imp else 1), imp_n + (1 if imp else 0))
+        regular = dict((t, c[0]) for t, c in counts.items() if c[0])
+        pool = regular or dict((t, c[0]) for t, c in counts.items())
+        best = max(pool.values())
+        winners = [t for t, c in pool.items() if c == best]
+        if len(winners) == 1:
+            return winners[0]
+        return None   # tie: honest Variant
+    return None
+
+
+def _deref_param_types(instrs, nargs):
+    """Per-parameter pointee type (or None) from callee-body evidence (#9).
+
+    Under the all-reference ABI a param slot always holds a POINTER: a
+    direct F* load's suffix names the POINTER WIDTH, not the pointee
+    (FLdI4 stack+12 forwards the reference; its I4 is 4 bytes of address),
+    so F* direct loads are no type evidence for ANY param.  Valid
+    evidence: unambiguous derefs (ILdI2/IStI2/ILdR8) and the two look-back
+    string proofs (CStr2Ansi marshaling; CVarRef VT_BYREF type codes).
+    """
+    ev = _slot_evidence(instrs)
+    byref_ok = {"ILdI2", "IStI2", "ILdR8", "CStr2Ansi", "CVarRef"}
+    types = []
+    for i in range(nargs):
+        slot = 12 + 4 * i
+        votes = ev.get(slot)
+        if not votes:
+            types.append(None)
+            continue
+        filtered = {}
+        for category in ("store", "load", "for"):
+            kept = [item for item in (votes.get(category) or [])
+                    if item[3] in byref_ok]
+            if kept:
+                filtered[category] = kept
+        if votes.get("fixed_str"):
+            filtered["fixed_str"] = votes["fixed_str"]
+        types.append(_arbitrate_slot_type(filtered))
+    return types
+
+
+def _hint_majority(hints):
+    """Pick the majority type from a {type: count} table, None on tie."""
+    if not hints:
+        return None
+    best = max(hints.values())
+    winners = [t for t, n in hints.items() if n == best]
+    return winners[0] if len(winners) == 1 else None
+
+
+def _tally_votes(sink, arg_map):
+    """Tally one #9 vote sink into modifier + hint + edge tables (pure).
+
+    sink: {(va, pos): (callee, kind, hint, caller, caller_param_idx)}
+    arg_map: {proc_name: nargs}
+
+    Returns (param_kinds, copy_hints, forwards):
+      param_kinds: {name: ["ByRef"|"ByVal", ...]} -- ANY copy vote wins
+        (a ByRef variable argument must pass the variable's own address,
+        so a value-copy temp is definitive ByVal codegen); body votes
+        lose (identity optimization on read-only ByVal params); no
+        evidence defaults to ByRef (the VB4 source default).
+      copy_hints: {(callee, pos): {type: count}} -- copy idioms type the
+        param by the copied variable's load suffix.
+      forwards: {(callee, pos): set((caller, caller_pos))} -- param-slot
+        pointer forwarding edges for pointee propagation.
+    """
+    kinds_votes = {}
+    copy_hints = {}
+    forwards = {}
+    for (_va, _pos), (callee, kind, hint, caller, src_param) in sink.items():
+        kinds_votes.setdefault((callee, _pos), set()).add(kind)
+        if kind == "copy" and hint:
+            hints = copy_hints.setdefault((callee, _pos), {})
+            hints[hint] = hints.get(hint, 0) + 1
+        if kind == "forward" and src_param is not None:
+            forwards.setdefault((callee, _pos), set()).add(
+                (caller, src_param))
+    param_kinds = {}
+    for name, nargs in arg_map.items():
+        if not nargs:
+            continue
+        param_kinds[name] = [
+            "ByVal" if "copy" in kinds_votes.get((name, i), ())
+            else "ByRef"
+            for i in range(nargs)]
+    return param_kinds, copy_hints, forwards
+
+
+def _propagate_forward_types(param_types, forwards):
+    """Fixpoint pointee-type propagation over forwarding edges (pure).
+
+    An edge (caller, K) -> (callee, M) means the caller forwards its
+    param K's pointer into the callee's param M: both slots name the
+    same pointee, so types flow in BOTH directions (the callee side is
+    often typed directly by its body's derefs while the caller side is
+    only ever forwarded -- pub_132.a0 -> pub_013.a0's ILdI2).  Majority
+    wins; ties stay untyped.  Mutates and returns param_types.
+    """
+    adj = {}
+    for dst, srcs in forwards.items():
+        adj.setdefault(dst, set()).update(srcs)
+        for s in srcs:
+            adj.setdefault(s, set()).add(dst)
+    for _round in range(10):
+        changed = False
+        for node, neighbors in adj.items():
+            if node in param_types:
+                continue
+            cands = {}
+            for n in neighbors:
+                t = param_types.get(n)
+                if t:
+                    cands[t] = cands.get(t, 0) + 1
+            t = _hint_majority(cands)
+            if t:
+                param_types[node] = t
+                changed = True
+        if not changed:
+            break
+    return param_types
+
+
+def collect_param_votes(pal, analysis, procs):
+    """Pass 1 for style-review #9: call-site ABI vote collection.
+
+    Runs the full decompile once with StackMachine vote recording enabled
+    (text is discarded) and tallies the per-(callee, arg-position) push
+    idioms into the modifier + pointee-type tables used by both the disasm
+    params header and the pseudocode signatures:
+
+      - kinds: ANY copy vote (a bare variable value load materialized into
+        a temp via PopTmpLdAd*) proves ByVal -- a ByRef variable argument
+        must pass the variable's own address, so the compiler copying the
+        value into a temp is definitive ByVal codegen.  FLdRfVar/MemLdRf
+        "body" votes are ByRef-compatible but also arise from the
+        compiler's identity optimization on read-only ByVal params, so
+        they lose to copies.  No evidence (leaf procs, MethCallEngine
+        entries, VCall-only callers) defaults to ByRef, the VB4 source
+        default.
+
+      - types: callee-body dereference evidence first (direct, strongest);
+        copy-vote load suffixes fill gaps (the copied variable's type);
+        param-slot forwarding edges then propagate pointee types along the
+        call graph to a fixpoint (both directions: a forwarded pair names
+        one pointee), e.g. pub_132.magicIdx -> pub_013's ILdI2 -> Integer.
+
+    Returns (param_kinds, param_types):
+      param_kinds: {proc_name: ["ByRef"|"ByVal", ...]} indexed by position
+      param_types: {(proc_name, pos): type-or-None}
+    """
+    sink = {}
+    vcall_sink = {}
+    decompile_all(pal, analysis, procs, votes_sink=sink,
+                  vcall_sink=vcall_sink, quiet=True)
+
+    arg_map = _build_arg_map(pal, analysis, procs)
+    param_kinds, copy_hints, forwards = _tally_votes(sink, arg_map)
+
+    # Pointee types: 1) callee-body dereference evidence (direct).
+    param_types = {}
+    for idx, (_ps, _pd, name) in enumerate(procs):
+        nargs = arg_map.get(name, 0)
+        if not nargs:
+            continue
+        try:
+            _start, _end, instrs = build_instrs(pal, analysis, idx)
+        except Exception:
+            continue
+        for i, t in enumerate(_deref_param_types(instrs, nargs)):
+            if t:
+                param_types[(name, i)] = t
+
+    # 2) copy-vote load suffixes fill gaps (the copied variable's type).
+    for key, hints in copy_hints.items():
+        if key not in param_types:
+            t = _hint_majority(hints)
+            if t:
+                param_types[key] = t
+
+    # 3) Forwarding edges propagate pointee types to a fixpoint.
+    _propagate_forward_types(param_types, forwards)
+
+    return param_kinds, param_types, vcall_sink
+
+
+def _build_arg_map(pal, analysis, procs):
+    """Map proc name -> arg count (shared by the vote pass and rendering)."""
+    arg_counts = _build_arg_counts(pal, analysis)
+    return dict((name, arg_counts.get(idx, 0))
+                for idx, (_ps, _pd, name) in enumerate(procs))
+
+
+def _local_dim_lines(instrs, stmts, machine):
+    """Dim lines for local frame slots that render in the output (#6).
+
+    A slot "renders" when its stack-N name appears in a final statement:
+    mechanism slots (For ctl, CStr2Ansi temps, FFree* areas,
+    LitVar_Missing slots, ByRef-call alias out-slots) never do and stay
+    undeclared.  The Function result slot renders as the proc name
+    (_subst_param) and is declared by the signature's As clause.
+    """
+    rendered = set()
+    for stmt in stmts:
+        for m in _STACK_NEG_RE.finditer(stmt.text):
+            rendered.add(-int(m.group(1)))
+    rendered.discard(machine.result_slot)
+    if not rendered:
+        return []
+    ev = _slot_evidence(instrs)
+    # Loop variables: authoritative from the machine (ForI2/ForI4 popped
+    # the very ref the rendered For names).
+    for ref_text, vtype in machine.loop_var_types.items():
+        if ref_text.startswith("stack-"):
+            try:
+                slot = -int(ref_text[len("stack-"):])
+            except ValueError:
+                continue
+            ev.setdefault(slot, {"store": [], "load": [], "for": [],
+                                 "fixed_str": 0})["for"].append(
+                (vtype, 0, False, None))
+    lines = []
+    # Frame slots allocate downward (-134 first): descending numeric
+    # order == declaration order.
+    for slot in sorted(rendered, reverse=True):
+        vtype = _arbitrate_slot_type(ev.get(slot))
+        if vtype:
+            lines.append("    Dim stack%d As %s" % (slot, vtype))
+        else:
+            # No type proof (ByRef-forwarded temp, mixed reuse): a bare
+            # Dim declares Variant, which covers every observed use.
+            lines.append("    Dim stack%d" % slot)
+    return lines
+
+
+def _prepare_proc(pal, analysis, index, name, arg_map, param_kinds=None,
+                  param_types=None, votes_sink=None, vcall_sink=None,
+                  vcall_modes=None):
     """Common per-procedure setup: instrs, signature, configured machine.
 
     Returns (start, end, instrs, sig, keyword, machine, ret_type, name).
@@ -131,22 +508,26 @@ def _prepare_proc(pal, analysis, index, name, arg_map):
     start, end, instrs = build_instrs(pal, analysis, index)
     entry_stub = analysis["method_stubs"].get(end)
 
-    # Classify each param slot ByRef/ByVal using the same rule as the disasm
-    # (word_disasm.classify_params).  The ByRef/ByVal annotation goes directly
-    # into the pseudocode signature here, so remap.py only needs to do plain
-    # name substitution (preserving the prefix) on pal_code.txt.
-    kinds = word_disasm.classify_params([(i.label, i.operand) for i in instrs])[1]
-
-    # Build parameter list and a substitution map for stack+N references.
+    # Param modifiers come from the call-site ABI vote table (#9,
+    # collect_param_votes): under the all-reference ABI the callee's own
+    # I*/F* usage cannot distinguish ByRef/ByVal, so the VOTE pass's
+    # cross-call-site push idioms are authoritative.  No table (unit
+    # tests / procs with no call sites) -> VB4 source default ByRef.
+    # Every param gets an explicit modifier: a bare name means ByRef in
+    # VB4, so omitting it on a ByVal slot would CHANGE the calling
+    # convention on recompile (style review #2).
     nargs = (arg_map or {}).get(name, 0)
+    kinds = (param_kinds or {}).get(name) or []
+    types = [(param_types or {}).get((name, i)) for i in range(nargs)]
     params = []
     param_map = {8: "Me"}   # stack+8 is always the implicit object base
     for i in range(nargs):
         pname = "a%d" % i
-        if i < len(kinds) and kinds[i] == "ByRef":
-            params.append("ByRef " + pname)   # signature: prefix ByRef
-        else:
-            params.append(pname)   # body refs stay plain a0/a1/...
+        kind = kinds[i] if i < len(kinds) else "ByRef"
+        text = ("ByVal " if kind == "ByVal" else "ByRef ") + pname
+        if types[i]:
+            text += " As " + types[i]   # pointee evidence (#7/#9)
+        params.append(text)
         param_map[8 + 4 * (i + 1)] = pname
 
     ret_type = proc_return_kind([i.label for i in instrs])
@@ -161,6 +542,12 @@ def _prepare_proc(pal, analysis, index, name, arg_map):
     machine.arg_map = arg_map or {}
     machine.param_map = param_map
     machine.exit_keyword = "Exit %s" % keyword
+    machine.proc_name = name
+    machine.call_votes = votes_sink
+    # #14: pass 1 records speculative-result liveness per VCall site;
+    # pass 2 replays the collected modes (missing key = push, Function).
+    machine.vcall_sink = vcall_sink
+    machine.vcall_modes = vcall_modes
     if ret_type:
         # VB4 reserves the first local slot (stack-134) for the Function
         # result; render it as the proc name (VB "name = value" semantics).
@@ -251,9 +638,10 @@ def _fold_returns(stmts, label_at_stmt, name, ret_type, exit_keyword):
         k += 1
 
 
-def _render_proc(sig, keyword, stmts, label_at_stmt):
+def _render_proc(sig, keyword, stmts, label_at_stmt, dim_lines=()):
     """Render a statement list into the final pseudocode text."""
     lines = [sig]
+    lines.extend(dim_lines)
     indent = 1
     for i, stmt in enumerate(stmts):
         labels_here = sorted(label_at_stmt.get(i, []))
@@ -471,22 +859,30 @@ def _decompile_cfg(base, exit_addrs, stats):
     stmts, label_at_stmt, st = structuring.structure_proc(
         instrs, start, end, machine, exit_addrs, machine.exit_keyword)
     stats.update(st)
+    # #14 pass-1 closeout: any tagged VCall result still on the eval
+    # stack at proc end was never consumed -> Sub site.
+    machine.settle_vcall_sites()
     stmts, label_at_stmt = _select_case_from_elseif(stmts, label_at_stmt)
     stmts, label_at_stmt = _postprocess_stmts(
         stmts, label_at_stmt, start, end, keyword, name, ret_type,
         machine, exit_addrs)
-    return _render_proc(sig, keyword, stmts, label_at_stmt)
+    dim_lines = _local_dim_lines(instrs, stmts, machine)
+    return _render_proc(sig, keyword, stmts, label_at_stmt, dim_lines)
 
 
 def decompile_proc(pal, analysis, index, name, arg_map=None, exit_addrs=None,
-                   stats_out=None):
+                   stats_out=None, param_kinds=None, param_types=None,
+                   votes_sink=None, vcall_sink=None, vcall_modes=None):
     """Decompile one procedure into VB pseudocode text.
 
     Routes through the CFG/dominator structurer (src/structuring.py).
     StructureUnsupported propagates to the caller; decompile_all isolates
     per-proc failures and emits an error stub instead of aborting the run.
     """
-    base = _prepare_proc(pal, analysis, index, name, arg_map)
+    base = _prepare_proc(pal, analysis, index, name, arg_map,
+                         param_kinds=param_kinds, param_types=param_types,
+                         votes_sink=votes_sink, vcall_sink=vcall_sink,
+                         vcall_modes=vcall_modes)
     start, end, instrs, sig, keyword, _machine, ret_type, _name = base
     if not instrs:
         return "%s\n    ' (empty procedure)\nEnd %s" % (sig, keyword)
@@ -691,27 +1087,44 @@ def _postprocess_stmts(stmts, label_at_stmt, start, end, keyword,
     # "Return <expr>" (semantically identical: store to the result slot
     # + exit).  See _fold_returns for the full rationale.
     _fold_returns(stmts, label_at_stmt, name, ret_type, machine.exit_keyword)
+
+    # Redundant tail exit (style review #4): the standard epilogue's
+    # ExitProcStr renders "Exit Sub"/"Exit Function" as the FINAL
+    # statement; End Sub/End Function already exits, so drop it when no
+    # GoTo targets it.  A label on the statement means something jumps
+    # here (a live GoTo survived _prune_labels above) and the exit must
+    # stay.  Mid-body exits are never last: a fallthrough barrier (e.g.
+    # a Select no-match leg) always precedes its closing End Select, so
+    # dropping only the last statement cannot remove a barrier.
+    if (stmts and stmts[-1].text == machine.exit_keyword
+            and stmts[-1].indent_delta == 0
+            and not label_at_stmt.get(len(stmts) - 1)):
+        stmts.pop()
     return stmts, label_at_stmt
 
 
-def decompile_all(pal, analysis, procs):
+def decompile_all(pal, analysis, procs, param_kinds=None, param_types=None,
+                  votes_sink=None, vcall_sink=None, vcall_modes=None,
+                  quiet=False):
     """Decompile all procedures.  Returns full text.
 
     Each procedure is isolated: an exception in one proc emits an error
     stub instead of aborting the whole run, and a per-structuring summary
-    is printed to stdout (path counts + goto stats).
+    is printed to stdout (path counts + goto stats).  votes_sink enables
+    #9 call-idiom recording on every machine (pass 1); param_kinds /
+    param_types inject the voted modifiers/pointee types (pass 2).  quiet
+    suppresses the stdout summary (used by the vote pass, whose text is
+    discarded).  #14: vcall_sink collects per-site speculative-result
+    liveness (pass 1); vcall_modes replays it (pass 2).
     """
-    arg_counts = _build_arg_counts(pal, analysis)
-    # Map proc name -> arg_count.
-    arg_map = {}
-    for idx, (_ps, _pd, name) in enumerate(procs):
-        arg_map[name] = arg_counts.get(idx, 0)
+    arg_map = _build_arg_map(pal, analysis, procs)
     exit_addrs = _build_exit_addrs(analysis)
     out = []
     out.append("VB4 p-code decompilation (VB-style pseudocode)")
     out.append("Procedures: %d\n" % len(procs))
     path_counts = {}
     goto_total = 0
+    audit_bad = []
     errors = []
     import traceback
     for idx, (_ps, _pd, name) in enumerate(procs):
@@ -719,7 +1132,12 @@ def decompile_all(pal, analysis, procs):
         try:
             text = decompile_proc(pal, analysis, idx, name,
                                   arg_map=arg_map, exit_addrs=exit_addrs,
-                                  stats_out=stats)
+                                  stats_out=stats,
+                                  param_kinds=param_kinds,
+                                  param_types=param_types,
+                                  votes_sink=votes_sink,
+                                  vcall_sink=vcall_sink,
+                                  vcall_modes=vcall_modes)
             path = stats.get("path", "cfg")
         except Exception as e:  # per-proc isolation: keep decompiling
             path = "error"
@@ -732,11 +1150,18 @@ def decompile_all(pal, analysis, procs):
             text += "' " + "=" * 66
         path_counts[path] = path_counts.get(path, 0) + 1
         goto_total += stats.get("gotos", 0)
+        for v in stats.get("edge_audit", []) or []:
+            audit_bad.append("%s: %s" % (name, v))
         out.append(text)
         out.append("")
     summary = ["Structurer summary: %s" % ", ".join(
         "%s=%d" % kv for kv in sorted(path_counts.items()))]
     if goto_total:
         summary.append("explicit gotos: %d" % goto_total)
-    print(" | ".join(summary))
+    summary.append("edge audit: %s" % ("clean" if not audit_bad
+                                       else "%d VIOLATIONS" % len(audit_bad)))
+    if not quiet:
+        print(" | ".join(summary))
+        for v in audit_bad:
+            print("  EDGE-AUDIT %s" % v, file=sys.stderr)
     return "\n".join(out)

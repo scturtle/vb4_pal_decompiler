@@ -33,6 +33,9 @@ def run(instrs, proc_start, proc_end, exit_addrs=None):
     stmts, label_at_stmt, stats = structuring.structure_proc(
         instrs, proc_start, proc_end, machine, exit_addrs or set(),
         "Exit Sub")
+    # #19 gate: synthetic cases must pass the edge audit (every
+    # implicit fall/defer edge reaches its target cleanly)
+    assert not stats.get("edge_audit"), stats["edge_audit"]
     texts = [s.text for s in stmts]
     return texts, label_at_stmt, stats, machine
 
@@ -1090,7 +1093,8 @@ class RegressionFixTest(unittest.TestCase):
             "Loop",
             "stack-108 = 3",
             "Exit Sub",
-            "' ---- unreachable p-code ----",
+            # #18: the dangling marker is gone -- the unreachable set
+            # held only bare Branch trampolines, no rendered block.
         ])
         self.assertEqual(labels, {})
         self.assertEqual(stats["gotos"], 0)
@@ -1152,7 +1156,7 @@ class RegressionFixTest(unittest.TestCase):
             "Loop",
             "stack-108 = 3",         # the tail, once, after the loops
             "Exit Sub",
-            "' ---- unreachable p-code ----",
+            # #18: dangling marker suppressed (tramp-only unreachable)
         ])
         # The restart GoTo labels the outer Do line.
         self.assertEqual(labels, {0: [0x6000]})
@@ -1202,7 +1206,7 @@ class RegressionFixTest(unittest.TestCase):
             "End If",
             "stack-104 = 2",
             "Loop",
-            "' ---- unreachable p-code ----",
+            # #18: dangling marker suppressed (tramp-only unreachable)
         ])
         self.assertNotIn("Exit Do", texts)
         self.assertEqual(stats["exits"], 2)
@@ -1269,8 +1273,9 @@ class RegressionFixTest(unittest.TestCase):
             "End If",
             "stack-106 = 5",
             "Loop",
-            "' ---- unreachable p-code ----",
-            "Exit Sub",
+            # #18: the dead ExitProcStr tail is suppressed -- its only
+            # render is the exit keyword, which the writer drops as a
+            # trailing exit (#4), leaving a dangling marker.
         ])
         self.assertNotIn("Exit Do", texts)
         self.assertEqual(stats["exits"], 0)
@@ -1992,6 +1997,61 @@ class ConditionScannerTest(unittest.TestCase):
         self.assertFalse(structuring._has_top_cmp('f("= 1")'))
         # the top-level Or is still seen (quote- and paren-aware)
         self.assertIsNone(structuring._invert_cmp('f("a)b") Or c'))
+
+    def test_interior_mutual_cycle_region_structures_as_nested_loop(self):
+        # #18: a loop-interior region whose blocks form a MUTUAL pred
+        # cycle (R1 -> R2 fall, R2 -> R2b -> R1) is a natural inner
+        # loop -- the walk structures it as a nested Do inside the
+        # outer loop's arm.  Nothing hoists after the outer Loop and
+        # no GoTo survives: the region renders INSIDE, address-ordered.
+        instrs = [
+            I(0x6000, "LitI2", "val=1", size=2),
+            I(0x6002, "FStI2", "mem=stack-100", size=4),   # h: x = 1
+            I(0x6006, "FLdI2", "mem=stack-102", size=4),
+            I(0x600A, "LitI2", "val=0", size=2),
+            I(0x600C, "EqI2", size=2),
+            I(0x600E, "BranchF", "to=00006040", size=4),   # c<>0 -> R1
+            I(0x6012, "LitI2", "val=2", size=2),
+            I(0x6014, "FStI2", "mem=stack-104", size=4),   # body: y = 2
+            I(0x6018, "FLdI2", "mem=stack-110", size=4),
+            I(0x601C, "LitI2", "val=0", size=2),
+            I(0x601E, "EqI2", size=2),
+            I(0x6020, "BranchF", "to=00006030", size=4),   # d<>0 -> exit
+            I(0x6024, "Branch", "to=00006000", size=4),    # spine backedge
+            I(0x6030, "Branch", "to=00006060", size=4),    # exit tramp
+            # interior region R1 (only the c<>0 branch enters it)
+            I(0x6040, "LitI2", "val=3", size=2),
+            I(0x6042, "FStI2", "mem=stack-106", size=4),   # z = 3
+            # R2: preds = {R1 (fall), R2b (Branch)} -- mutual cycle
+            I(0x6046, "FLdI2", "mem=stack-108", size=4),
+            I(0x604A, "LitI2", "val=0", size=2),
+            I(0x604C, "EqI2", size=2),
+            I(0x604E, "BranchF", "to=00006054", size=4),   # w<>0 -> R2b
+            I(0x6052, "Branch", "to=00006000", size=4),    # w=0: restart
+            I(0x6054, "Branch", "to=00006040", size=4),    # R2b: cycle
+            I(0x6060, "ExitProcStr", size=2),
+        ]
+        texts, labels, stats, _m = run(instrs, 0x6000, 0x6062, {0x6060})
+        self.assertEqual(texts, [
+            "Do",
+            "stack-100 = 1",
+            "If stack-102 <> 0 Then",
+            "Do",                       # <- inner loop, INSIDE the arm
+            "stack-106 = 3",
+            "Loop Until stack-108 = 0",
+            "GoTo L_00006052",          # <- #19: the arm's fall into the
+            "End If",                   #    latch renders explicitly --
+            "stack-104 = 2",            #    the If's fall-through owns
+            "If stack-110 <> 0 Then",   #    the position after End If
+            "Exit Sub",
+            "End If",
+            "Continue Do",              # <- spine restart, in place
+            "Loop",
+        ])
+        # The latch label anchors the GoTo (labels the Loop closer).
+        self.assertIn(0x6052, labels.get(6, []) + sum(labels.values(), []))
+        self.assertEqual(stats["loops"], 2)
+        self.assertEqual(stats["gotos"], 1)
 
 
 if __name__ == "__main__":

@@ -3,44 +3,22 @@
 独立的 `PAL.EXE -> pal_code.txt` VB4 p-code 逆向工程项目。核心解码依赖带 NB09
 CodeView 信息的 `VB40032.DLL`，详细逆向结论统一见 `docs/vb40032.md`。
 
-## 目录
-
-- `input/PAL.EXE`：待分析的 VB4-32 p-code 程序
-- `input/VB40032.DLL`：word-pcode dispatcher 与 CodeView handler 名称来源
-- `input/mapping.json`：匿名过程、变量和 PAL API 的可读名称映射
-- `input/output_hashes.json`：三个文本产物的 SHA-256 基准
-- `src/`：运行代码和名称映射
-- `docs/vb40032.md`：VB40032/PAL p-code 逆向说明
-- `out/`：反汇编、伪代码和最终代码
-
 ## 运行
-
-在项目根目录执行：
 
 ```bash
 uv sync
 uv run run_pipeline.py
 ```
 
-流水线按顺序执行：
+流水线：扫描 ProcDsc 恢复过程边界 → 用 `VB40032.DLL` 恢复 word-pcode →
+解析模块声明流，补出数组边界、标量与 UDT 字段类型（`src/decl_stream.py`、
+`src/struct_types.py`）→ 栈机 + CFG 结构化器生成 VB 风格伪代码：参数
+ByRef/ByVal 与 pointee 类型由调用点压栈习语投票推断（全引用 ABI，
+两遍流水线），过程头部发射局部 `Dim` 块（`src/stack_ir.py`、
+`src/pseudo_code.py`、`src/structuring.py`）→ 按 `input/mapping.json` 重映射名称（仅替换，
+无推断）→ 校验 `out/pal_*.txt` 的 SHA-256。
 
-1. 扫描 ProcDsc，恢复 PAL 的过程边界；
-2. 使用 `VB40032.DLL` 恢复 16-bit word-pcode 指令；
-3. 解析模块声明流（`src/decl_stream.py`），恢复模块级数组的真实边界
-   与元素类型，写入反汇编头部、行内注释和伪代码声明块；依据字段访问
-   opcode（`Mem*` 后缀：I2/UI1/R4/…）推断 UDT 字段类型，在伪代码声明块
-   里展开为槽位级匿名类型 `UDT_fXXXX` 的 `Type ... End Type` 声明
-   （`src/struct_types.py`）；
-4. 用栈机生成 VB 风格伪代码。控制流走 CFG 结构化器
-   （`src/structuring.py`：基本块 CFG、Cooper-Harvey-Kennedy 支配树、
-   后支配树 join、SCC 循环分析 → While/Do/For/If-Else/Select Case；
-   不支持的结构抛 `StructureUnsupported`，按过程输出错误桩并计数）；
-5. 使用 `input/mapping.json` 重映射名称（仅替换，无推断）：结构体名
-   → 帕斯卡命名（首字母大写），`fXXXX` 字段 → 语义字段名，同名结构体
-   只保留首个 Type 块；
-6. 校验 `out/pal_*.txt` 的 SHA-256。
-
-可覆盖输入和输出路径。使用自定义输出目录时，同时指定对应的 hash 文件：
+可覆盖输入输出路径（自定义输出目录时同时指定 hash 文件）：
 
 ```bash
 uv run run_pipeline.py \
@@ -51,14 +29,8 @@ uv run run_pipeline.py \
   --hashes input/output_hashes.json
 ```
 
-也可单独执行：
-
-```bash
-uv run src/main.py
-uv run src/remap.py
-uv run src/check_outputs.py
-uv run src/word_probe.py
-```
+也可单独执行 `src/main.py`、`src/remap.py`、`src/check_outputs.py`、
+`src/word_probe.py`。
 
 有意改变输出内容后，检查 diff 无误再更新基准：
 

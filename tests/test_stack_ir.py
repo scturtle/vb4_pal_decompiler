@@ -465,17 +465,108 @@ class LitVarI2MalformedTest(unittest.TestCase):
 
 
 class FLdPrTest(unittest.TestCase):
-    def test_fldprthis_pushes_me_not_dash(self):
+    def test_fldprthis_sets_receiver_not_stack(self):
+        # #14: FLdPrThis copies [ebp+8] into the [ebp-0x50] receiver
+        # register (handler-verified) -- it never touches the eval stack.
         sm = machine()
         sm.process(Instr(0x1000, "FLdPrThis", "-"))
-        self.assertEqual([e.text for e in sm.stack], ["Me"])
+        self.assertEqual(sm.receiver, "Me")
+        self.assertEqual([e.text for e in sm.stack], [])
 
-    def test_fldpr_keeps_slot_and_dash_falls_back_to_me(self):
+    def test_fldprthis_vcall_uses_receiver(self):
+        sm = machine()
+        sm.process(Instr(0x1000, "FLdPrThis", "-"))
+        sm.process(Instr(0x1004, "VCallHresult", "vcall=0038@00403180"))
+        self.assertEqual([e.text for e in sm.stack], ["Me.method_0038()"])
+
+    def test_fldpr_sets_receiver_not_stack(self):
+        # #16: FLdPr loads the frame-slot object into the [ebp-0x50]
+        # receiver register (handler: mov eax,[ebp+off]; mov
+        # [ebp-0x50],eax) -- it never touches the eval stack.  All 3 PAL
+        # uses feed a LateIdLdVar invoke.
         sm = machine()
         sm.process(Instr(0x1000, "FLdPr", "mem=stack-136"))
-        self.assertEqual([e.text for e in sm.stack], ["stack-136"])
-        sm.process(Instr(0x1004, "FLdPr", "-"))
-        self.assertEqual([e.text for e in sm.stack], ["stack-136", "Me"])
+        self.assertEqual(sm.receiver, "stack-136")
+        self.assertEqual([e.text for e in sm.stack], [])
+
+    def test_fldpr_dash_falls_back_to_me(self):
+        sm = machine()
+        sm.process(Instr(0x1000, "FLdPr", "-"))
+        self.assertEqual(sm.receiver, "Me")
+        self.assertEqual([e.text for e in sm.stack], [])
+
+    def test_late_id_ld_var_aliases_slot_for_inline_render(self):
+        # #16: LateIdLdVar = zero-argument IDispatch::Invoke member get
+        # (entry hardcodes ebx=0 -- the argument count; the worker issues
+        # Invoke(obj, dispid, IID_NULL, ctx, 3, {NULL,0}, &slot, ...) so
+        # the result VARIANT lands straight in the mem= slot).  The slot
+        # is aliased so the consuming FLdRfVar renders the get inline.
+        sm = machine()
+        sm.process(Instr(0x1000, "FLdPr", "mem=stack-136"))
+        sm.process(Instr(0x1004, "LateIdLdVar",
+                         "mem=stack-152 id=00010001"))
+        self.assertEqual([s.text for s in sm.statements], [])
+        sm.process(Instr(0x1008, "FLdRfVar", "mem=stack-152"))
+        self.assertEqual([e.text for e in sm.stack],
+                         ["stack-136.lateid_00010001"])
+
+    def test_late_id_ld_var_without_receiver_uses_me(self):
+        self.assertEqual(
+            run([Instr(0x2000, "LateIdLdVar", "mem=stack-152 id=00010000"),
+                 Instr(0x2004, "FLdRfVar", "mem=stack-152")]),
+            ["Me.lateid_00010000"])
+
+    def test_late_id_ld_var_no_eval_effect(self):
+        # Zero-argument get: the pending value below must survive for the
+        # NEXT call's drain (the runtime pops nothing: add esp, ebx*16
+        # with ebx=0; the continuation pushes &slot and PopAd discards
+        # it -- net zero).
+        sm = machine()
+        sm.push("pending_result")
+        sm.process(Instr(0x1000, "LateIdLdVar", "mem=stack-152 id=00010001"))
+        self.assertEqual([e.text for e in sm.stack], ["pending_result"])
+
+    def test_late_id_ld_var_second_get_overwrites_alias(self):
+        # priv_092 reuses stack-152 (freed between sites): the second get
+        # must replace the alias, not stack the renders.
+        sm = machine()
+        sm.process(Instr(0x1000, "FLdPr", "mem=stack-136"))
+        sm.process(Instr(0x1004, "LateIdLdVar", "mem=stack-152 id=00010001"))
+        sm.process(Instr(0x1008, "FLdPr", "mem=stack-156"))
+        sm.process(Instr(0x100C, "LateIdLdVar", "mem=stack-152 id=00010000"))
+        sm.process(Instr(0x1010, "FLdRfVar", "mem=stack-152"))
+        self.assertEqual([e.text for e in sm.stack],
+                         ["stack-156.lateid_00010000"])
+
+    def test_pop_ad_is_silent_and_zero_effect(self):
+        # #16: PopAd's handler is a bare `add esp,4` (native rebalance) --
+        # no eval-stack effect, no statement.  Its 3 PAL uses are all the
+        # LateIdLdVar idiom tail; PopAdLdVar (a different opcode) keeps
+        # its plumbing role.
+        sm = machine()
+        sm.push("a")
+        sm.process(Instr(0x1000, "PopAd", "-"))
+        self.assertEqual([e.text for e in sm.stack], ["a"])
+        self.assertEqual([s.text for s in sm.statements], [])
+
+    def test_open_flags_render_vb4_syntax(self):
+        # #17: flags u16 = mode | (access << 8) | (share << 12);
+        # 0x0104 = For Random + Access Read (handler-verified).
+        self.assertEqual(
+            run([Instr(0x1000, "LitStr", "text='WORD.DAT'"),
+                 Instr(0x1002, "LitI2", "val=2"),
+                 Instr(0x1004, "LitI2", "val=10"),
+                 Instr(0x1006, "Open", "flags=0104")]),
+            ["Open 'WORD.DAT' For Random Access Read As #2 Len = 10"])
+
+    def test_open_unknown_flags_stay_visible(self):
+        # Unknown mode/access/share codes must not silently vanish.
+        self.assertEqual(
+            run([Instr(0x1000, "LitStr", "text='X'"),
+                 Instr(0x1002, "LitI2", "val=1"),
+                 Instr(0x1004, "LitI2", "val=0"),
+                 Instr(0x1006, "Open", "flags=8107")]),
+            ["Open 'X' For ?07 Access Read ' lock=8 As #1"])
 
 
 class RedimMalformedTest(unittest.TestCase):
@@ -561,7 +652,10 @@ class LabelOperandRenderTest(unittest.TestCase):
                          ["# Bogus x=1"])
 
     def test_stmt_no_trailing_space(self):
-        self.assertEqual(run([Instr(0x1000, "AryLock", "-")]), ["AryLock"])
+        # AryLock is now a suppressed lifecycle opcode (#12: no statement);
+        # the '-' sentinel trimming stays covered via the opaque fallback.
+        self.assertEqual(run([Instr(0x1000, "AryLock", "-")]), [])
+        self.assertEqual(run([Instr(0x1000, "Bogus", "-")]), ["# Bogus"])
 
 
 class NoReturnCallTest(unittest.TestCase):

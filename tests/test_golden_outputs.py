@@ -92,16 +92,18 @@ class GoldenFixTest(unittest.TestCase):
         after = " ".join(text[text.index("L_004160E6:"):].split())
         self.assertIn("If stack-198 <> 1 Then GoTo L_004160F6 "
                       "End If", after)
-        self.assertIn("GoTo L_004160F2", after)
+        # #18: the m = 1 dispatch test region renders INSIDE the outer
+        # loop, address-ordered before the Loop close -- its fall-through
+        # IS the loop's own backedge, so the explicit GoTo L_004160F2 and
+        # the label are gone (the fold that once dropped it needed the
+        # trampoline visible; the interior placement makes the edge the
+        # Loop closer itself).
+        self.assertEqual(after, "L_004160E6: If stack-198 <> 1 Then "
+                         "GoTo L_004160F6 End If Loop End Sub")
+        self.assertNotIn("L_004160F2", text)
         self.assertIn("L_004160F6:", text)
-        # The restart edge now routes through the outer latch trampoline
-        # (GoTo the labeled Loop closer = continue); nothing jumps the
-        # header directly anymore, so the header needs no label and
-        # L_004160F2 labels the OUTERMOST Loop closer.
+        # Nothing jumps the header directly, so the header needs no label.
         self.assertNotIn("L_00415B1C:", text)
-        i = text.index("L_004160F2:")
-        self.assertTrue(text[i:].startswith("L_004160F2:\n    Loop"),
-                        "L_004160F2 must label the outer Loop closer")
 
     # ---- pub_167: case-9 join-exit fold polarity -------------------------
     def test_pub167_case9_fold_polarity(self):
@@ -118,8 +120,12 @@ class GoldenFixTest(unittest.TestCase):
         self.assertIn("If Me.f07DC(a0).f001E >= stack-140 Then "
                       "Me.f07DC(a0).f001E = 0 Exit Do End If "
                       "Exit Sub", flat)
-        # the shared tail renders once after the Loop, label-free
-        self.assertIn("Loop a1 = pub_009_0040345C(a1) Exit Sub", flat)
+        # the shared tail renders once after the Loop, label-free; the
+        # trailing Exit Sub is dropped at the implicit proc exit (#18:
+        # it used to survive because the dangling unreachable marker
+        # sat between it and End Sub)
+        self.assertIn("Loop a1 = pub_009_0040345C(a1) End Sub", flat)
+        self.assertNotIn("unreachable", flat)
         self.assertNotIn("L_004102CE", flat)
 
     # ---- pub_137: local diamond join folds after the End If --------

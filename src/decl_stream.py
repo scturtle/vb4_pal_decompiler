@@ -57,7 +57,18 @@ DEFAULT_STREAM_VA = 0x00401A7C
 _SCALAR_SUFFIX = {
     "I2": "Integer", "I4": "Long", "UI1": "Byte",
     "R4": "Single", "R8": "Double", "Cy": "Currency",
+    "FPR4": "Single", "FPR8": "Double",
 }
+
+# 声明记录在实例数据区的足迹（相邻记录 offset 之差互证：1D=0x18 / 2D=0x20 /
+# 3D=0x28）。动态数组记录 f01F8 的下一记录 f020C 相距 0x14，其中段
+# f01FC 是标量 max_subfile_size（FMemStI4 存 Long、ImpAdStR4 零初始化），
+# 证明动态数组足迹仅 4 字节（SAFEARRAY 指针槽）；对象引用足迹 8 字节
+# （payload 6 字节 + 对齐，末记录 f086C 止于 0x874，0x878 起为窗体控件
+# COM 槽位区，不在声明流内）。
+_FIXED_FOOTPRINT = {1: 0x18, 2: 0x20, 3: 0x28}
+_DYNAMIC_FOOTPRINT = 4
+_OBJECT_FOOTPRINT = 8
 
 # Ary*Pr/Rf 之后紧跟的 MemLd*/MemSt* 标签 → 标量类型（元素仅 +0 字段时）。
 _MEM_SCALAR = {
@@ -115,6 +126,7 @@ class DeclStream(object):
         self.records = records
         self.by_offset = dict((r.off, r) for r in records)
         self.usage = {}    # resolve_types() 之后有效：元素访问证据
+        self.scalars = []  # set_scalars() 之后有效：[(off, vb_type|None)]
 
     # -- 类型解析 -----------------------------------------------------------
 
@@ -128,6 +140,35 @@ class DeclStream(object):
             if rec.kind != KIND_FIXED:
                 continue
             rec.elem_type = self._elem_type(rec, self.usage)
+
+    def set_scalars(self, scalar_usage):
+        """scalar_usage = scan_scalar_usage() 的结果；解析后
+        self.scalars = [(off, vb_type_or_None), ...]（升序）。
+
+        VB4 声明流不为简单标量发记录（见模块 docstring），但代码引用的
+        槽位中未被任何记录足迹覆盖的部分就是标量：按 FMem*/ImpAd 访问
+        后缀推类型后发射 Dim，Option Explicit 下即可编译（style review
+        #1）。
+        """
+        covered = []
+        for rec in self.records:
+            if rec.kind == KIND_FIXED:
+                size = _FIXED_FOOTPRINT.get(rec.c_dims, 0x18)
+            elif rec.kind == KIND_DYNAMIC:
+                size = _DYNAMIC_FOOTPRINT
+            else:
+                size = _OBJECT_FOOTPRINT
+            covered.append((rec.off, rec.off + size))
+        scalars = []
+        for off in sorted(scalar_usage):
+            if any(lo <= off < hi for lo, hi in covered):
+                continue
+            if off >= self.data_size:
+                # 0x878 起为窗体控件 COM 槽位区（ImpAdLdPr + VCallHresult，
+                # vb_com_object_1/2）：不属于实例数据区，不发声明。
+                continue
+            scalars.append((off, _arbitrate_scalar_type(scalar_usage[off])))
+        self.scalars = scalars
 
     @staticmethod
     def _elem_type(rec, usage):
@@ -177,6 +218,12 @@ class DeclStream(object):
             "' " + "-" * 74,
             "' 模块级声明（VB4 声明流 @ 0x%08X，%d 条记录，实例数据区 0x%X 字节）"
             % (self.va, len(self.records), self.data_size),
+            "' 标量槽位：声明流不为简单标量发记录，此处由代码引用扫描补出"
+            "（src/decl_stream.py scan_scalar_usage）：",
+            "' 未被数组/对象记录足迹覆盖的引用槽位，按 FMemLd/St、ImpAdLd/St"
+            " 后缀推类型（I2=Integer、I4=Long、R4=Single…）；",
+            "' 冲突时多数表决，ImpAd 证据（5 条零初始化，后缀偏宽）输平局；",
+            "' 0x878 起的窗体控件 COM 槽位区不在此列。",
             "' 数组边界来自 EXE 内嵌 SAFEARRAY 描述符模板（src/decl_stream.py）；",
             "' kind=0x0005 固定数组 / 0x0105 动态数组（运行期 ReDim）/ 0x0004 对象引用。",
             "' 描述符 bounds[0] 对应源码最后一个下标（ExDerefAry 列主序），此处已按源码顺序还原。",
@@ -186,6 +233,14 @@ class DeclStream(object):
             "' 与元素大小的空洞补 fXXXX 占位；重映射后为帕斯卡结构体名与语义字段名。",
             "' " + "-" * 74,
         ]
+        if self.scalars:
+            for off, vtype in self.scalars:
+                if vtype:
+                    lines.append("Dim Me.f%04X As %s" % (off, vtype))
+                else:
+                    # 无类型证据（仅引用推送）：Variant 兜底。
+                    lines.append("Dim Me.f%04X" % off)
+            lines.append("")
         for rec in self.records:
             if rec.kind == KIND_FIXED:
                 if self._UDT_TYPE_RE.match(rec.elem_type or ""):
@@ -419,6 +474,104 @@ def scan_element_usage(pal, analysis):
                     analysis["stub_names"], analysis["declares"], pal)
             decoded.append((label, operand))
         _scan_usage(decoded, usage)
+    return usage
+
+
+# ---------------------------------------------------------------------------
+# 模块级标量槽位扫描（style review #1）
+# ---------------------------------------------------------------------------
+
+_MEM_FIELD_RE = re.compile(r"mem=stack\+8\.f([0-9A-F]{4})")
+_GLOBAL_RE = re.compile(r"global=([0-9A-F]{8})")
+
+
+def _arbitrate_scalar_type(votes):
+    """多数表决选一个 VB 类型；无证据/平局返回 None。
+
+    votes = {"store": [(type, va, imp)], "load": [...]}（imp 标记 ImpAd*
+    证据）。存储opcode定义槽位内容，优先；ImpAd 证据输平局 —— 全程序仅
+    有的 5 条 ImpAd 存储是 Form_Load 零初始化，后缀偏宽（如
+    screen_buffer_ptr=0 的 f02A4 用 R4 存指针槽，16 条 FMemStI4 才是真身；
+    max_subfile_size f01FC 的 FMemStI4 战胜 ImpAdStR4）。
+    """
+    for kind in ("store", "load"):
+        items = votes.get(kind) or []
+        if not items:
+            continue
+        counts = {}
+        for vtype, _va, imp in items:
+            reg, imp_n = counts.get(vtype, (0, 0))
+            counts[vtype] = (reg + (0 if imp else 1), imp_n + (1 if imp else 0))
+        regular = dict((t, c[0]) for t, c in counts.items() if c[0])
+        pool = regular or dict((t, c[0]) for t, c in counts.items())
+        best = max(pool.values())
+        winners = [t for t, c in pool.items() if c == best]
+        if len(winners) == 1:
+            return winners[0]
+        return None   # 平局：Variant 兜底
+    return None
+
+
+def scan_scalar_usage(pal, analysis):
+    """扫描全部过程，收集模块级标量槽位的类型证据。
+
+    返回 {field_off: {"store": [(vb_type, va, imp)], "load": [...]}}。
+
+    - ``mem=stack+8.fXXXX``（FMem*）与 ``global=XXXX``（ImpAd*）同基址
+      （docs/vb40032.md「ImpAd 与 FMem 的同基址等价」）；
+    - 数值后缀（I2/I4/R4/R8/UI1/Cy/FPR4/FPR8）给出类型投票；
+    - FMemLd4/ImpAdLd4（原 CodeView 名 FMemLdStr/ImpAdLdStr，#13 改中性名）
+      不计证据：无数值后缀可匹配——PAL 中它们为 Declare 调用压 4 字节
+      句柄/指针（fh_* 文件句柄、screen_buffer_ptr），并非 BSTR 字段；
+    - 引用推送（FMemLdRf/FMemLdRfVar/ImpAdLdRf/Pr/Var）同样无类型信息
+      （被覆盖的数组基址/对象引用槽位由记录足迹排除）。
+    """
+    import word_disasm
+
+    entries = analysis["entries"]
+    labels = analysis["labels"]
+
+    def label_of(opcode):
+        target = entries.get(opcode, 0)
+        label = labels.get(target, "")
+        if label.startswith("lblEX_"):
+            label = label[len("lblEX_"):]
+        if label == "LitI2_10":
+            label = "LitI2"
+        return label
+
+    usage = {}
+    for start, end, path in analysis["paths"]:
+        for pos, opcode, size, _fallback in path:
+            label = label_of(opcode)
+            if not (label.startswith(("FMemLd", "FMemSt", "ImpAdLd",
+                                     "ImpAdSt"))):
+                continue
+            raw = pal.bytes_at(pos, size)
+            operand = word_disasm.special_operand(opcode, raw)
+            if operand is None:
+                operand = word_disasm.format_operand(
+                    opcode, label, raw, start,
+                    analysis["stub_names"], analysis["declares"], pal)
+            vtype = None
+            for suf, t in _SCALAR_SUFFIX.items():
+                if label.endswith(suf):
+                    vtype = t
+                    break
+            off = None
+            m = _MEM_FIELD_RE.match(operand or "")
+            if m:
+                off = int(m.group(1), 16)
+            else:
+                m = _GLOBAL_RE.match(operand or "")
+                if m:
+                    off = int(m.group(1), 16)
+            if off is None or vtype is None:
+                continue
+            kind = "store" if label.startswith(("FMemSt", "ImpAdSt")) \
+                else "load"
+            votes = usage.setdefault(off, {"store": [], "load": []})
+            votes[kind].append((vtype, pos, label.startswith("ImpAd")))
     return usage
 
 

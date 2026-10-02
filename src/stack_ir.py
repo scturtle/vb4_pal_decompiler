@@ -69,6 +69,12 @@ _NEG_PAREN_OPS = (
     " Eqv ", " Imp ", " & ", " = ", " < ", " > ", " <= ", " >= ", " <> ",
 )
 
+# A bare numeric literal (LitI2/LitI4/LitR4/LitR8 text).  Used to drop the
+# compiler's implicit CSng promotions on literals feeding Single operators.
+_PURE_LIT_RE = re.compile(
+    r"-?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$")
+
+
 def _has_top_level_binary_op(text):
     """True if text has a depth-0 infix operator (needs parens after -).
 
@@ -288,15 +294,14 @@ LOAD_LABELS = {
     "LitStr", "LitVarStr", "LitDate",
     "FLdI2", "FLdI4", "FLdR4", "FLdR8", "FLdFPR4", "FLdFPR8", "FLdUI1",
     "ILdI2", "ILdI4", "ILdR8",
-    "FMemLdI2", "FMemLdI4", "FMemLdR4", "FMemLdR8", "FMemLdStr",
+    "FMemLdI2", "FMemLdI4", "FMemLdR4", "FMemLdR8", "FMemLd4",
     "LitVarI2", "LitVar_Missing",
     "FLdRfVar", "FLdZeroAd",
     # ByRef field loads: push the address reference (call/array base).
     "FMemLdRf", "FMemLdRfVar", "FLdRf",
-    "ImpAdLdRf", "ImpAdLdPr",
+    "ImpAdLdRf",
     "ImpAdLdI2", "ImpAdLdI4", "ImpAdLdR4", "ImpAdLdR8", "ImpAdLdCy",
-    "ImpAdLdStr", "ImpAdLdVar",
-    "FLdPr", "FLdPrThis",
+    "ImpAdLd4", "ImpAdLdVar",
 }
 
 # Array element load: pop 2 (index + arrayref), push 1.
@@ -374,10 +379,21 @@ RUNTIME_SPECS = {
     "VB40032.rtcBstrFromAnsi": 1,
 }
 
-# rtcBstrFromAnsi builds a BSTR from one ANSI code == Chr$(code); all three
-# PAL.EXE sites build Chr(48 + n) & ".RPG" filenames.
+# VB built-in renderings for VB40032 runtime helpers (name mapping only;
+# push order is already source order -- TOS=ARG1 -- so the arg list carries
+# over verbatim).  rtcBstrFromAnsi builds a BSTR from one ANSI code ==
+# Chr(code); rtcAnsiValueBstr is its inverse == Asc; rtcStrFromVar == Str.
+# Deliberately NOT rendered (kept as raw VB40032 names for disasm
+# traceability, per follow-up decision): rtcRandomNext (=Rnd, 59 sites),
+# rtcGetTimer (=Timer), rtcMsgBox (=MsgBox), rtcRandomize (=Randomize),
+# rtcDoEvents (=DoEvents) -- they render verbatim as e.g.
+# "VB40032.rtcRandomNext()" / "Call VB40032.rtcRandomize(tmp)"
+# (RUNTIME_SPECS still supplies their arg counts and trailing <missing>
+# filtering).
 RUNTIME_RENDER = {
     "VB40032.rtcBstrFromAnsi": "Chr",
+    "VB40032.rtcAnsiValueBstr": "Asc",
+    "VB40032.rtcStrFromVar": "Str",
 }
 
 # Runtime helpers with a ByRef output slot (pushed last via FLdRfVar).  The
@@ -425,6 +441,39 @@ VCALL_LABELS = {"VCallHresult", "VCallI2", "VCallI4", "VCallAd",
                  "ThisVCallHresult", "ThisVCallI2", "ThisVCallI4",
                  "ThisVCallAd"}
 
+# #14: the VCall receiver chain walks the interpreter's [ebp-0x50]
+# "current object" register -- handler-verified, it never touches the
+# eval stack:
+#   FLdPrThis:    mov eax,[ebp+8]; mov [ebp-0x50],eax   (no push)
+#   ImpAdLdPr:    native-stack chain feeding the register
+#   MemLdRf:      edi = [ebp-0x50] + off; push edi       (NATIVE push,
+#                 popped by the next NewIfNull*, not an eval push)
+#   NewIfNullPr/Ad: pop the native ref, null-check/create, set the register
+#   FStAdNoPop:   side-store the register object into a frame temp
+#                 (kept alive for a later FFree1Ad; never rendered)
+# So the receiver is NEVER an eval-stack argument: the chain ops below
+# maintain machine.receiver as an expression and push nothing, and VCall
+# drains the eval stack for exactly the pushed arguments.  The VCallHresult
+# handler itself pushes no result either (add esi,8 and re-dispatch; the
+# HRESULT only feeds the error check) -- whether the CALLEE pushes one
+# (Function vs Sub) is invisible in pcode, so pass 1 infers it by
+# liveness: a tagged result surviving to a statement boundary was never
+# consumed and the site renders as a Sub call.
+#
+# Chain shapes in PAL (24 sites, all VCallHresult):
+#   ImpAdLdPr global; MemLdRf mem=NNNN; NewIfNullPr/Ad [; FStAdNoPop]
+#   FLdPrThis
+# MemLdRf also serves the Me-relative UDT-array idiom (Ary1LdPr ->
+# MemLdRf, 135 sites); there it keeps its eval pop/push behavior -- only
+# a MemLdRf inside an open receiver chain composes the receiver.
+# Receiver-chain openers set the [ebp-0x50] receiver register (handler:
+# zero eval-stack effect) and open a chain; VCallHresult (and #16
+# LateIdLdVar) read the register.  FLdPr loads a frame-slot object,
+# FLdPrThis the current form (Me); ImpAdLdPr a form-module global.
+RECV_CHAIN_START = {"ImpAdLdPr", "FLdPrThis", "FLdPr"}
+RECV_CHAIN_CONT = {"MemLdRf", "NewIfNullPr", "NewIfNullAd",
+                   "NewIfNullObj", "NewIfNullVar", "FStAdNoPop"}
+
 TERMINATOR_LABELS = {
     "ExitProc", "ExitProcHresult", "ExitProcI2", "ExitProcStr",
     "End", "ExitProcCbHresult",
@@ -444,9 +493,16 @@ FIXED_STR_STORE = {"StFixedStr"}
 FIXED_STR_LOAD = {"LdFixedStr"}
 
 # Statement-level ops with no stack effect (emit as-is).
-STMT_LABELS = {
-    "AryLock", "AryUnlock",
-}
+# Compiler lifecycle opcodes with NO source-level statement (#12).
+# AryLock/AryUnlock pin/unpin movable array memory around bare-array
+# pointer arguments to Declare functions (Win16 heritage); VB4 source
+# cannot spell them.  Zero eval-stack effect (empirically airtight: all
+# 4 PAL pairs sit around strict _collect_args calls that never
+# mis-synced, and no leftover value ever flushed).  The locked temp
+# slot (stack-144/-136) is never read back, so suppressing the statement
+# also drops the phantom bare Dim via #6's "unrendered slots stay
+# undeclared" invariant -- same philosophy as FStStrNoPop (#A1).
+LIFECYCLE_LABELS = {"AryLock", "AryUnlock"}
 
 # Statement ops that pop eval-stack values (counts verified by handler
 # disassembly; operand order documented in _stmt_pop).
@@ -458,16 +514,46 @@ STMT_POP_LABELS = {
     "GetRecOwner3": 2,
 }
 
+# #17 Open flags: u16 = mode | (access << 8) | (share << 12), the exact
+# split the 0x0F787D0C worker masks out (mode = low byte, access = &0xF00,
+# share = &0xF000).  Modes 1/2/4/8/0x20 are the worker's dispatch arms;
+# access 3 = "Read Write" confirmed by its `cmp bx,0x300` check.  Share
+# codes other than 0 never occur in PAL -- unknown values stay visible as
+# a trailing comment instead of a guess.
+_OPEN_MODES = {
+    0x01: " For Input", 0x02: " For Output", 0x04: " For Random",
+    0x08: " For Append", 0x20: " For Binary",
+}
+_OPEN_ACCESS = {
+    0x0: "", 0x1: " Access Read", 0x2: " Access Write",
+    0x3: " Access Read Write",
+}
+_OPEN_SHARE = {
+    0x0: "",
+}
+
 # Variant binary ops: pop 2, push 1 (AddVar = numeric add or string concat).
 VAR_BINARY_OPS = {
     "AddVar": "+",
     "EqVar": "=",
 }
 
+# PopTmpLdAd*: pop the TOS value, store it into a frame temp, push the
+# temp's ADDRESS (all-reference ABI arg materialization).  Text is
+# transparent (the temp aliases the value).  Provenance-wise this is the
+# ByVal COPY idiom when the popped item is a bare variable load (#9): a
+# ByRef variable argument must pass the variable's own address, so the
+# compiler copying the value into a temp proves the callee param is ByVal.
+POP_TMP_LABELS = {
+    "PopTmpLdAd", "PopTmpLdAd1", "PopTmpLdAd2", "PopTmpLdAd4",
+    "PopTmpLdAdStr",
+}
+
 # Transparent plumbing: pop 1, push 1 (address/pointer manipulation).
+# The value passed through is no longer a bare variable load (a conversion
+# happened), so copy-idiom provenance does not survive these.
 PLUMBING = {
-    "PopTmpLdAd2", "PopTmpLdAd4", "PopTmpLdAdStr", "PopTmpLdAd1",
-    "PopFPR4", "PopFPR8", "PopAd", "PopAdLdVar",
+    "PopFPR4", "PopFPR8", "PopAdLdVar",
     "FStAdNoPop",
     "NewIfNullPr", "NewIfNullAd", "NewIfNullObj", "NewIfNullVar",
     "CVarRef", "CVarI2", "CVarStr", "CVarR4", "CVarR8", "CVarI4",
@@ -475,6 +561,46 @@ PLUMBING = {
     "LateIdLdVar",
     "HardType",
 }
+
+# Bare value loads whose label names the loaded type.  Used only for
+# #9 call-site copy-vote type hints (ByVal arg = the copied variable's
+# type).
+_LOAD_TYPE_HINTS = {
+    "FLdI2": "Integer", "FMemLdI2": "Integer", "ImpAdLdI2": "Integer",
+    "ILdI2": "Integer",
+    "FLdI4": "Long", "FMemLdI4": "Long", "ImpAdLdI4": "Long",
+    "FLdR4": "Single", "FMemLdR4": "Single", "ImpAdLdR4": "Single",
+    "FLdFPR4": "Single",
+    "FLdR8": "Double", "ImpAdLdR8": "Double", "ILdR8": "Double",
+    "FLdFPR8": "Double",
+    "FLdUI1": "Byte",
+    "FLdStr": "String",
+    # FMemLd4/ImpAdLd4 (the generic 4-byte module load, #13) carry NO
+    # hint: the 4 bytes may be a Long, a raw pointer or an object
+    # reference (PAL: screen_buffer_ptr/RPG_money vs vb_form_ref) --
+    # ambiguous, so copy votes abstain.  Zero FMemLd*->PopTmpLdAd copy
+    # idioms exist in PAL, so this only removes a dormant trap (the old
+    # "FMemLdStr": "String" entry, refuted by the 126-site consumer
+    # census: no ConcatStr/CStr2Ansi consumer anywhere).
+}
+
+# Labels whose push is a BARE VALUE LOAD ("is a load" vs "carries a type
+# hint" are distinct: FMemLd4 votes copy but abstains on the type).
+_VALUE_LOAD_LABELS = frozenset(_LOAD_TYPE_HINTS) | {
+    "FMemLd4", "ImpAdLd4",
+}
+
+# Reference pushes (variable / array-element / field address).  Used for
+# #9 body votes (ByRef evidence: the argument is an lvalue's own address).
+_BODY_PUSH_LABELS = {
+    "FLdRfVar", "FLdRf", "FLdZeroAd", "FMemLdRf", "FMemLdRfVar",
+    "ImpAdLdRf",
+    "Ary1LdRf", "AryLdRf",
+}
+
+# mem=stackN operand -> signed offset (param slots are stack+12/+16/...;
+# mem=stack+8.fXXXX is the Me base, never a param).
+_SLOT_OFF_RE = re.compile(r"mem=stack([+-]\d+)$")
 
 
 # ----------------------------------------------------------------------
@@ -488,13 +614,25 @@ class Expr(object):
     in this expression.  They are realised when the value is consumed by a
     store, condition, or outer call, and emitted as standalone "Call ..."
     statements when the value is flushed unconsumed.
-    """
-    __slots__ = ("text", "is_call", "effects")
 
-    def __init__(self, text, is_call=False, effects=None):
+    origin: provenance for style-review #9 call-site ABI voting.  None for
+    computed expressions/literals/call results; ("load", label, operand)
+    for a bare value load of a frame/module slot; ("body", label, operand)
+    for a reference push (variable/array-element address); ("copy", label,
+    operand) for a load materialized into a temp via PopTmpLdAd* (the ByVal
+    copy idiom).  Never read for rendering -- text is identical either way.
+    """
+    __slots__ = ("text", "is_call", "effects", "origin", "site")
+
+    def __init__(self, text, is_call=False, effects=None, origin=None,
+                 site=None):
         self.text = text
         self.is_call = is_call
         self.effects = effects or []
+        self.origin = origin
+        # #14: the emitting VCall site when this Expr is a speculatively
+        # pushed call result (pass-1 liveness inference only).
+        self.site = site
 
     def __repr__(self):
         return "Expr(%r)" % self.text
@@ -530,7 +668,7 @@ class StackMachine(object):
                          "result_slot", "result_name")
     _SNAPSHOT_LISTS = ("stack", "statements", "pending_loops")
     _SNAPSHOT_DICTS = ("temp_aliases", "_alias_effects", "_pending_byref",
-                       "arg_map", "param_map")
+                       "arg_map", "param_map", "loop_var_types")
 
     def __init__(self):
         self.stack = []
@@ -540,6 +678,13 @@ class StackMachine(object):
         self.pending_loops = []
         self.arg_map = {}  # proc name -> arg count
         self.param_map = {}  # stack offset -> param name (e.g. {12: "a0"})
+        # #9 vote collection (optional): dict sink keyed (va, arg_pos) ->
+        # (callee, kind, type_hint, caller_name, caller_param_idx).  Shared
+        # across procs and append-only with idempotent keys, so it is NOT
+        # part of the checkpoint/restore state (re-executed paths re-record
+        # the same facts; every recorded fact is a real p-code push idiom).
+        self.call_votes = None
+        self.proc_name = None  # owning proc, for forward-chain edges
         self.exit_keyword = "Exit Sub"  # Functions override to "Exit Function"
         self.result_slot = None  # Function result-slot offset (e.g. -134)
         self.result_name = None  # Function result slot renders as the proc name
@@ -550,6 +695,22 @@ class StackMachine(object):
         # slot -> (order, va, call_text, effects); drained by
         # _flush_pending_byref so an unread call is not dropped.
         self._pending_byref = {}
+        # #14 VCall receiver chain: the [ebp-0x50] register expression.
+        # See RECV_CHAIN_START -- the chain never touches the eval stack.
+        self.receiver = None
+        self._recv_chain = False
+        # #14 two-pass result inference.  vcall_sink (pass 1): {va: True}
+        # seeded at push, flipped False when a tagged result survives to a
+        # statement boundary (never consumed -> Sub site).  vcall_modes
+        # (pass 2): the collected map; missing key = push (Function).
+        self.vcall_sink = None
+        self.vcall_modes = None
+        # Loop-var ref text -> VB type, recorded when _loop_start pops the
+        # var ref (ForI2/ForStepI2 -> Integer, ForI4/ForStepI4 -> Long).
+        # Authoritative for local Dim type inference (pseudo_code #6):
+        # the popped ref is exactly what the rendered For names, immune to
+        # long end-expressions between the FLdRfVar and the For opcode.
+        self.loop_var_types = {}
 
     def _subst_param(self, text):
         """Replace stack+N references with parameter names where applicable,
@@ -598,8 +759,9 @@ class StackMachine(object):
 
     # -- stack helpers ------------------------------------------------------
 
-    def push(self, text, is_call=False, effects=None):
-        self.stack.append(Expr(text, is_call=is_call, effects=effects or []))
+    def push(self, text, is_call=False, effects=None, origin=None, site=None):
+        self.stack.append(Expr(text, is_call=is_call, effects=effects or [],
+                               origin=origin, site=site))
 
     def pop(self):
         if self.stack:
@@ -622,6 +784,13 @@ class StackMachine(object):
         """
         self._source_order += 1
         new_stmt = Stmt(va, indent_delta, text, order=self._source_order)
+        # #14 pass-1 liveness: VB4 keeps the eval stack empty between
+        # statements, so a speculatively tagged VCall result surviving to
+        # a statement boundary was never consumed -> the site is a Sub.
+        if self.vcall_sink is not None and self.stack:
+            for item in self.stack:
+                if item.site is not None:
+                    self.vcall_sink[item.site] = False
         # Insert after the last statement whose address is <= va.  Statements
         # are emitted in address order apart from earlier inserts, so a
         # linear scan from the end is both correct and cheap.
@@ -694,6 +863,10 @@ class StackMachine(object):
         """
         if not item.text or item.text in ("<missing>", "<empty>"):
             return False
+        # #14 pass-1 liveness: a stranded tagged VCall result was flushed
+        # unconsumed -> the site is a Sub.
+        if item.site is not None and self.vcall_sink is not None:
+            self.vcall_sink[item.site] = False
         if item.effects:
             for origin_order, origin_va, call_text in item.effects:
                 self._insert_stmt(origin_order, origin_va, 0,
@@ -762,8 +935,42 @@ class StackMachine(object):
         operand = instr.operand
         va = instr.pos
 
+        # #14 receiver-chain bookkeeping: the chain stays open only across
+        # its own continuation opcodes; anything else closes it (the VCall
+        # itself reads machine.receiver, which persists).
+        if label not in RECV_CHAIN_CONT and label not in RECV_CHAIN_START:
+            self._recv_chain = False
+
         if label in BINARY_OPS:
             self._binary(BINARY_OPS[label])
+        elif label == "MemLdRf" and self._recv_chain:
+            # #14 receiver-chain member access: compose the register
+            # expression, no eval-stack effect.  Must precede MEM_LD --
+            # outside a chain MemLdRf keeps its UDT-array pop/push role.
+            self.receiver = (self.receiver or "Me") + _field_ref(operand)
+        elif label in RECV_CHAIN_CONT and self._recv_chain:
+            # NewIfNull*/FStAdNoPop inside an open chain: register protocol
+            # only (FStAdNoPop's side-store feeds a later FFree1Ad; the
+            # temp is plumbing, never rendered).  Must precede PLUMBING.
+            pass
+        elif label in RECV_CHAIN_START:
+            # #14: open a receiver chain (see RECV_CHAIN_START).
+            if label == "FLdPrThis":
+                self.receiver = "Me"
+            elif label == "FLdPr":
+                # #16: frame-slot object -> receiver register (handler:
+                # mov eax,[ebp+off]; mov [ebp-0x50],eax -- no eval-stack
+                # effect).  All 3 PAL uses feed a LateIdLdVar invoke.  Me on
+                # a malformed operand.
+                self.receiver = (
+                    self._subst_param(parse_mem(operand))
+                    if operand and operand != "-" else "Me")
+            else:
+                # ImpAdLdPr: the global= operand renders the module slot
+                # (Me.fXXXX); the remap layer renames it to the control's
+                # semantic name (vb_com_object_N).
+                self.receiver = parse_mem(operand or "")
+            self._recv_chain = True
         elif label in COMPARE_OPS:
             self._binary(COMPARE_OPS[label])
         elif label in VAR_BINARY_OPS:
@@ -789,10 +996,51 @@ class StackMachine(object):
                 self.pop()
                 self.pop()
             # else: transparent conversion (pop 1 push 1, text unchanged).
+            # The value passed through a type conversion, so it is no longer
+            # a bare variable load: drop the copy-idiom provenance (#9's
+            # "exclude widening casts" rule -- `FLdI2 v; CI4I2;
+            # PopTmpLdAd4` materializes a WIDENED temp, not a value copy).
+            if self.stack:
+                top = self.stack[-1]
+                if top.origin is not None and top.origin[0] == "load":
+                    self.stack[-1] = Expr(top.text, top.is_call, top.effects)
+        elif label in POP_TMP_LABELS:
+            # Materialize the TOS value into a frame temp and push its
+            # address; text is transparent (the temp aliases the value).
+            # #9: a bare variable load materialized here is the ByVal COPY
+            # idiom -- tag it so the call site votes ByVal.  Everything else
+            # (expressions, literals, call results, converted values) keeps
+            # no copy provenance and abstains.
+            if self.stack:
+                top = self.stack[-1]
+                if top.origin is not None and top.origin[0] == "load":
+                    self.stack[-1] = Expr(top.text, top.is_call, top.effects,
+                                          origin=("copy",) + top.origin[1:])
+        elif label == "LateIdLdVar":
+            # #16: IDispatch::Invoke late-bound member load (see
+            # _late_id_ld) -- must precede PLUMBING only for readability;
+            # it is no longer a plumbing member.
+            self._late_id_ld(operand, va)
+        elif label == "PopAd":
+            # #16: native rebalance only -- the handler is a bare
+            # `add esp,4` with no eval-stack effect and no statement.  All
+            # 3 PAL uses are the LateIdLdVar idiom tail (the stale native
+            # receiver push).  PopAdLdVar is a different opcode and keeps
+            # its plumbing role.
+            pass
         elif label in PLUMBING:
-            pass  # transparent pointer/address plumbing
-        elif label in STMT_LABELS:
-            self._stmt(label, operand, va)
+            # transparent conversion (pop 1 push 1, text unchanged): the
+            # value passed through a conversion, so it is no longer a bare
+            # variable load -- drop the copy-idiom provenance (#9's
+            # "exclude widening casts" rule; conservative, never a false
+            # positive).
+            if self.stack:
+                top = self.stack[-1]
+                if top.origin is not None and top.origin[0] == "load":
+                    self.stack[-1] = Expr(top.text, top.is_call, top.effects)
+        elif label in LIFECYCLE_LABELS:
+            # #12: no stack effect, no statement (see LIFECYCLE_LABELS).
+            pass
         elif label in STMT_POP_LABELS:
             self._stmt_pop(label, operand, va)
         elif label == "Redim":
@@ -885,6 +1133,15 @@ class StackMachine(object):
                 self.push("-" + text, effects=effects)
         elif op == "Not":
             self.push("Not (%s)" % strip(a.text), effects=effects)
+        elif op == "CSng" and _PURE_LIT_RE.match(a.text.strip()):
+            # Style-review #5 (literal subset): VB4 inserts FnCSng* on
+            # integer literals feeding Single (R4) operators; the source
+            # wrote the bare literal and recompiling re-inserts the same
+            # promotion, so the wrapper is pure noise.  Only applied when
+            # the operand is a pure numeric literal -- a literal-literal
+            # pair would constant-fold on recompile (none in PAL.EXE:
+            # every CSng(literal) combines with a non-literal operand).
+            self.push(a.text, effects=effects)
         else:
             # Function-style unary ops render as Len(x), not "Len (x)".
             self.push("%s(%s)" % (op, strip(a.text)), effects=effects)
@@ -909,24 +1166,25 @@ class StackMachine(object):
                 self.push(ref if ref and ref != "-" else "<missing>")
         elif label == "FLdZeroAd":
             self.push("0")
-        elif label == "FLdPrThis":
-            # Push Me; the operand is the '-' sentinel, not a literal.
-            self.push("Me")
-        elif label == "FLdPr":
-            # Push the frame-slot object pointer (Me on a malformed operand).
-            if operand and operand != "-":
-                self.push(self._subst_param(parse_mem(operand)))
-            else:
-                self.push("Me")
         elif label.startswith("ImpAdLd"):
             # ImpAdLd* push a form-module slot ref; global= already renders
             # Me.fXXXX, so it skips _subst_param (nothing to rewrite).
             # A missing operand must not reach startswith/parse_mem as None.
             operand = operand or ""
-            if operand.startswith("global="):
-                self.push(parse_mem(operand))
+            if label in _BODY_PUSH_LABELS:
+                origin = ("body", label, operand)
+            elif label in _VALUE_LOAD_LABELS:
+                # "is a bare value load" is independent of "carries a
+                # type hint": FMemLd4 (#13) loads a value but its 4 bytes
+                # are Long/pointer/object-ambiguous, so it votes copy
+                # with NO hint.
+                origin = ("load", label, operand)
             else:
-                self.push(self._subst_param(parse_mem(operand)))
+                origin = None
+            if operand.startswith("global="):
+                self.push(parse_mem(operand), origin=origin)
+            else:
+                self.push(self._subst_param(parse_mem(operand)), origin=origin)
         elif label == "FLdRfVar":
             slot = self._subst_param(parse_mem(operand))
             # Resolve a ByRef alias if this slot has one.
@@ -935,7 +1193,7 @@ class StackMachine(object):
                 text, effects, is_call = resolved
                 self.push(text, is_call=is_call, effects=effects)
             else:
-                self.push(slot)
+                self.push(slot, origin=("body", label, operand or ""))
         elif label in ("FLdI2", "FLdI4", "FLdR4", "FLdR8", "FLdUI1"):
             # Resolve a CStr2Ansi/ByRef alias if this slot has one.
             slot = self._subst_param(parse_mem(operand))
@@ -944,9 +1202,14 @@ class StackMachine(object):
                 text, effects, is_call = resolved
                 self.push(text, is_call=is_call, effects=effects)
             else:
-                self.push(slot)
+                self.push(slot, origin=("load", label, operand or ""))
         else:
-            self.push(self._subst_param(parse_mem(operand)))
+            origin = None
+            if label in _BODY_PUSH_LABELS:
+                origin = ("body", label, operand or "")
+            elif label in _VALUE_LOAD_LABELS:
+                origin = ("load", label, operand or "")
+            self.push(self._subst_param(parse_mem(operand)), origin=origin)
 
     def _ary_load(self, label):
         # Ary1Ld*: stack top = arrayref, below = index.
@@ -1055,17 +1318,51 @@ class StackMachine(object):
         # a known arity larger than the eval stack is a p-code parse error, so
         # raise (per-proc error stub) instead of silently dropping args.  Never
         # fires on PAL.EXE (all 198 procs verified), so output is unchanged.
+        if self.call_votes is not None and nargs and name in self.arg_map:
+            self._record_votes(va, name, nargs)
         args = self._collect_args(nargs, reverse=False, strict=True)
         disp = RUNTIME_RENDER.get(name, name)
+        call_text = "%s(%s)" % (disp, args)
         if label in CALL_NORETURN:
             # No-return call: same "Call name(args)" shape, no result push.
             self.emit(va, 0, "Call %s(%s)" % (disp, args))
         else:
-            call_text = "%s(%s)" % (disp, args)
             # Deferred effect: if the result is never consumed,
             # flush_leftovers emits "Call name(args)" at its origin.
             self.push(call_text, is_call=True,
                       effects=[(self._source_order, va, call_text)])
+
+    def _record_votes(self, va, callee, nargs):
+        """Record per-arg push idioms for one internal call site (#9).
+
+        Peeks the top nargs items (TOS = ARG1) before _collect_args pops
+        them.  Kinds: "copy" (bare variable load materialized into a temp:
+        ByVal, the copied load's suffix types it), "body" (an lvalue's own
+        address: ByRef), "forward" (this proc's param slot pushed onward:
+        abstains on the modifier, but links the two param slots for pointee
+        type propagation), "expr" (temp/literal/call result: abstain).
+        Keyed (va, pos) so structurer re-walks stay idempotent.
+        """
+        count = min(nargs, len(self.stack))
+        for pos in range(count):
+            item = self.stack[-1 - pos]
+            kind, hint, src_param = "expr", None, None
+            origin = item.origin
+            if origin is not None and origin[0] in ("load", "copy"):
+                m = _SLOT_OFF_RE.match(origin[2] or "")
+                slot = int(m.group(1)) if m else None
+                if slot is not None and slot >= 12 and (slot - 8) % 4 == 0:
+                    # A param slot pushed onward: the pointer forwards
+                    # regardless of any temp materialization.
+                    kind = "forward"
+                    src_param = (slot - 12) // 4
+                elif origin[0] == "copy":
+                    kind = "copy"
+                    hint = _LOAD_TYPE_HINTS.get(origin[1])
+            elif origin is not None and origin[0] == "body":
+                kind = "body"
+            self.call_votes[(va, pos)] = (
+                callee, kind, hint, self.proc_name, src_param)
 
     def _byref_call(self, name, spec, va):
         """Handle a ByRef runtime function (e.g. rtcVarStrFromVar).
@@ -1143,16 +1440,40 @@ class StackMachine(object):
 
     def _vcall(self, label, operand, va):
         slot = parse_vcall_slot(operand) or "0"
-        method = "method_%s" % slot
-        # VCall is COM late dispatch with no static arg count, so it drains
-        # the whole eval stack.  Unlike ImpAdCall it pushes args left-to-right
-        # with the receiver last (TOS), so reverse=True restores source order.
+        # #14: the receiver chain walked the [ebp-0x50] register, never the
+        # eval stack (handler-verified -- see RECV_CHAIN_START), so the
+        # drain below now collects exactly the pushed arguments; the old
+        # "Me." hard prefix and the receiver-as-trailing-arg artifact are
+        # both gone.  The slot is a vtable offset on the receiver's own
+        # dispatch table (call [[receiver]+slot]); PAL.EXE carries no
+        # slot->name table, so method_XXXX is the best available name.
+        receiver = self.receiver if self.receiver is not None else "Me"
         args = self._collect_args(reverse=True)
-        # All VCall variants return a value; an unconsumed one flushes as a
-        # discarded "Call" statement.
-        call_text = "Me.%s(%s)" % (method, args)
-        self.push(call_text, is_call=True,
-                  effects=[(self._source_order, va, call_text)])
+        call_text = "%s.method_%s(%s)" % (receiver, slot, args)
+        push_result = (self.vcall_modes is None
+                       or self.vcall_modes.get(va, True))
+        if push_result:
+            # Speculatively pushed result (Function site, or pass 1).  A
+            # tagged result surviving to a statement boundary marks the
+            # site Sub (see _insert_stmt / settle_vcall_sites).
+            if self.vcall_sink is not None:
+                self.vcall_sink[va] = True
+            self.push(call_text, is_call=True,
+                      effects=[(self._source_order, va, call_text)],
+                      site=va)
+        else:
+            # Sub site (inferred): the callee pushed nothing, so emit the
+            # call as a statement like the no-return external calls.
+            self.emit(va, 0, "Call %s" % call_text)
+
+    def settle_vcall_sites(self):
+        """#14 pass-1 closeout: any tagged result still on the eval stack
+        at the end of a proc was never consumed -> Sub site."""
+        if self.vcall_sink is None:
+            return
+        for item in self.stack:
+            if item.site is not None:
+                self.vcall_sink[item.site] = False
 
     def _collect_args(self, nargs=None, reverse=False, strict=False):
         """Collect argument list (oldest first).
@@ -1207,6 +1528,8 @@ class StackMachine(object):
         # back to; accept whatever it renders as (slot or mapped member name).
         var_ref = self.pop()
         ref_text = strip(var_ref.text).lstrip('&')
+        self.loop_var_types[ref_text] = (
+            "Integer" if label in ("ForI2", "ForStepI2") else "Long")
         # Reject empty/<missing> and bare numbers (would emit "For 5 = ...").
         if ref_text and ref_text != "<missing>" and not ref_text.lstrip('-').isdigit():
             loop_var = ref_text
@@ -1234,8 +1557,43 @@ class StackMachine(object):
             self.pending_loops.pop()
         self.emit(va, -1, "Next")
 
-    def _stmt(self, label, operand, va):
-        self.emit(va, 0, _render_label(label, operand))
+    def _late_id_ld(self, operand, va):
+        """#16: LateIdLdVar = zero-argument IDispatch::Invoke member get.
+
+        Handler-verified end to end (VB40032): the entry
+        (lblEX_LateIdLdVar) loads the mem= slot address and the 32-bit
+        member id and hardcodes ebx=0 -- the argument count (late-bound
+        calls WITH arguments use sibling opcodes whose operands carry a
+        u16 count; the shared continuation pops count*16 bytes).
+        The worker issues the textbook IDispatch::Invoke(obj, dispid=id,
+        &IID_NULL, ctx, 3 /*METHOD|PROPERTYGET*/, {rgvarg=NULL,
+        cArgs=0}, pVarResult=&mem_slot, &EXCEPINFO, &puArgErr): the
+        result VARIANT is written straight into the mem= frame slot.
+        The continuation then pushes &slot for expression flow and
+        PopAd discards it (net zero eval effect).
+
+        Rendering: the slot is ALIASED to `recv.lateid_XXXXXXXX` so the
+        consuming read (FLdRfVar+CR4Var at all 3 PAL sites) renders the
+        get inline where its value flows (the CStr2Ansi alias
+        precedent).  A statement form (`tmp = recv.lateid_...`) would
+        break at the two priv_092 sites: the slot is freed and REUSED
+        by the second get, and the drained call texts render after the
+        reassignment, mis-tying the value.  Member names resolve at
+        runtime against the object's IDispatch and are unrecoverable
+        (same class as #14(d) vtable slots), so the render keeps the
+        raw dispid.
+        """
+        m = re.match(r"mem=(\S+)(?:\s+id=(\S+))?", operand or "")
+        slot = m.group(1) if m else ""
+        member = m.group(2) if m and m.group(2) else "0"
+        if not slot:
+            return
+        recv = self.receiver if self.receiver is not None else "Me"
+        key = self._slot_key("mem=" + slot)
+        # An overwritten destination drops its old alias (see _store).
+        self._alias_effects.pop(key, None)
+        self._flush_pending_byref(key)
+        self.temp_aliases[key] = "%s.lateid_%s" % (recv, member)
 
     def _stmt_pop(self, label, operand, va):
         """Statement ops that pop eval-stack values.
@@ -1266,11 +1624,35 @@ class StackMachine(object):
             elif label == "GetRecOwner3":
                 self.emit(va, 0, "Get %s, %s" % (nxt.text, top.text))
         elif npop == 3:
-            # Open: stack bottom->top = [filename, filenum, reclen]
+            # Open: stack bottom->top = [filename, filenum, reclen].
+            # #17: the operand u16 = mode | (access << 8) | (share << 12),
+            # handler-verified (lblEX_Open reads the u16 into the 0x0F787D0C
+            # worker: mode = low byte, dispatching arms 1=Input / 2=Output /
+            # 4=Random / 8=Append / 0x20=Binary; access = bits 8-11, with
+            # the worker's `cmp bx,0x300` confirming 3 = Read Write; share
+            # = bits 12-15).  PAL's only site (0041434E, flags=0104) is
+            # Random + Read, matching the `String * 10` record array and
+            # the Len=10 reclen operand.
             reclen = self.pop()
             filenum = self.pop()
             filename = self.pop()
-            self.emit(va, 0, "Open %s, %s, %s" % (filename.text, filenum.text, reclen.text))
+            try:
+                flag_text = (operand or "").split("=", 1)[-1].strip()
+                flags = int(flag_text, 16)
+            except (TypeError, ValueError):
+                flags = 0
+            mode = flags & 0xFF
+            access = (flags >> 8) & 0xF
+            share = (flags >> 12) & 0xF
+            text = "Open %s" % filename.text
+            text += _OPEN_MODES.get(mode, " For ?%02X" % mode if mode else "")
+            text += _OPEN_ACCESS.get(access, " Access ?%X" % access)
+            text += _OPEN_SHARE.get(share, " ' lock=%X" % share)
+            text += " As #%s" % filenum.text
+            if (reclen.text not in ("0", "<empty>", "<missing>", "")
+                    and mode in (0x04, 0x20)):
+                text += " Len = %s" % reclen.text
+            self.emit(va, 0, text)
 
     def _redim(self, label, operand, va):
         """Redim consumes 1 + dims*2 eval-stack values.

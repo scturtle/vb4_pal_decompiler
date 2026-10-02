@@ -48,7 +48,7 @@ class CStr2AnsiAliasTest(unittest.TestCase):
         # PAL_DrawString is a Declare-table (stdcall) target, so arguments
         # are pushed right-to-left and must NOT be reversed on collection.
         instrs = [
-            Instr(0x0040375C, "FMemLdStr", "mem=stack+8.f02A4"),
+            Instr(0x0040375C, "FMemLd4", "mem=stack+8.f02A4"),
             Instr(0x00403762, "ILdI2", "mem=stack+28"),   # x  (a4)
             Instr(0x00403766, "ILdI2", "mem=stack+24"),   # y  (a3)
             Instr(0x0040376A, "ILdI2", "mem=stack+16"),   # shadow (a1)
