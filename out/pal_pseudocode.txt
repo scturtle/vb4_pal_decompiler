@@ -1162,7 +1162,7 @@ Sub pub_065_004054A4(ByRef a0 As Integer)
     End If
 End Sub
 
-Sub pub_066_00405570(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3, ByRef a4 As Integer)
+Sub pub_066_00405570(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integer, ByRef a3 As Long, ByRef a4 As Integer)
     Call pub_062_00405254_hot(a1, a2, 5, a4)
     Call pub_016_0040375C_hot(a1 + 10, a2 + 10, Me.f0344(a0), 3, 0)
     Call pub_100_004076F0(a1 + 48, a2 + 15, a3, 6)
@@ -1647,7 +1647,7 @@ Sub pub_096_0040725C(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Integ
     End If
 End Sub
 
-Sub pub_097_00407378(ByRef a0)
+Sub pub_097_00407378(ByRef a0 As Long)
     Call pub_062_00405254_hot(60, 100, 10, -1)
     Call pub_016_0040375C_hot(70, 110, Me.f0344(9), 3, 0)
     Call pub_100_004076F0(148, 114, a0, 6)
@@ -1695,7 +1695,7 @@ Sub pub_099_004075C8_hot(ByRef a0 As Integer, ByRef a1 As Integer, ByVal a2 As I
     Loop While stack-136 > 0
 End Sub
 
-Sub pub_100_004076F0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2, ByRef a3 As Integer)
+Sub pub_100_004076F0(ByRef a0 As Integer, ByRef a1 As Integer, ByRef a2 As Long, ByRef a3 As Integer)
     Dim stack-134 As Integer
     Dim stack-136 As Integer
     Dim stack-138 As Integer

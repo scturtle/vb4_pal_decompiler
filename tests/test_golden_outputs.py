@@ -203,6 +203,35 @@ class GoldenFixTest(unittest.TestCase):
         self.assertNotIn("Else", arm)
         self.assertIn("If stack-134 > 0 Then", arm)
 
+    # ---- ILdI4 consumer-flow pointee types (ILdI4Flow) ------------------
+    def test_ild_i4_flow_types_hp_money_number(self):
+        # pub_100 a2 (show_small_number.number) is only ever ILdI4-fetched
+        # (LtI4 compare + FStI4 into a Long local): the consumer flow
+        # votes Long; pub_066 a3 (draw_menu_with_text_and_hp.hp) is a pure
+        # pointer forward into pub_100 a2 and inherits Long via the
+        # forwarding fixpoint; pub_097 a0 (show_money.amount) votes Long
+        # directly (AddI4 with the Long global RPG_money).
+        self.assertIn(
+            "Sub pub_066_00405570(ByRef a0 As Integer, ByRef a1 As Integer, "
+            "ByRef a2 As Integer, ByRef a3 As Long, ByRef a4 As Integer)",
+            self._proc("pub_066_00405570"))
+        self.assertIn(
+            "Sub pub_100_004076F0(ByRef a0 As Integer, ByRef a1 As Integer, "
+            "ByRef a2 As Long, ByRef a3 As Integer)",
+            self._proc("pub_100_004076F0"))
+        self.assertIn(
+            "Sub pub_097_00407378(ByRef a0 As Long)",
+            self._proc("pub_097_00407378"))
+
+    def test_ild_i4_abstain_class_stays_untyped(self):
+        # Honest abstentions keep no As clause: pub_061 a0 feeds Declare
+        # call arguments (raw ABI), pub_053 a1 feeds an array descriptor
+        # (AryLock/Ary1LdRf) -- neither is a pointee-type use.
+        self.assertIn("Sub pub_061_00405194(ByRef a0, ByRef a1 As Integer)",
+                      self._proc("pub_061_00405194"))
+        self.assertIn("Sub pub_053_00404BF8_hot(ByRef a0 As Integer, "
+                      "ByRef a1)", self._proc("pub_053_00404BF8_hot"))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

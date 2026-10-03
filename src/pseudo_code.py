@@ -127,10 +127,14 @@ def proc_return_kind(labels):
 # Direct F* loads/stores carry the slot's type in their suffix.  I*
 # (indirect) ops only ever touch POSITIVE (parameter) slots in PAL.EXE
 # (verified: no ILd*/ISt* on stack-N) where they dereference the caller's
-# variable: ILdI2/IStI2 prove the poinee is Integer.  ILdI4/IStI4 are
-# deliberately absent -- through a ByRef slot an I4 access may read a
-# Long, fetch a BSTR pointer (ByRef String marshaled via CStr2Ansi) or
-# fetch a UDT pointer, indistinguishable at the opcode level.
+# variable: ILdI2/IStI2 prove the poinee is Integer.  ILdI4/IStI4 carry
+# no suffix entry -- through a ByRef slot an I4 access may read a Long,
+# fetch a BSTR pointer (ByRef String marshaled via CStr2Ansi) or fetch a
+# UDT pointer, indistinguishable at the opcode level.  ILdI4 LOADS are
+# instead typed by their first CONSUMER (_ild_i4_flow_vote): an I4 value
+# op proves Long, Len(BSTR)/the CStr2Ansi source proves String, pointer
+# uses abstain.  IStI4 STORES stay untyped: the stored operand may
+# itself be a BSTR pointer, and no PAL site exists to calibrate.
 _SLOT_STORE_TYPES = {
     "FStI2": "Integer", "FStI4": "Long", "FStR4": "Single",
     "FStFPR4": "Single", "FStR8": "Double", "FStFPR8": "Double",
@@ -150,6 +154,108 @@ _STACK_NEG_RE = re.compile(r"stack-(\d+)")
 # wrapped reference's element type.  Only the two observed codes are
 # mapped; anything else is deliberately no evidence.
 _CVARREF_TYPES = {"4002": "Integer", "4008": "String"}
+
+# ByRef-slot ILdI4 fetch: consumer votes (see _ild_i4_flow_vote).
+# ANY position -- both operands of an I4 binary/compare/logic op are I4
+# value uses, whichever is the fetch.
+_ILD_I4_LONG_ANY = frozenset(
+    [l for l in stack_ir.BINARY_OPS if l.endswith("I4")]
+    + [l for l in stack_ir.COMPARE_OPS if l.endswith("I4")])
+# TOP-only -- unary/convert-from-I4/I4-store/temp-materialization consume
+# exactly the TOS.  MemStI4/Ary1StI4: TOS is the stored VALUE, below-TOS
+# is the base address (pointer use -> abstain).
+_ILD_I4_LONG_TOP = frozenset([
+    "NotI4", "UMiI4", "FnAbsI4", "FnIntI4", "FnSgnI4", "FnCSngI4",
+    "CI2I4", "CI4I4", "CR4I4", "CR8I4", "CUI1I4", "CCyI4", "CBoolI4",
+    "FStI4", "IStI4", "FMemStI4", "ImpAdStI4", "PopTmpLdAd4",
+    "MemStI4", "Ary1StI4",
+])
+# Walk bound: instructions between a fetch and its consumer (PAL max
+# observed gap is 2, e.g. ILdI4; LitI4 0; LtI4).
+_ILD_I4_FLOW_WINDOW = 8
+
+
+def _flow_stack_effect(label):
+    """(pops, pushes) for the ILdI4 consumer walk, or (None, None).
+
+    Only idioms that can sit between a fetch and its consumer are
+    modeled (counts mirror StackMachine.process); everything else --
+    calls, branches, loops, terminators, unknowns -- stops the walk with
+    no vote, so the walk never crosses a basic-block boundary.
+    """
+    if label in stack_ir.LOAD_LABELS:
+        return 0, 1
+    if label in ("CStr2Ansi", "CStr2Uni"):   # before CONV_LABELS: pop 2
+        return 2, 0
+    if label in stack_ir.CONV_LABELS:
+        return 1, 1
+    if (label in stack_ir.BINARY_OPS or label in stack_ir.COMPARE_OPS
+            or label in stack_ir.VAR_BINARY_OPS):
+        return 2, 1
+    if (label in stack_ir.UNARY_OPS or label in stack_ir.POP_TMP_LABELS
+            or label in stack_ir.PLUMBING or label in stack_ir.MEM_LD):
+        return 1, 1
+    if label in stack_ir.MEM_ST:
+        return 2, 0
+    if label in stack_ir.ARY_LOAD:
+        return 2, 1
+    if label in stack_ir.ARY_STORE:
+        return 3, 0
+    if label in stack_ir.STORE_LABELS:
+        # FStStrNoPop re-pushes the value for its real consumer.
+        if label in stack_ir.STORE_NOPOP:
+            return 1, 1
+        return 1, 0
+    if (label in stack_ir.FFREE_LABELS
+            or label in stack_ir.LIFECYCLE_LABELS):
+        return 0, 0
+    if label in stack_ir.STMT_POP_LABELS:
+        return stack_ir.STMT_POP_LABELS[label], 0
+    return None, None
+
+
+def _ild_i4_consumer_vote(label, above):
+    """Pointee vote for the first consumer of a param-slot ILdI4 fetch.
+
+    above = number of eval-stack values between the fetched I4 and TOS
+    (0 = the fetch is TOS).  Returns "Long", "String" or None:
+      - I4 value ops prove the pointee is a Long;
+      - Len(BSTR) (FnLenStr, TOS) and the CStr2Ansi source (below the
+        slot ptr) prove a BSTR fetch -> String;
+      - call arguments, array refs/bases, Mem* bases and array INDEX
+        operands (widened to I4 regardless of source type) abstain.
+    """
+    if label == "CStr2Ansi":
+        return "String" if above == 1 else None
+    if label == "FnLenStr":
+        return "String" if above == 0 else None
+    if label in _ILD_I4_LONG_ANY:
+        return "Long"
+    if label in _ILD_I4_LONG_TOP:
+        return "Long" if above == 0 else None
+    return None
+
+
+def _ild_i4_flow_vote(instrs, start):
+    """Classify the first consumer of a param-slot ILdI4's fetched value.
+
+    Walks forward simulating only the RELATIVE eval-stack depth (the
+    count of values pushed on top of the fetch); the first modeled
+    instruction that pops it decides the vote.  Returns
+    (vote, consumer_idx) with vote in {"Long", "String", None};
+    consumer_idx is the deciding instruction's index (start itself when
+    the walk ran out of instructions or stopped on an unmodeled opcode).
+    """
+    above = 0
+    end = min(len(instrs), start + 1 + _ILD_I4_FLOW_WINDOW)
+    for j in range(start + 1, end):
+        pops, pushes = _flow_stack_effect(instrs[j].label)
+        if pops is None:
+            return None, j
+        if pops > above:
+            return _ild_i4_consumer_vote(instrs[j].label, above), j
+        above += pushes - pops
+    return None, start
 
 
 def _slot_of(operand):
@@ -181,6 +287,10 @@ def _slot_evidence(instrs):
       ``CVarRef ... type=4000|VT`` names the POINTEE type (4002=ByRef
       Integer, 4008=ByRef String; the 0x4000 flag is VT_BYREF).  Only
       the two codes observed in PAL.EXE are mapped.
+    Look-forward pattern (param slots only):
+    - ByRef-slot ILdI4 fetches: the fetched value's first CONSUMER
+      votes the pointee (ILdI4Flow -- I4 value op -> Long, BSTR
+      consumer -> String, pointer uses abstain; see _ild_i4_flow_vote).
     For-loop variable types are NOT scanned here: the end expression
     between the FLdRfVar and the For opcode is arbitrarily long, so
     pseudo_code takes them from StackMachine.loop_var_types (recorded
@@ -228,6 +338,25 @@ def _slot_evidence(instrs):
                 slot = _slot_of(prev.operand)
                 if vtype is not None and slot is not None:
                     add(slot, "store", vtype, prev.pos, label="CVarRef")
+            continue
+        elif lab == "ILdI4":
+            # ByRef-slot I4 fetch: ambiguous in isolation (Long read /
+            # BSTR pointer / UDT pointer), so the suffix tables abstain
+            # -- the fetched value's first consumer disambiguates
+            # (ILdI4Flow).  Param slots only: I* never touches stack-N
+            # in PAL.EXE and stack+8 is the Me base.
+            pslot = _slot_of(ins.operand)
+            if pslot is not None and pslot >= 12:
+                vote, consumer = _ild_i4_flow_vote(instrs, i)
+                if (vote == "String"
+                        and instrs[consumer].label == "CStr2Ansi"
+                        and consumer == i + 2):
+                    # The CStr2Ansi look-back above already voted this
+                    # exact fetch (this ILdI4 is at consumer-2);
+                    # don't double-count the site.
+                    vote = None
+                if vote:
+                    add(pslot, "load", vote, ins.pos, label="ILdI4Flow")
             continue
         slot = _slot_of(ins.operand)
         if slot is None:
@@ -280,11 +409,15 @@ def _deref_param_types(instrs, nargs):
     direct F* load's suffix names the POINTER WIDTH, not the pointee
     (FLdI4 stack+12 forwards the reference; its I4 is 4 bytes of address),
     so F* direct loads are no type evidence for ANY param.  Valid
-    evidence: unambiguous derefs (ILdI2/IStI2/ILdR8) and the two look-back
-    string proofs (CStr2Ansi marshaling; CVarRef VT_BYREF type codes).
+    evidence: unambiguous derefs (ILdI2/IStI2/ILdR8), the two look-back
+    string proofs (CStr2Ansi marshaling; CVarRef VT_BYREF type codes),
+    and ILdI4 consumer-flow votes (ILdI4Flow: a ByRef I4 fetch whose
+    first consumer is an I4 value op votes Long; a BSTR consumer votes
+    String; pointer/ABI/index uses abstain).
     """
     ev = _slot_evidence(instrs)
-    byref_ok = {"ILdI2", "IStI2", "ILdR8", "CStr2Ansi", "CVarRef"}
+    byref_ok = {"ILdI2", "IStI2", "ILdR8", "CStr2Ansi", "CVarRef",
+                "ILdI4Flow"}
     types = []
     for i in range(nargs):
         slot = 12 + 4 * i
@@ -404,11 +537,13 @@ def collect_param_votes(pal, analysis, procs):
         entries, VCall-only callers) defaults to ByRef, the VB4 source
         default.
 
-      - types: callee-body dereference evidence first (direct, strongest);
-        copy-vote load suffixes fill gaps (the copied variable's type);
-        param-slot forwarding edges then propagate pointee types along the
-        call graph to a fixpoint (both directions: a forwarded pair names
-        one pointee), e.g. pub_132.magicIdx -> pub_013's ILdI2 -> Integer.
+      - types: callee-body dereference evidence first (direct, strongest:
+        deref suffixes, CStr2Ansi/CVarRef look-backs, ILdI4 consumer
+        flow); copy-vote load suffixes fill gaps (the copied variable's
+        type); param-slot forwarding edges then propagate pointee types
+        along the call graph to a fixpoint (both directions: a forwarded
+        pair names one pointee), e.g. pub_132.magicIdx -> pub_013's
+        ILdI2 -> Integer.
 
     Returns (param_kinds, param_types):
       param_kinds: {proc_name: ["ByRef"|"ByVal", ...]} indexed by position

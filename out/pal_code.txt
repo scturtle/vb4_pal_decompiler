@@ -1156,7 +1156,7 @@ Sub fade_out_palette(ByRef speed As Integer)
     End If
 End Sub
 
-Sub draw_menu_with_text_and_hp(ByRef wordIdx As Integer, ByRef x As Integer, ByRef y As Integer, ByRef hp, ByRef labelIdx As Integer)
+Sub draw_menu_with_text_and_hp(ByRef wordIdx As Integer, ByRef x As Integer, ByRef y As Integer, ByRef hp As Long, ByRef labelIdx As Integer)
     Call frame_menu(x, y, 5, labelIdx)
     Call draw_string(x + 10, y + 10, word_dat_data(wordIdx), 3, 0)
     Call show_small_number(x + 48, y + 15, hp, 6)
@@ -1641,7 +1641,7 @@ Sub draw_object_icon(ByRef x As Integer, ByRef y As Integer, ByRef invIdx As Int
     End If
 End Sub
 
-Sub show_money(ByRef amount)
+Sub show_money(ByRef amount As Long)
     Call frame_menu(60, 100, 10, -1)
     Call draw_string(70, 110, word_dat_data(9), 3, 0)
     Call show_small_number(148, 114, amount, 6)
@@ -1689,7 +1689,7 @@ Sub display_number(ByRef x As Integer, ByRef y As Integer, ByVal number As Integ
     Loop While remaining > 0
 End Sub
 
-Sub show_small_number(ByRef x As Integer, ByRef y As Integer, ByRef number, ByRef digitCount As Integer)
+Sub show_small_number(ByRef x As Integer, ByRef y As Integer, ByRef number As Long, ByRef digitCount As Integer)
     Dim screenX As Integer
     Dim i As Integer
     Dim digit As Integer
